@@ -77,7 +77,7 @@ endif
 
 brew_tasks :=
 ifneq ($(wildcard $(BREW_BUNDLE_FILE)),)
-brew_tasks := brew-install brew-update brew-clean
+brew_tasks := brew-install brew-update brew-upgrade brew-cask-upgrade brew-clean
 endif
 
 gem_tasks :=
@@ -96,6 +96,7 @@ install_tasks +=	clean \
 			virtualenv-create \
 			pip-install \
 			precommit-update \
+			precommit-run \
 			versions \
 			_revision \
 			_notify
@@ -120,8 +121,10 @@ distclean_tasks +=	pip-uninstall \
 
 provision_tasks +=	install \
 			ansible-galaxy \
-			vagrant-provision \
 			ansible-lint \
+			vagrant-provision
+
+test_tasks +=		provision \
 			ansible-test \
 			vagrant-destroy \
 			distclean
@@ -133,6 +136,7 @@ update:			$(update_tasks)
 check:			$(check_tasks)
 distclean:		$(distclean_tasks)
 provision:		$(provision_tasks)
+test:			$(test_tasks)
 
 list help:
 	$(info $@: available targets)
@@ -153,19 +157,19 @@ brew-install:
 
 brew-update: $(BREW_BUNDLE_FILE)
 	$(info $@: resolving $(BREW_BUNDLE_FILE))
-	brew update
-	brew bundle --file=$(BREW_BUNDLE_FILE)
+	brew update >/dev/null
+	brew bundle --file=$(BREW_BUNDLE_FILE) >/dev/null
 	# returns non-zero if nothing to link
 	-brew linkapps >/dev/null
 
 brew-upgrade: $(BREW_BUNDLE_FILE)
 	$(info $@: uprading brews)
-	brew update
+	brew update >/dev/null
 	brew upgrade --cleanup
 
 brew-cask-upgrade: $(BREW_BUNDLE_FILE)
 	$(info $@: uprading casks)
-	sbin/cask-up
+	@sbin/cask-up
 
 .PHONY: brew-clean
 brew-clean:
@@ -231,7 +235,7 @@ python-uninstall:
 .PHONY: virtualenv-provide
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
-	curl $(VENV_URI) -o $(VENV_TGZ)
+	curl -s $(VENV_URI) -o $(VENV_TGZ)
 	tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
 	chmod +x $(VENV_SCRIPT)
 	# virtualenv version
