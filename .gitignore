@@ -44,22 +44,16 @@ $RECYCLE.BIN/
 *.settings
 *.so
 *.sqlite
-*.stTheme.cache
 *.sublime-*
-*.sublime-project
-*.sublime-settings
-*.sublime-workspace
 *.sw[a-z]
 *.tgz
-*.tmlanguage.cache
-*.tmp
 *.tmp*
-*.tmPreferences.cache
 *.toast
 *.vmdk
 *.xlk
 *.~vsdx
 *_flymake*
+*_freeze.txt
 *_state
 *agent
 *cache*
@@ -87,7 +81,6 @@ $RECYCLE.BIN/
 .colander
 .cvs/
 .directory
-.DocumentRevisions-*
 .DocumentRevisions-V100/
 .DS_Store
 .DS_Store?
@@ -107,7 +100,6 @@ $RECYCLE.BIN/
 .rubocop_todo.yml
 .settings*
 .socket*
-.Spotlight-*
 .Spotlight-V100/
 .ssh/
 .stfolder
@@ -116,7 +108,6 @@ $RECYCLE.BIN/
 .svn/
 .TemporaryItems/
 .Trash*
-.vagrant*/
 .vagrant/
 .vbox*
 .vbt5
@@ -138,6 +129,7 @@ DEADJOE
 Desktop.ini
 dyld_*
 ehthumbs.db
+files/*
 fishd.*
 gem_graph.png
 gpg-*
@@ -147,9 +139,8 @@ Icon?
 id_*
 include/
 lib/
-log/
+log/*
 Logs/
-lost+found
 lost+found/
 mail/
 Network Trash Folder/
@@ -162,6 +153,7 @@ Package Control.cache/
 Package Control.last-run
 Package Control.system-ca-bundle
 pagefile.sys
+persistent/*
 pip-selfcheck.json
 private/
 random_seed
@@ -176,16 +168,15 @@ Snapshots/
 spool/
 ssh-*
 static/
+sync/*
 TAGS*
 Temporary Items/
 Temporary/
 Thumbs.db
-tmp/
+tmp/*
 tmtags
 vendor/
 venv/
 ~$*.doc*
 ~$*.ppt*
 ~$*.xls*
-persistent/
-*_freeze.txt

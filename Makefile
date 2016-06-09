@@ -27,7 +27,8 @@ PLAYBOOK_FILE ?= playbooks/taxigirl.yml
 PRE_COMMIT_CONFIG ?= .pre-commit-config.yaml
 PYTHON_VERSION ?= 2.7.11
 VENV_SCRIPT ?= ./bin/virtualenv.py
-VENV_TGZ ?= ./files/virtualenv-15.0.2.tar.gz
+VENV_TGZ ?= ./files/virtualenv.tgz
+VENV_URI ?= https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d6e1f02db352f3facf907d9eb614fb80e9/virtualenv-15.0.2.tar.gz#md5=0ed59863994daf1292827ffdbba80a63
 
 ###
 ### # intialization
@@ -230,6 +231,7 @@ python-uninstall:
 .PHONY: virtualenv-provide
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
+	curl $(VENV_URI) -o $(VENV_TGZ)
 	tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
 	chmod +x $(VENV_SCRIPT)
 	# virtualenv version
@@ -417,14 +419,13 @@ clobber:
 	-vagrant destroy -f
 	# might not be present
 	-pre-commit clean
+	rm -f .revision
 	rm -f pip-selfcheck.json $(PIP_FREEZE_FILE) $(PIP_PRE_FREEZE_FILE)
+	rm -f $(VENV_TGZ)
 	rm -rf .vagrant
 	rm -rf $(BIN_PATH)/* include/* lib/* .Python *.spec
 	rm -rf log/* cache/* tmp/*
 	rm -rf vendor/* Gemfile.lock
-	rm -f .revision
-	# might not be present
-	-pyenv rehash
 	# might not be present
 	-git gc --auto
 	sync
