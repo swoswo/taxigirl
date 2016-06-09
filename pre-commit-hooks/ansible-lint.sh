@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 #
-while read -r f; do
-    # yaml check
-    if [[ $(head -n1 "$f" ) == "---" ]]; then
-        if ! ansible-lint "$f"; then
-            exit 1
-        fi
+FILES_PATTERN='.*\.(yml|yaml)$'
+
+for f in $(git diff --cached --name-only | grep -E "$FILES_PATTERN"); do
+    if ! ansible-lint "$f"; then
+        exit 1
     fi
-done < <(git diff-index --name-only HEAD)
+done

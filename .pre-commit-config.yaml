@@ -10,39 +10,6 @@
     -   id: check-yaml
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
--   repo: local
-    hooks:
-    -   id: codevalidator
-        name: Codevalidator
-        language: script
-        description: Simple source code validator with file reformatting option
-        files: .*\.(yml|yaml|py|rb|erb|sql)$|Vagrantfile$
-        entry: pre-commit-hooks/codevalidator.sh
-    -   id: bashate
-        name: bashate
-        language: script
-        description: A pep8 equivalent for bash scripts
-        files: .*\.(sh|bash)$
-        entry: pre-commit-hooks/bashate.sh
-    -   id: shellcheck
-        name: ShellCheck
-        language: script
-        description: Static analysis tool for shell scripts in the name are encrypted
-        files: .*\.(sh|bash)$
-        entry: pre-commit-hooks/shellcheck.sh
-    -   id: ansible-lint
-        name: Ansible Lint
-        language: script
-        description: Best practices checker for Ansible
-        files: taxigirl\.yml$
-        entry: pre-commit-hooks/ansible-lint.sh
-    -   id: vault
-        name: Ansible Vault Check
-        language: script
-        description: Pre-commit hook that verifies if all files containing 'vault'
-            in the name are encrypted
-        files: .*vault.*\.(yml|yaml)$
-        entry: pre-commit-hooks/vault.sh
 -   repo: git://github.com/FalconSocial/pre-commit-python-sorter
     sha: d044ff27300a6dc8b1a56cd22552e3a810dc6f49
     hooks:
@@ -61,20 +28,35 @@
         - --max-line-length=160
         - --no-autodetect
         - --strictness=medium
-#        - --without-tool=pep257
-#        - --without-tool=pylint
-# -   repo: git://github.com/jordant/rubocop-pre-commit-hook
-#     sha: ae431551f703fff928bfabe2b440a9a8048e962b
-#     hooks:
-#     -   id: check-rubocop
-#         files: .*\.rb$|Vagrantfile$
-# -   repo: https://github.com/therealjessesanford/reek-pre-commit-hook.git
-#     sha: 68381b2db41db5221d04881d8054b8f7da55c8e7
-#     hooks:
-#     -   id: check-reek
-#         files: .*\.rb$
-# -   repo: git://github.com/chriskuehl/puppet-pre-commit-hooks
-#     sha: 4bc20784cca4713e2ba5f884ff4c37a1e4e87de1
-#     hooks:
-#     -   id: erb-validate
-#         files: .*\.erb$
+-   repo: local
+    hooks:
+    -   id: codevalidator
+        name: Codevalidator
+        language: script
+        description: Simple source code validator with file reformatting option
+        files: .*\.(yaml|yml|json|py|java|jsp|vm|sh|html|xml|less|css|properties|php|rb|erb|sql|js)|Gemfile|Brewfile.*|Vagrantfile$
+        entry: pre-commit-hooks/codevalidator.sh
+    -   id: bashate
+        name: bashate
+        language: script
+        description: A pep8 equivalent for bash scripts
+        files: .*\.(sh|bash|envrc)$
+        entry: pre-commit-hooks/bashate.sh
+    -   id: shellcheck
+        name: ShellCheck
+        language: script
+        description: Static analysis tool for shell scripts in the name are encrypted
+        files: .*\.(sh|bash|dash|ksh|envrc)$
+        entry: pre-commit-hooks/shellcheck.sh
+    -   id: ansible-lint
+        name: Ansible Lint
+        language: script
+        description: Best practices checker for Ansible
+        files: main\.yml$
+        entry: pre-commit-hooks/ansible-lint.sh
+    -   id: vault
+        name: Ansible Vault Check
+        language: script
+        description: Pre-commit hook that verifies if all files containing 'vault' in the name are encrypted
+        files: .*vault.*$
+        entry: pre-commit-hooks/vault.sh

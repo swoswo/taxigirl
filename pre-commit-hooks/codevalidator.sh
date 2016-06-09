@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 #
-while read -r f; do
+FILES_PATTERN=\
+".*\.(yaml|yml|json|py|rb|erb|sql|sh|xml|\
+java|jsp|vm|properties|\
+html|less|css|php|js)|\
+Gemfile|Brewfile.*|Vagrantfile$"
+
+for f in $(git diff --cached --name-only | grep -E "$FILES_PATTERN"); do
     if ! codevalidator "$f"; then
         exit 1
     fi
-done < <(git diff-index --name-only HEAD)
+done
