@@ -23,7 +23,7 @@ GEM_BUNDLE_FILE ?= Gemfile
 PIP_FREEZE_FILE ?= requirements_freeze.txt
 PIP_PRE_FREEZE_FILE ?= requirements_pre_freeze.txt
 PIP_REQ_FILE ?= requirements.txt
-PLAYBOOK_FILE ?= playbooks/taxigirl.yml
+PLAYBOOK_FILE ?= playbooks/main.yml
 PRE_COMMIT_CONFIG ?= .pre-commit-config.yaml
 PYTHON_VERSION ?= 2.7.11
 VENV_SCRIPT ?= ./bin/virtualenv.py
@@ -322,9 +322,10 @@ ansible-test:
 
 precommit-update: $(PRE_COMMIT_CONFIG)
 	$(info $@: update and build pre-commit environments)
-	$(BIN_PATH)/pre-commit-validate-config
+	@$(BIN_PATH)/pre-commit-validate-config
 	$(BIN_PATH)/pre-commit autoupdate
-	$(BIN_PATH)/pre-commit install -f
+	# TODO: ensure proper hooks
+	$(BIN_PATH)/pre-commit install
 
 precommit-run: $(PRE_COMMIT_CONFIG)
 	$(info $@: checking cached files)
