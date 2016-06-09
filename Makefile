@@ -334,6 +334,10 @@ precommit-run: $(PRE_COMMIT_CONFIG)
 	$(info $@: checking cached files)
 	$(BIN_PATH)/pre-commit run --all-files --allow-unstaged-config
 
+precommit-clean: $(PRE_COMMIT_CONFIG)
+	$(info $@: cleanup pre-commit)
+	$(BIN_PATH)/pre-commit clean
+
 ###
 ### # git
 ###
