@@ -1,13 +1,15 @@
+#!/usr/bin/env make
 #
-# ansible development bootstrap makefile
+# https://github.com/emetriq/taxigirl
 # 2016 tom hensel <github@jitter.eu>
 #
 # tested on osx. usage:
 #   $ make install
 #   $ PYTHON_VERSION=3.5.1 PIP_BIN_NAME=pip3 make install
 #
+
 ###
-### # constants
+### # defaults
 ###
 
 BIN_PATH ?= ./bin
@@ -93,7 +95,7 @@ install_tasks +=	clean \
 			virtualenv-create \
 			pip-install \
 			precommit-update \
-			check \
+			versions \
 			_revision \
 			_notify
 
@@ -107,30 +109,29 @@ update_tasks +=		git-update \
 			$(gem_tasks) \
 			$(vagrant_tasks)
 
-check_tasks += 		check-versions
-
-lint_tasks += 		precommit-run
+check_tasks += 		git-secrets-scan \
+			precommit-run
 
 distclean_tasks +=	pip-uninstall \
 			virtualenv-remove \
 			gem-remove gem-clean \
 			clean
 
-test_tasks +=		install \
+provision_tasks +=	install \
 			ansible-galaxy \
 			vagrant-provision \
+			ansible-lint \
 			ansible-test \
 			vagrant-destroy \
 			distclean
 
-.PHONY: install reset update check lint distclean list test
+.PHONY: install reset update check lint distclean list provision
 install:		$(install_tasks)
 reset:			$(reset_tasks)
 update:			$(update_tasks)
 check:			$(check_tasks)
-lint:			$(lint_tasks)
 distclean:		$(distclean_tasks)
-test:			$(test_tasks)
+provision:		$(provision_tasks)
 
 list help:
 	$(info $@: available targets)
@@ -142,28 +143,29 @@ list help:
 ### # homebrew
 ###
 
-.ONESHELL: brew-install
 .PHONY: brew-install
 brew-install:
 	$(info $@: installing homebrew)
 	# returns non-zero when already installed
 	-$(BREW_INSTALL_FILE) 2>/dev/null
-	brew tap Homebrew/bundle
+	brew tap Homebrew/bundle >/dev/null
 
 brew-update: $(BREW_BUNDLE_FILE)
 	$(info $@: resolving $(BREW_BUNDLE_FILE))
 	brew update
 	brew bundle --file=$(BREW_BUNDLE_FILE)
 	# returns non-zero if nothing to link
-	-brew linkapps
+	-brew linkapps >/dev/null
 
-.ONESHELL: brew-upgrade
 brew-upgrade: $(BREW_BUNDLE_FILE)
 	$(info $@: uprading brews)
 	brew update
 	brew upgrade --cleanup
 
-.ONESHELL: brew-clean
+brew-cask-upgrade: $(BREW_BUNDLE_FILE)
+	$(info $@: uprading casks)
+	sbin/cask-up
+
 .PHONY: brew-clean
 brew-clean:
 	$(info $@: cleaning up homebrew)
@@ -178,27 +180,6 @@ brew-uninstall:
 	$(BREW_UNINSTALL_FILE) 2>/dev/null
 
 ###
-### # vagrant
-###
-
-vagrant-update: Vagrantfile
-	$(info $@: updating plugins and boxen, pruning outdated)
-	vagrant version
-	vagrant plugin update >/dev/null
-	vagrant box update >/dev/null
-	# returns non-zero when nothing to remove
-	-vagrant remove-old-check >/dev/null
-
-vagrant-provision: Vagrantfile
-	$(info $@: kick the box)
-	vagrant up --no-provision
-	vagrant provision
-
-vagrant-destroy: Vagrantfile
-	$(info $@: bringing the box down)
-	vagrant destroy -f
-
-###
 ### # ruby
 ###
 
@@ -209,7 +190,7 @@ gem-update:
 	-gem update --quiet --no-document --env-shebang --wrappers --system
 	yes | gem update  --quiet --no-document --env-shebang --wrappers
 	gem check -q --doctor
-	gem install bundler
+	gem install bundler >/dev/null
 
 gem-bundle: $(GEM_BUNDLE_FILE)
 	$(info $@: bundler might take some time)
@@ -234,6 +215,7 @@ gem-remove:
 .PHONY: python-install
 python-install:
 	$(info $@: compiling python $(PYTHON_VERSION))
+	# install only if not existing
 	pyenv install --skip-existing $(PYTHON_VERSION)
 
 .PHONY: python-uninstall
@@ -284,6 +266,26 @@ pip-uninstall: $(PIP_REQ_FILE)
 	-$(BIN_PATH)/$(PIP_BIN_NAME) uninstall -q -y -r $(PIP_FREEZE_FILE)
 
 ###
+### # vagrant
+###
+
+vagrant-update: Vagrantfile
+	$(info $@: updating plugins and boxen, pruning outdated)
+	vagrant plugin update >/dev/null
+	vagrant box update >/dev/null
+	# returns non-zero when nothing to remove
+	-vagrant remove-old-check >/dev/null
+
+vagrant-provision: Vagrantfile
+	$(info $@: kick the box)
+	vagrant up --no-provision
+	vagrant provision
+
+vagrant-destroy: Vagrantfile
+	$(info $@: bringing the box down)
+	vagrant destroy -f
+
+###
 ### # ansible
 ###
 
@@ -293,7 +295,17 @@ ansible-galaxy: $(GALAXY_REQ_FILE)
 
 .PHONY: ansible-lint
 ansible-lint:
-	$(info $@: check if the book can play)
+	$(info $@: checking ansible related files)
+	pre-commit run --no-stash --allow-unstaged-config --files \
+		.envrc \
+		ansible.cfg Makefile README.md Vagrantfile requirements.txt \
+		action_plugins/* callback_plugins/* \
+		config/* group_vars/* \
+		inventory/* library/* \
+		meta/* \
+		playbooks/** roles/** tests/** \
+		pre-commit-hooks/* \
+		provisioning/* sbin/*
 	$(BIN_PATH)/ansible-lint $(PLAYBOOK_FILE)
 
 .PHONY: ansible-test
@@ -313,8 +325,8 @@ precommit-update: $(PRE_COMMIT_CONFIG)
 	$(BIN_PATH)/pre-commit install -f
 
 precommit-run: $(PRE_COMMIT_CONFIG)
-	$(info $@: checking all files)
-	$(BIN_PATH)/pre-commit run --all-files --allow-unstaged-config --verbose
+	$(info $@: checking cached files)
+	$(BIN_PATH)/pre-commit run --all-files --allow-unstaged-config
 
 ###
 ### # git
@@ -333,7 +345,7 @@ _revision:
 git-secrets-scan:
 	$(info $@: scanning for secrects psst)
 	# returns non-zero if something is revealed
-	git secrets --scan -r .
+	git secrets --scan --cached .
 
 .PHONY: git-update
 git-update:
@@ -350,40 +362,40 @@ git-update:
 _notify:
 	@-terminal-notifier -message 'All done!' -title 'Taxigirl - Makefile' -subtitle '🚖👧🔧💟'
 
-
 ###
 ### # 'test'
 ###
 
-.PHONY: check-versions
-version versions check-versions:
+.ONESHELL: versions
+.PHONY: versions
+versions:
 	$(info $@: gathering version strings)
 	# ruby
-	@-command -v ruby && ruby -v
+	@-command -v ruby; ruby -v
 	# ruby gems
-	@-command -v gem && gem -v
+	@-command -v gem; gem -v
 	# bundler
-	@-command -v bundle && bundle -v
+	@-command -v bundle; bundle -v
 	# vagrant
-	@-command -v vagrant && vagrant --version
+	@-command -v vagrant; vagrant --version
 	# virtualbox
-	@-command -v VBoxManage && VBoxManage --version
+	@-command -v VBoxManage; VBoxManage --version
 	# git
-	@command -v git; git --version
+	@-command -v git; git --version
 	# pyenv
-	@command -v pyenv; pyenv -v; pyenv version
+	@-command -v pyenv; pyenv -v; pyenv version
 	# python easy_install
-	@command -v easy_install; $(BIN_PATH)/easy_install --version
+	@-command -v easy_install; $(BIN_PATH)/easy_install --version
 	# python virtualenv
-	@command -v virtualenv; $(BIN_PATH)/virtualenv --version
+	@-command -v virtualenv; $(BIN_PATH)/virtualenv --version
 	# python pip
-	@command -v pip; $(BIN_PATH)/$(PIP_BIN_NAME) --version
+	@-command -v pip; $(BIN_PATH)/$(PIP_BIN_NAME) --version
 	# yelp pre-commit
-	@command -v pre-commit; $(BIN_PATH)/pre-commit --version
+	@-command -v pre-commit; $(BIN_PATH)/pre-commit --version
 	# python
-	@command -v python; python -V
+	@-command -v python; $(BIN_PATH)/python -V
 	# ansible
-	@command -v ansible; $(BIN_PATH)/ansible --version
+	@-command -v ansible; $(BIN_PATH)/ansible --version
 
 ###
 ### # cleansing
@@ -395,6 +407,7 @@ clean:
 	-rm -rf log/* cache/* tmp/*
 	-rm -f *.spec
 
+.ONESHELL: clobber
 .PHONY: clobber
 clobber:
 	$(warning $@: are you sure? press any key to continue)
