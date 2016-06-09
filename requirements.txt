@@ -8,10 +8,10 @@ flake8-todo
 mccabe
 pre-commit
 prospector
+PyYAML
 
 httplib2
 Jinja2
-PyYAML
 ansible
 ansible-ec2-inventory
 
