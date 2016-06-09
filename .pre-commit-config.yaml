@@ -34,19 +34,19 @@
         name: Codevalidator
         language: script
         description: Simple source code validator with file reformatting option
-        files: .*\.(yaml|yml|json|py|java|jsp|vm|sh|html|xml|less|css|properties|php|rb|erb|sql|js)|Gemfile|Brewfile.*|Vagrantfile$
+        files: \.(yaml|yml|json|py|java|jsp|vm|sh|html|xml|less|css|properties|php|rb|erb|sql|js)|Gemfile|Brewfile.*|Vagrantfile$
         entry: pre-commit-hooks/codevalidator.sh
     -   id: bashate
         name: bashate
         language: script
         description: A pep8 equivalent for bash scripts
-        files: .*\.(sh|bash|envrc)$
+        files: \.(sh|bash|envrc)$
         entry: pre-commit-hooks/bashate.sh
     -   id: shellcheck
         name: ShellCheck
         language: script
         description: Static analysis tool for shell scripts in the name are encrypted
-        files: .*\.(sh|bash|dash|ksh|envrc)$
+        files: \.(sh|bash|dash|ksh|envrc)$
         entry: pre-commit-hooks/shellcheck.sh
     -   id: ansible-lint
         name: Ansible Lint
