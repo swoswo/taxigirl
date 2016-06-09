@@ -77,7 +77,7 @@ endif
 
 brew_tasks :=
 ifneq ($(wildcard $(BREW_BUNDLE_FILE)),)
-brew_tasks := brew-install brew-update brew-upgrade brew-cask-upgrade brew-clean
+brew_tasks := brew-install brew-update brew-cask-upgrade brew-clean
 endif
 
 gem_tasks :=
@@ -96,7 +96,7 @@ install_tasks +=	clean \
 			virtualenv-create \
 			pip-install \
 			precommit-update \
-			precommit-run \
+			check \
 			versions \
 			_revision \
 			_notify
@@ -159,17 +159,13 @@ brew-update: $(BREW_BUNDLE_FILE)
 	$(info $@: resolving $(BREW_BUNDLE_FILE))
 	brew update >/dev/null
 	brew bundle --file=$(BREW_BUNDLE_FILE) >/dev/null
+	brew upgrade --cleanup
 	# returns non-zero if nothing to link
 	-brew linkapps >/dev/null
 
-brew-upgrade: $(BREW_BUNDLE_FILE)
-	$(info $@: uprading brews)
-	brew update >/dev/null
-	brew upgrade --cleanup
-
 brew-cask-upgrade: $(BREW_BUNDLE_FILE)
 	$(info $@: uprading casks)
-	@sbin/cask-up
+	@sbin/cask-up.sh
 
 .PHONY: brew-clean
 brew-clean:
@@ -302,7 +298,7 @@ ansible-galaxy: $(GALAXY_REQ_FILE)
 .PHONY: ansible-lint
 ansible-lint:
 	$(info $@: checking ansible related files)
-	pre-commit run --no-stash --allow-unstaged-config --files \
+	@pre-commit run --no-stash --allow-unstaged-config --files \
 		.envrc \
 		ansible.cfg Makefile README.md Vagrantfile requirements.txt \
 		action_plugins/* callback_plugins/* \
