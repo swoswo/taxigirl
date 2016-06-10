@@ -3,8 +3,10 @@
 # https://github.com/emetriq/taxigirl
 # 2016 tom hensel <github@jitter.eu>
 #
-# tested on osx. usage:
+# tested on osx.
+# usage:
 #   $ make install
+#   or i.e.:
 #   $ PYTHON_VERSION=3.5.1 PIP_BIN_NAME=pip3 make install
 #
 
@@ -26,7 +28,6 @@ PIP_REQ_FILE 		?= requirements.txt
 PLAYBOOK_FILE		?= playbooks/main.yml
 PRE_COMMIT_CONFIG	?= .pre-commit-config.yaml
 PYTHON_VERSION 		?= 2.7.11
-VAGRANT_LOG 		?= error
 VENV_SCRIPT 		?= ./bin/virtualenv.py
 VENV_TGZ 		?= ./files/virtualenv.tgz
 VENV_URI 		?= https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d6e1f02db352f3facf907d9eb614fb80e9/virtualenv-15.0.2.tar.gz#md5=0ed59863994daf1292827ffdbba80a63
@@ -115,10 +116,10 @@ update_tasks +=		git-update \
 check_tasks += 		git-secrets-scan \
 			precommit-run
 
-provision_tasks +=	install \
+provide_tasks +=	install \
+			vagrant-up \
 			ansible-galaxy \
-			ansible-lint \
-			vagrant-provision
+			ansible-lint
 
 distclean_tasks +=	vagrant-halt \
 			gem-remove gem-clean \
@@ -126,17 +127,17 @@ distclean_tasks +=	vagrant-halt \
 			virtualenv-remove \
 			clean
 
-test_tasks +=		provision \
-			ansible-test \
+test_tasks +=		provide \
+			vagrant-provision \
 			vagrant-destroy \
 			distclean
 
-.PHONY: install reset update check provision distclean test
+.PHONY: install reset update check provide distclean test
 install:		$(install_tasks)
 reset:			$(reset_tasks)
 update:			$(update_tasks)
 check:			$(check_tasks)
-provision:		$(provision_tasks)
+provide:		$(provide_tasks)
 distclean:		$(distclean_tasks)
 test:			$(test_tasks)
 
@@ -279,9 +280,12 @@ vagrant-update: Vagrantfile
 	@# returns non-zero when nothing to remove
 	@-vagrant remove-old-check >/dev/null
 
-vagrant-provision: Vagrantfile
-	$(info $@: kick the box)
+vagrant-up: Vagrantfile
+	$(info $@: bring the box up)
 	@vagrant up --no-provision
+
+vagrant-provision: Vagrantfile
+	$(info $@: provision the box)
 	@vagrant provision
 
 vagrant-halt: Vagrantfile
@@ -303,6 +307,7 @@ ansible-galaxy: $(GALAXY_REQ_FILE)
 .PHONY: ansible-lint
 ansible-lint:
 	$(info $@: checking ansible related files)
+	@# TODO: abstraction
 	@pre-commit run --no-stash --allow-unstaged-config --files \
 		.envrc \
 		ansible.cfg Makefile README.md Vagrantfile requirements.txt \
@@ -313,7 +318,7 @@ ansible-lint:
 		playbooks/** roles/** tests/** \
 		pre-commit-hooks/* \
 		provisioning/* sbin/*
-	$(BIN_PATH)/ansible-lint $(PLAYBOOK_FILE)
+	@$(BIN_PATH)/ansible-lint $(PLAYBOOK_FILE)
 
 .PHONY: ansible-test
 ansible-test:
@@ -421,8 +426,8 @@ clobber:
 	$(warning $@: are you sure? press any key to continue)
 	@read -t 10
 	$(info $@: wiping it all away)
-	@-vagrant destroy -f
-	@-pre-commit clean
+	@-vagrant destroy -f >/dev/null
+	@-pre-commit clean >/dev/null
 	@-rm -f .revision *.spec
 	@-rm -f pip-selfcheck.json $(PIP_FREEZE_FILE) $(PIP_PRE_FREEZE_FILE)
 	@-rm -f $(VENV_TGZ)
@@ -430,5 +435,4 @@ clobber:
 	@-rm -rf $(BIN_PATH)/* include/* lib/* .Python
 	@-rm -rf log/* cache/* tmp/*
 	@-rm -rf vendor/* Gemfile.lock
-	@-git gc --auto
 	@-sync
