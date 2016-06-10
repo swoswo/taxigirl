@@ -97,7 +97,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.cache.scope = :machine
     config.cache.synced_folder_opts = {
       type: 'nfs',
-      mount_options: ['rw', 'vers=3', 'udp', 'nolock', 'actimeo=2', 'noatime', 'fsc']
+      mount_options: ['rw', 'vers=3', 'tcp', 'nolock', 'actimeo=2', 'noatime', 'fsc']
     }
   end # plugin
 
