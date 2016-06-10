@@ -1,0 +1,7 @@
+---
+- src: https://github.com/dev-sec/ansible-os-hardening
+  path: roles.galaxy/
+  name: os-hardening
+- src: https://github.com/chusiang/switch-apt-mirror.ansible.role
+  path: roles.galaxy/
+  name: switch-apt-mirror
