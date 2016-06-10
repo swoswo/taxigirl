@@ -9,6 +9,7 @@ brew 'ruby-install', args: ['HEAD']
 brew 'ry'
 brew 'shellcheck'
 brew 'terminal-notifier'
+brew 'tmux'
 cask 'vagrant'
 cask 'vagrant-manager', restart_service: :changed
 cask 'virtualbox', restart_service: :changed
