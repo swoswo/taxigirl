@@ -1,33 +1,34 @@
--   repo: git://github.com/pre-commit/pre-commit-hooks
+-   repo: https://github.com/asottile/reorder_python_imports
+    sha: 017e2f64306853ec7f000db52b8280da27eb3b96
+    hooks:
+    -   id: reorder-python-imports
+-   repo: https://github.com/pre-commit/pre-commit-hooks
     sha: 6b1aa19425b35f8c34f43ada8f1045b028dc19a5
     hooks:
-    -   id: check-added-large-files
-    -   id: check-byte-order-marker
-    -   id: check-case-conflict
-    -   id: check-json
     -   id: check-merge-conflict
+    -   id: check-added-large-files
     -   id: check-symlinks
-    -   id: check-yaml
+    -   id: check-case-conflict
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
--   repo: git://github.com/FalconSocial/pre-commit-python-sorter
-    sha: d044ff27300a6dc8b1a56cd22552e3a810dc6f49
-    hooks:
-    -   id: python-import-sorter
-        args:
-        - --silent-overwrite
--   repo: git://github.com/pre-commit/mirrors-yapf
-    sha: 316b795b2f32cbe80047aff7e842b72368d5a2c1
-    hooks:
-    -   id: yapf
--   repo: git://github.com/guykisel/prospector-mirror
+    -   id: check-byte-order-marker
+    -   id: check-json
+    -   id: check-yaml
+    -   id: flake8
+-   repo: https://github.com/guykisel/prospector-mirror
     sha: 00fbd80101566b1b9c873c71f2ab7b95b8bd0a7d
     hooks:
     -   id: prospector
         args:
         - --max-line-length=160
-        - --no-autodetect
         - --strictness=medium
+        - --no-autodetect
+        - --without-tool=pylint
+        - --without-tool=pep257
+-   repo: https://github.com/pre-commit/mirrors-yapf
+    sha: 316b795b2f32cbe80047aff7e842b72368d5a2c1
+    hooks:
+    -   id: yapf
 -   repo: local
     hooks:
     -   id: codevalidator
@@ -37,7 +38,7 @@
         files: \.(yaml|yml|json|py|java|jsp|vm|sh|html|xml|less|css|properties|php|rb|erb|sql|js)|Gemfile|Brewfile.*|Vagrantfile$
         entry: pre-commit-hooks/codevalidator.sh
     -   id: bashate
-        name: bashate
+        name: Bashate
         language: script
         description: A pep8 equivalent for bash scripts
         files: \.(sh|bash|envrc)$

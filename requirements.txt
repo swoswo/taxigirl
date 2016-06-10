@@ -3,7 +3,10 @@ codevalidator
 flake8
 flake8-deprecated
 flake8-format-ansi
-flake8-future-import
+flake8-future
+flake8-import-order
+flake8-print
+flake8-string-format
 flake8-todo
 mccabe
 pre-commit
