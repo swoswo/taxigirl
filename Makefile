@@ -26,6 +26,7 @@ PIP_REQ_FILE 		?= requirements.txt
 PLAYBOOK_FILE		?= playbooks/main.yml
 PRE_COMMIT_CONFIG	?= .pre-commit-config.yaml
 PYTHON_VERSION 		?= 2.7.11
+VAGRANT_LOG 		?= error
 VENV_SCRIPT 		?= ./bin/virtualenv.py
 VENV_TGZ 		?= ./files/virtualenv.tgz
 VENV_URI 		?= https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d6e1f02db352f3facf907d9eb614fb80e9/virtualenv-15.0.2.tar.gz#md5=0ed59863994daf1292827ffdbba80a63
@@ -96,7 +97,7 @@ install_tasks +=	clean \
 			virtualenv-create \
 			pip-install \
 			precommit-update \
-			check \
+			precommit-run \
 			versions \
 			_revision \
 			_notify
@@ -119,9 +120,10 @@ provision_tasks +=	install \
 			ansible-lint \
 			vagrant-provision
 
-distclean_tasks +=	pip-uninstall \
-			virtualenv-remove \
+distclean_tasks +=	vagrant-halt \
 			gem-remove gem-clean \
+			pip-uninstall \
+			virtualenv-remove \
 			clean
 
 test_tasks +=		provision \
@@ -141,7 +143,6 @@ test:			$(test_tasks)
 list help:
 	$(info $@: available targets)
 	@# http://stackoverflow.com/a/26339924/1972627
-	# please note: some targets have aliases
 	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs
 
 ###
@@ -152,15 +153,15 @@ list help:
 brew-install:
 	$(info $@: installing homebrew)
 	# returns non-zero when already installed
-	-$(BREW_INSTALL_FILE) 2>/dev/null
-	brew tap Homebrew/bundle >/dev/null
+	@-$(BREW_INSTALL_FILE) 2>/dev/null
+	@brew tap Homebrew/bundle >/dev/null
 
 brew-update: $(BREW_BUNDLE_FILE)
 	$(info $@: resolving $(BREW_BUNDLE_FILE))
 	@brew update >/dev/null
 	@brew bundle --file=$(BREW_BUNDLE_FILE) >/dev/null
 	@brew upgrade --cleanup
-	# returns non-zero if nothing to link
+	@# returns non-zero if nothing to link
 	@-brew linkapps >/dev/null
 
 brew-cask-upgrade: $(BREW_BUNDLE_FILE)
@@ -187,7 +188,7 @@ brew-uninstall:
 .PHONY: gem-update
 gem-update:
 	$(info $@: installing and updating gems)
-	# returns non-zero if up-to-date
+	@# returns non-zero if up-to-date
 	@-gem update --quiet --no-document --env-shebang --wrappers --system
 	@yes | gem update  --quiet --no-document --env-shebang --wrappers
 	@gem check -q --doctor
@@ -216,13 +217,13 @@ gem-remove:
 .PHONY: python-install
 python-install:
 	$(info $@: compiling python $(PYTHON_VERSION))
-	# install only if not existing
-	pyenv install --skip-existing $(PYTHON_VERSION)
+	@# install only if not existing
+	@pyenv install --skip-existing $(PYTHON_VERSION)
 
 .PHONY: python-uninstall
 python-uninstall:
 	$(info $@: uninstalling python $(PYTHON_VERSION))
-	pyenv uninstall $(PYTHON_VERSION)
+	@pyenv uninstall $(PYTHON_VERSION)
 
 ###
 ### # virtualenv
@@ -234,14 +235,14 @@ virtualenv-provide:
 	@curl -s $(VENV_URI) -o $(VENV_TGZ)
 	@tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
 	@chmod +x $(VENV_SCRIPT)
-	# virtualenv version
+	# virtualenv check
 	@$(BIN_PATH)/virtualenv.py --version
 
 .PHONY: virtualenv-create
 virtualenv-create:
 	$(info $@: creating virtual environment)
 	@$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(pyenv_prefix)/$(BIN_PATH)/python .
-	@$(BIN_PATH)/python -m ensurepip -U
+	@$(BIN_PATH)/python -m ensurepip -U >/dev/null
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
 
 .ONESHELL: virtualenv-remove
@@ -258,9 +259,9 @@ virtualenv-remove:
 pip-update pip-install: $(PIP_REQ_FILE)
 	$(info $@: installing requirements via pip)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_PRE_FREEZE_FILE)
-	$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U -r $(PIP_REQ_FILE)
+	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U -r $(PIP_REQ_FILE)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_FREEZE_FILE)
-	# returns non-zero on difference
+	@# returns non-zero on difference
 	@-diff -N $(PIP_PRE_FREEZE_FILE) $(PIP_FREEZE_FILE)
 
 pip-uninstall: $(PIP_REQ_FILE)
@@ -275,7 +276,7 @@ vagrant-update: Vagrantfile
 	$(info $@: updating plugins and boxen, pruning outdated)
 	@vagrant plugin update >/dev/null
 	@vagrant box update >/dev/null
-	# returns non-zero when nothing to remove
+	@# returns non-zero when nothing to remove
 	@-vagrant remove-old-check >/dev/null
 
 vagrant-provision: Vagrantfile
@@ -283,9 +284,13 @@ vagrant-provision: Vagrantfile
 	@vagrant up --no-provision
 	@vagrant provision
 
+vagrant-halt: Vagrantfile
+	$(info $@: halting the box)
+	@-vagrant halt --force
+
 vagrant-destroy: Vagrantfile
 	$(info $@: bringing the box down)
-	@vagrant destroy -f
+	@-vagrant destroy --force
 
 ###
 ### # ansible
@@ -312,8 +317,8 @@ ansible-lint:
 
 .PHONY: ansible-test
 ansible-test:
-	$(info $@: run test)
-	# TODO: abstraction
+	$(info $@: run test on guest)
+	@# TODO: abstraction
 	$(BIN_PATH)/ansible-playbook -C -i inventory/vagrant.ini -e "@config/test.yml" --skip-tags="apt_upgrade" $(PLAYBOOK_FILE)
 
 ###
@@ -323,8 +328,8 @@ ansible-test:
 precommit-update: $(PRE_COMMIT_CONFIG)
 	$(info $@: update and build pre-commit environments)
 	@$(BIN_PATH)/pre-commit-validate-config
-	@$(BIN_PATH)/pre-commit autoupdate
-	# TODO: ensure proper hooks
+	@$(BIN_PATH)/pre-commit autoupdate >/dev/null
+	@# TODO: ensure proper hooks
 	@$(BIN_PATH)/pre-commit install
 
 precommit-run: $(PRE_COMMIT_CONFIG)
@@ -343,21 +348,19 @@ precommit-clean: $(PRE_COMMIT_CONFIG)
 .PHONY: _revision
 _revision:
 	$(info $@: tagging as $(git_tag))
-	# conditional
 	@test -n "$(git_rev)" && echo $(git_tag) > .revision
-	# conditional
 	@test -n "$(git_rev)" && git tag "Makefile_$(git_tag)"
 
 .PHONY: git-secrets-scan
 git-secrets-scan:
 	$(info $@: scanning for secrects psst)
-	# returns non-zero if something is revealed
+	@# returns non-zero if something is revealed
 	@git secrets --scan --cached .
 
 .PHONY: git-update
 git-update:
 	$(info $@: updating $(git_rev))
-	# returns non-zero if host is unreachable
+	@# returns non-zero if host is unreachable
 	@-git pull
 	@-git gc --auto
 
@@ -384,25 +387,23 @@ versions:
 	# bundler
 	@-command -v bundle; bundle -v
 	# vagrant
-	@-command -v vagrant; vagrant --version
+	@command -v vagrant; vagrant --version
 	# virtualbox
-	@-command -v VBoxManage; VBoxManage --version
+	@command -v VBoxManage; VBoxManage --version
 	# git
-	@-command -v git; git --version
+	@command -v git; git --version
 	# pyenv
-	@-command -v pyenv; pyenv -v; pyenv version
-	# python easy_install
-	@-command -v easy_install; $(BIN_PATH)/easy_install --version
+	@command -v pyenv; pyenv -v; pyenv version
 	# python virtualenv
-	@-command -v virtualenv; $(BIN_PATH)/virtualenv --version
+	@command -v virtualenv; $(BIN_PATH)/virtualenv --version
 	# python pip
-	@-command -v pip; $(BIN_PATH)/$(PIP_BIN_NAME) --version
+	@command -v pip; $(BIN_PATH)/$(PIP_BIN_NAME) --version
 	# yelp pre-commit
-	@-command -v pre-commit; $(BIN_PATH)/pre-commit --version
+	@command -v pre-commit; $(BIN_PATH)/pre-commit --version
 	# python
-	@-command -v python; $(BIN_PATH)/python -V
+	@command -v python; $(BIN_PATH)/python -V
 	# ansible
-	@-command -v ansible; $(BIN_PATH)/ansible --version
+	@command -v ansible; $(BIN_PATH)/ansible --version
 
 ###
 ### # cleansing
@@ -420,9 +421,7 @@ clobber:
 	$(warning $@: are you sure? press any key to continue)
 	@read -t 10
 	$(info $@: wiping it all away)
-	# box might not exist
 	@-vagrant destroy -f
-	# might not be present
 	@-pre-commit clean
 	@-rm -f .revision *.spec
 	@-rm -f pip-selfcheck.json $(PIP_FREEZE_FILE) $(PIP_PRE_FREEZE_FILE)

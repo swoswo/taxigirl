@@ -119,14 +119,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   if Vagrant.has_plugin?('vagrant-triggers')
-    # additional check on halt
-    config.trigger.before [:halt] do
-      confirm = nil
-      until %w(Y y N n).include?(confirm)
-        confirm = ask 'Are you sure you want to halt the VM? [y/N] '
-      end
-      exit unless confirm.casecmp('Y').zero?
-    end # trigger
+    # # additional check on halt
+    # config.trigger.before [:halt] do
+    #   confirm = nil
+    #   until %w(Y y N n).include?(confirm)
+    #     confirm = ask 'Are you sure you want to halt the VM? [y/N] '
+    #   end
+    #   exit unless confirm.casecmp('Y').zero?
+    # end # trigger
 
     # translate command triggers to notifications
     {
@@ -164,7 +164,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # ansible provisioning
   config.vm.provision 'ansible' do |ansible|
     ansible.verbose = 'v'
-    ansible.playbook = './playbooks/taxigirl.yml'
+    ansible.playbook = './playbooks/main.yml'
     ansible.inventory_path = './inventory/vagrant.ini'
     ansible.limit = 'local'
     ansible.extra_vars = ENV['TAXIGIRL_CONFIG']
