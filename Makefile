@@ -12,23 +12,23 @@
 ### # defaults
 ###
 
-BIN_PATH ?= ./bin
-PIP_BIN_NAME ?= pip
-BREW_BUNDLE_FILE ?= Brewfile
-BREW_INSTALL_FILE ?= ./sbin/brew-install
-BREW_UNINSTALL_FILE ?= ./sbin/brew-uninstall
-BUNDLER_CACHE_PATH ?= ./vendor/cache
-GALAXY_REQ_FILE ?= requirements.yml
-GEM_BUNDLE_FILE ?= Gemfile
-PIP_FREEZE_FILE ?= requirements_freeze.txt
-PIP_PRE_FREEZE_FILE ?= requirements_pre_freeze.txt
-PIP_REQ_FILE ?= requirements.txt
-PLAYBOOK_FILE ?= playbooks/main.yml
-PRE_COMMIT_CONFIG ?= .pre-commit-config.yaml
-PYTHON_VERSION ?= 2.7.11
-VENV_SCRIPT ?= ./bin/virtualenv.py
-VENV_TGZ ?= ./files/virtualenv.tgz
-VENV_URI ?= https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d6e1f02db352f3facf907d9eb614fb80e9/virtualenv-15.0.2.tar.gz#md5=0ed59863994daf1292827ffdbba80a63
+BIN_PATH 		?= ./bin
+BREW_BUNDLE_FILE 	?= Brewfile
+BREW_INSTALL_FILE 	?= ./sbin/brew-install
+BREW_UNINSTALL_FILE 	?= ./sbin/brew-uninstall
+BUNDLER_CACHE_PATH 	?= ./vendor/cache
+GALAXY_REQ_FILE 	?= requirements.yml
+GEM_BUNDLE_FILE		?= Gemfile
+PIP_BIN_NAME 		?= pip
+PIP_FREEZE_FILE 	?= requirements_freeze.txt
+PIP_PRE_FREEZE_FILE 	?= requirements_pre_freeze.txt
+PIP_REQ_FILE 		?= requirements.txt
+PLAYBOOK_FILE		?= playbooks/main.yml
+PRE_COMMIT_CONFIG	?= .pre-commit-config.yaml
+PYTHON_VERSION 		?= 2.7.11
+VENV_SCRIPT 		?= ./bin/virtualenv.py
+VENV_TGZ 		?= ./files/virtualenv.tgz
+VENV_URI 		?= https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d6e1f02db352f3facf907d9eb614fb80e9/virtualenv-15.0.2.tar.gz#md5=0ed59863994daf1292827ffdbba80a63
 
 ###
 ### # intialization
@@ -114,28 +114,28 @@ update_tasks +=		git-update \
 check_tasks += 		git-secrets-scan \
 			precommit-run
 
-distclean_tasks +=	pip-uninstall \
-			virtualenv-remove \
-			gem-remove gem-clean \
-			clean
-
 provision_tasks +=	install \
 			ansible-galaxy \
 			ansible-lint \
 			vagrant-provision
+
+distclean_tasks +=	pip-uninstall \
+			virtualenv-remove \
+			gem-remove gem-clean \
+			clean
 
 test_tasks +=		provision \
 			ansible-test \
 			vagrant-destroy \
 			distclean
 
-.PHONY: install reset update check lint distclean list provision
+.PHONY: install reset update check provision distclean test
 install:		$(install_tasks)
 reset:			$(reset_tasks)
 update:			$(update_tasks)
 check:			$(check_tasks)
-distclean:		$(distclean_tasks)
 provision:		$(provision_tasks)
+distclean:		$(distclean_tasks)
 test:			$(test_tasks)
 
 list help:
@@ -157,11 +157,11 @@ brew-install:
 
 brew-update: $(BREW_BUNDLE_FILE)
 	$(info $@: resolving $(BREW_BUNDLE_FILE))
-	brew update >/dev/null
-	brew bundle --file=$(BREW_BUNDLE_FILE) >/dev/null
-	brew upgrade --cleanup
+	@brew update >/dev/null
+	@brew bundle --file=$(BREW_BUNDLE_FILE) >/dev/null
+	@brew upgrade --cleanup
 	# returns non-zero if nothing to link
-	-brew linkapps >/dev/null
+	@-brew linkapps >/dev/null
 
 brew-cask-upgrade: $(BREW_BUNDLE_FILE)
 	$(info $@: uprading casks)
@@ -170,15 +170,15 @@ brew-cask-upgrade: $(BREW_BUNDLE_FILE)
 .PHONY: brew-clean
 brew-clean:
 	$(info $@: cleaning up homebrew)
-	brew cleanup >/dev/null
-	brew cask cleanup >/dev/null
-	brew prune >/dev/null
-	brew services cleanup >/dev/null
+	@brew cleanup >/dev/null
+	@brew cask cleanup >/dev/null
+	@brew prune >/dev/null
+	@brew services cleanup >/dev/null
 
 .PHONY: brew-uninstall
 brew-uninstall:
 	$(info $@: uninstalling homebrew)
-	$(BREW_UNINSTALL_FILE) 2>/dev/null
+	@$(BREW_UNINSTALL_FILE) 2>/dev/null
 
 ###
 ### # ruby
@@ -188,26 +188,26 @@ brew-uninstall:
 gem-update:
 	$(info $@: installing and updating gems)
 	# returns non-zero if up-to-date
-	-gem update --quiet --no-document --env-shebang --wrappers --system
-	yes | gem update  --quiet --no-document --env-shebang --wrappers
-	gem check -q --doctor
-	gem install bundler >/dev/null
+	@-gem update --quiet --no-document --env-shebang --wrappers --system
+	@yes | gem update  --quiet --no-document --env-shebang --wrappers
+	@gem check -q --doctor
+	@gem install bundler >/dev/null
 
 gem-bundle: $(GEM_BUNDLE_FILE)
 	$(info $@: bundler might take some time)
-	bundle --quiet --binstubs --clean --jobs=${core_count} --retry=2 --path $(BUNDLER_CACHE_PATH)
-	bundle up --quiet
+	@bundle --quiet --binstubs --clean --jobs=${core_count} --retry=2 --path $(BUNDLER_CACHE_PATH)
+	@bundle up --quiet
 
 .PHONY: gem-clean
 gem-clean:
 	$(info $@: cleaning up gems)
-	gem cleanup -q
-	-bundle clean --force
+	@gem cleanup -q
+	@-bundle clean --force
 
 .PHONY: gem-remove
 gem-remove:
 	$(info $@: uninstalling all gems)
-	-yes | gem uninstall --force -D -I -a
+	@-yes | gem uninstall --force -D -I -a
 
 ###
 ### # python
@@ -231,25 +231,25 @@ python-uninstall:
 .PHONY: virtualenv-provide
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
-	curl -s $(VENV_URI) -o $(VENV_TGZ)
-	tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
-	chmod +x $(VENV_SCRIPT)
+	@curl -s $(VENV_URI) -o $(VENV_TGZ)
+	@tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
+	@chmod +x $(VENV_SCRIPT)
 	# virtualenv version
 	@$(BIN_PATH)/virtualenv.py --version
 
 .PHONY: virtualenv-create
 virtualenv-create:
 	$(info $@: creating virtual environment)
-	$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(pyenv_prefix)/$(BIN_PATH)/python .
-	$(BIN_PATH)/python -m ensurepip -U
-	$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
+	@$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(pyenv_prefix)/$(BIN_PATH)/python .
+	@$(BIN_PATH)/python -m ensurepip -U
+	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
 
 .ONESHELL: virtualenv-remove
 .PHONY: virtualenv-remove
 virtualenv-remove:
 	$(info $@: trashing virtual environment)
-	-rm -rf $(BIN_PATH)/* include/* lib/*
-	-rm -f .Python pip-selfcheck.json $(PIP_FREEZE_FILE) $(PIP_PRE_FREEZE_FILE)
+	@-rm -rf $(BIN_PATH)/* include/* lib/*
+	@-rm -f .Python pip-selfcheck.json $(PIP_FREEZE_FILE) $(PIP_PRE_FREEZE_FILE)
 
 ###
 ### # pip
@@ -257,15 +257,15 @@ virtualenv-remove:
 
 pip-update pip-install: $(PIP_REQ_FILE)
 	$(info $@: installing requirements via pip)
-	$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_PRE_FREEZE_FILE)
+	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_PRE_FREEZE_FILE)
 	$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U -r $(PIP_REQ_FILE)
-	$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_FREEZE_FILE)
+	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_FREEZE_FILE)
 	# returns non-zero on difference
-	-diff -N $(PIP_PRE_FREEZE_FILE) $(PIP_FREEZE_FILE)
+	@-diff -N $(PIP_PRE_FREEZE_FILE) $(PIP_FREEZE_FILE)
 
 pip-uninstall: $(PIP_REQ_FILE)
 	$(info $@: remove all packages)
-	-$(BIN_PATH)/$(PIP_BIN_NAME) uninstall -q -y -r $(PIP_FREEZE_FILE)
+	@-$(BIN_PATH)/$(PIP_BIN_NAME) uninstall -q -y -r $(PIP_FREEZE_FILE)
 
 ###
 ### # vagrant
@@ -273,19 +273,19 @@ pip-uninstall: $(PIP_REQ_FILE)
 
 vagrant-update: Vagrantfile
 	$(info $@: updating plugins and boxen, pruning outdated)
-	vagrant plugin update >/dev/null
-	vagrant box update >/dev/null
+	@vagrant plugin update >/dev/null
+	@vagrant box update >/dev/null
 	# returns non-zero when nothing to remove
-	-vagrant remove-old-check >/dev/null
+	@-vagrant remove-old-check >/dev/null
 
 vagrant-provision: Vagrantfile
 	$(info $@: kick the box)
-	vagrant up --no-provision
-	vagrant provision
+	@vagrant up --no-provision
+	@vagrant provision
 
 vagrant-destroy: Vagrantfile
 	$(info $@: bringing the box down)
-	vagrant destroy -f
+	@vagrant destroy -f
 
 ###
 ### # ansible
@@ -323,17 +323,17 @@ ansible-test:
 precommit-update: $(PRE_COMMIT_CONFIG)
 	$(info $@: update and build pre-commit environments)
 	@$(BIN_PATH)/pre-commit-validate-config
-	$(BIN_PATH)/pre-commit autoupdate
+	@$(BIN_PATH)/pre-commit autoupdate
 	# TODO: ensure proper hooks
-	$(BIN_PATH)/pre-commit install
+	@$(BIN_PATH)/pre-commit install
 
 precommit-run: $(PRE_COMMIT_CONFIG)
 	$(info $@: checking cached files)
-	$(BIN_PATH)/pre-commit run --all-files --allow-unstaged-config
+	@$(BIN_PATH)/pre-commit run --all-files --allow-unstaged-config
 
 precommit-clean: $(PRE_COMMIT_CONFIG)
 	$(info $@: cleanup pre-commit)
-	$(BIN_PATH)/pre-commit clean
+	@$(BIN_PATH)/pre-commit clean
 
 ###
 ### # git
@@ -344,22 +344,22 @@ precommit-clean: $(PRE_COMMIT_CONFIG)
 _revision:
 	$(info $@: tagging as $(git_tag))
 	# conditional
-	test -n "$(git_rev)" && echo $(git_tag) > .revision
+	@test -n "$(git_rev)" && echo $(git_tag) > .revision
 	# conditional
-	test -n "$(git_rev)" && git tag "Makefile_$(git_tag)"
+	@test -n "$(git_rev)" && git tag "Makefile_$(git_tag)"
 
 .PHONY: git-secrets-scan
 git-secrets-scan:
 	$(info $@: scanning for secrects psst)
 	# returns non-zero if something is revealed
-	git secrets --scan --cached .
+	@git secrets --scan --cached .
 
 .PHONY: git-update
 git-update:
 	$(info $@: updating $(git_rev))
 	# returns non-zero if host is unreachable
-	-git pull
-	-git gc --auto
+	@-git pull
+	@-git gc --auto
 
 ###
 ### # notification
@@ -411,8 +411,8 @@ versions:
 .PHONY: clean
 clean:
 	$(info $@: cleaning temporary files)
-	-rm -rf log/* cache/* tmp/*
-	-rm -f *.spec
+	@-rm -rf log/* cache/* tmp/*
+	@-rm -f *.spec
 
 .ONESHELL: clobber
 .PHONY: clobber
@@ -421,16 +421,15 @@ clobber:
 	@read -t 10
 	$(info $@: wiping it all away)
 	# box might not exist
-	-vagrant destroy -f
+	@-vagrant destroy -f
 	# might not be present
-	-pre-commit clean
-	rm -f .revision
-	rm -f pip-selfcheck.json $(PIP_FREEZE_FILE) $(PIP_PRE_FREEZE_FILE)
-	rm -f $(VENV_TGZ)
-	rm -rf .vagrant
-	rm -rf $(BIN_PATH)/* include/* lib/* .Python *.spec
-	rm -rf log/* cache/* tmp/*
-	rm -rf vendor/* Gemfile.lock
-	# might not be present
-	-git gc --auto
-	sync
+	@-pre-commit clean
+	@-rm -f .revision *.spec
+	@-rm -f pip-selfcheck.json $(PIP_FREEZE_FILE) $(PIP_PRE_FREEZE_FILE)
+	@-rm -f $(VENV_TGZ)
+	@-rm -rf .vagrant
+	@-rm -rf $(BIN_PATH)/* include/* lib/* .Python
+	@-rm -rf log/* cache/* tmp/*
+	@-rm -rf vendor/* Gemfile.lock
+	@-git gc --auto
+	@-sync
