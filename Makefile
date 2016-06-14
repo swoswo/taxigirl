@@ -50,25 +50,11 @@ sys_name := $(shell uname -s)
 # some tasks provide multicore options
 core_count := $(shell getconf _NPROCESSORS_ONLN)
 
-# get git rev id or fail
-git_rev := $(shell git rev-parse --short HEAD)
-ifeq ($(git_rev),)
-$(warning unable to retrive git revision)
-endif
-# compose tag to set if this recipe succeeds
-git_tag := $(git_rev)_$(shell date +%s)
 
 # vagrant is installed by some task so don't expect it's presence
 _vagrant := $(shell which vagrant)
 ifneq ($(_vagrant),)
 vagrant_tasks := vagrant-update
-endif
-
-# get pyenv prefix or warn
-python_prefix := $(shell pyenv prefix $(PYTHON_VERSION))
-ifeq ($(python_prefix),)
-$(info unable to retrive pyenv prefix, using system)
-python_prefix :=
 endif
 
 brew_tasks :=
@@ -231,6 +217,7 @@ python-uninstall:
 ### # virtualenv
 ###
 
+# GNU needs extrawurst
 ifeq ($(sys_name),Linux)
 tar_options := --wildcards
 else
@@ -247,10 +234,17 @@ virtualenv-provide:
 	# virtualenv check
 	$(BIN_PATH)/virtualenv.py --version
 
+# get python prefix
+python_prefix := $(shell pyenv prefix $(PYTHON_VERSION))
+ifeq ($(python_prefix),)
+$(info unable to retrive pyenv prefix, using system)
+python_prefix := /usr
+endif
+
 .PHONY: virtualenv-create
 virtualenv-create:
 	$(info $@: creating virtual environment)
-	@$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(python_prefix)/$(BIN_PATH)/python .
+	@$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(python_prefix)/bin/python .
 	@$(BIN_PATH)/python -m ensurepip -U
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
 
@@ -356,6 +350,14 @@ precommit-clean: $(PRE_COMMIT_CONFIG)
 ###
 ### # git
 ###
+
+# get git rev id or fail
+git_rev := $(shell git rev-parse --short HEAD)
+ifeq ($(git_rev),)
+$(warning unable to retrive git revision)
+endif
+# compose tag to set if this recipe succeeds
+git_tag := $(git_rev)_$(shell date +%s)
 
 .DELETE_ON_ERROR: _revision
 .PHONY: _revision
