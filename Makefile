@@ -234,11 +234,11 @@ python-uninstall:
 .PHONY: virtualenv-provide
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
-	@curl -s $(VENV_URI) -o $(VENV_TGZ)
-	@tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
-	@chmod +x $(VENV_SCRIPT)
+	curl -s $(VENV_URI) -o $(VENV_TGZ)
+	tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
+	chmod +x $(VENV_SCRIPT)
 	# virtualenv check
-	@$(BIN_PATH)/virtualenv.py --version
+	$(BIN_PATH)/virtualenv.py --version
 
 .PHONY: virtualenv-create
 virtualenv-create:
