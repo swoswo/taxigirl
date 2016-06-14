@@ -116,7 +116,8 @@ check_tasks += 		git-secrets-scan \
 provision_tasks +=	install \
 			vagrant-up \
 			ansible-galaxy \
-			ansible-lint
+			ansible-lint \
+			vagrant-provision
 
 distclean_tasks +=	vagrant-halt \
 			gem-remove gem-clean \
