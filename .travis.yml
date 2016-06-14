@@ -26,12 +26,12 @@ env:
   - ANSIBLE_INVENTORY_FILE=inventory/travis.ini TAXIGIRL_CONFIG=@config/test.yml
 
 before_install:
-#  - 'sudo apt-get update -y'
-#  - 'sudo apt-get upgrade -y'
+#  - 'sudo apt-get -qq update'
+#  - 'sudo apt-get -qq upgrade'
   - 'uname -a; which python'
 
 install:
-  - 'sudo apt-get install -y curl'
+  - 'sudo apt-get install -qq curl'
 
 script:
   - 'pwd; ls -la'

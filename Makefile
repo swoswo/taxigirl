@@ -225,11 +225,11 @@ endif
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
 	@-mkdir bin files log tmp
-	curl -s $(VENV_URI) -o $(VENV_TGZ)
-	tar xzf $(VENV_TGZ) $(tar_options) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
-	chmod +x $(VENV_SCRIPT)
+	@curl -s $(VENV_URI) -o $(VENV_TGZ)
+	@tar xzf $(VENV_TGZ) $(tar_options) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
+	@chmod +x $(VENV_SCRIPT)
 	# virtualenv check
-	$(BIN_PATH)/virtualenv.py --version
+	@$(BIN_PATH)/virtualenv.py --version
 
 # get python prefix
 pyenv_prefix := $(shell pyenv prefix $(PYTHON_VERSION))
@@ -370,7 +370,7 @@ _revision:
 git-secrets-scan:
 	$(info $@: scanning for secrects psst)
 	@# returns non-zero if something is revealed
-	@git secrets --scan --cached .
+	@git-secrets --scan --cached .
 
 .PHONY: git-check
 git-check:
