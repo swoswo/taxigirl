@@ -198,8 +198,8 @@ gem-update:
 
 gem-bundle: $(GEM_BUNDLE_FILE)
 	$(info $@: bundler might take some time)
-	@bundle --quiet --binstubs --clean --jobs=${core_count} --retry=2 --path $(BUNDLER_CACHE_PATH)
-	@bundle up --quiet
+	@bundle --binstubs --clean --jobs=${core_count} --retry=2 --path $(BUNDLER_CACHE_PATH)
+	@bundle up
 
 .PHONY: gem-clean
 gem-clean:
