@@ -1,19 +1,18 @@
 ---
 language: python
 cache:
-  - bundler
-  - pip
-  - ccache
-  - directories:
-    - vendor/cache
+  bundler: true
+  pip: true
+  ccache: true
+  directories:
+  - vendor/cache
 
-python: '2.7.11'
-# matrix:
-#   include:
-#     - python: '2.7.11'
-#       env: TEST_SUITE=suite_2_7
-#     - python: '3.5'
-#       env: TEST_SUITE=suite_3_5
+# python: '2.7.11'
+matrix:
+  include:
+  - python: '2.7.11'
+  - python: '3.5'
+    env: PYTHON_VERSION=3.5.1 PIP_BIN_NAME=pip3
 
 virtualenv:
   system_site_packages: False
@@ -22,19 +21,19 @@ git:
   depth: 1
 
 env:
-  - ANSIBLE_INVENTORY_FILE=inventory/travis.ini TAXIGIRL_CONFIG=@config/test.yml
+- ANSIBLE_INVENTORY_FILE=inventory/travis.ini TAXIGIRL_CONFIG=@config/test.yml
 
 before_install:
-#  - 'sudo apt-get -qq update'
-#  - 'sudo apt-get -qq upgrade'
-  - 'uname -a; which python'
+#- 'sudo apt-get -qq update'
+#- 'sudo apt-get -qq upgrade'
+- 'uname -a; which python'
 
 install:
-  - 'sudo apt-get install -qq curl'
+- 'sudo apt-get install -qq curl'
 
 script:
-  - 'pwd; ls -la'
-#  - 'git clone --depth 1 https://github.com/nickjj/rolespec'
-#  - 'cd rolespec ; bin/rolespec -r https://github.com/gretel/taxigirl'
-  - 'make install'
-  - 'make ansible-run'
+- 'pwd; ls -la'
+#- 'git clone --depth 1 https://github.com/nickjj/rolespec'
+#- 'cd rolespec ; bin/rolespec -r https://github.com/gretel/taxigirl'
+- 'make install'
+- 'make ansible-run'
