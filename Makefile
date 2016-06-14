@@ -267,7 +267,8 @@ pip-update pip-install: $(PIP_REQ_FILE)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U -r $(PIP_REQ_FILE)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_FREEZE_FILE) >/dev/null
 	@# returns non-zero on difference
-	@-diff -N $(PIP_PRE_FREEZE_FILE) $(PIP_FREEZE_FILE)
+	@-diff -N $(PIP_PRE_FREEZE_FILE) $(PIP_FREEZE_FILE) > log/pip_diff.txt
+	@-cat log/pip_diff.txt
 
 pip-uninstall: $(PIP_REQ_FILE)
 	$(info $@: remove all packages)

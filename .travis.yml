@@ -35,9 +35,9 @@ virtualenv:
   system_site_packages: False
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; brew update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; sudo apt-get -qq update; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; sudo apt-get -qq upgrade; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq upgrade; fi
 
 install:
 - 'uname -a; which python'
