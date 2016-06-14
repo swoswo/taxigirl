@@ -1,5 +1,12 @@
 ---
 language: 'python'
+cache:
+  - bundler
+  - pip
+  - directories:
+    - bin
+    - files
+    - lib
 
 python: '2.7.11'
 # matrix:
