@@ -74,10 +74,11 @@ ifneq ($(_vagrant),)
 vagrant_tasks := vagrant-update
 endif
 
-# get pyenv prefix or fail
+# get pyenv prefix or warn
 pyenv_prefix := $(shell pyenv prefix $(PYTHON_VERSION))
 ifeq ($(pyenv_prefix),)
-$(error unable to retrive pyenv prefix)
+$(warning unable to retrive pyenv prefix, using system)
+pyenv_prefix := /usr/bin
 endif
 
 brew_tasks :=
