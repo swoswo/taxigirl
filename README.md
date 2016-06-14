@@ -28,86 +28,85 @@ Wait, you don't have `direnv` installed? Let's take care of your toolbox! :wrenc
 
 > On OSX the repository containts a `Makefile` which automates most of the tasks required to bootstrap the toolchain.
 
-```
+```bash
+$ make update
+$ make bootstrap
 $ make install
+...
 ```
 
 > While the `Makefile` is not very complex it bundles a lot of functionality -
 > please read the file before using it.
 
-##### Major Targets
+##### Targets
 
-Outputs a list of all available targets:
+> Instead of remembering, copy-pasting or yelling shell-code to coworkers these targets provide a error-resilient way of working with *Taxigirl*. Of course, all commands can be called in whatever way you prefer.
 
-    * help
+To list all targets available (including aliases which bundle a group of targets) a _special_ task is available:
 
-Provides toolchain required to run *Taxigirl*:
+```bash
+$ make help
+help: available targets
+ansible-galaxy ansible-lint ansible-test bootstrap brew-cask-upgrade brew-clean brew-install brew-uninstall brew-update check clean clobber distclean gem-bundle gem-clean gem-remove gem-update git-secrets-scan git-update install list pip-install pip-uninstall pip-update precommit-clean precommit-run precommit-update provision python-install python-uninstall reset test update vagrant-destroy vagrant-halt vagrant-provision vagrant-up vagrant-update versions virtualenv-create virtualenv-provide virtualenv-remove
+```
 
-    * install
+##### Meta Targets
+
+Each target can be called seperately while for general use there are some _meta_ targets available to promoto _batch_ style execution.
 
 Updates all components of the toolchain:
 
     * update
 
-Resets the `virtualenv` as thorough as possible without taking too much time on following iterations:
+Provides toolchain required to install *Taxigirl*:
 
-    * reset
+    * bootstrap
 
-Run a complete cycle inclduing provisioning and destruction of a virtual machine running *Taxigirl*:
+> Naturally, executing this target is required for most targets following.
+
+Installs *Taxigirl*:
+
+    * install
+
+> Can be called repeatedly to update requirements and refresh the virtualenv.
+
+Including the `install` target this one brings up a virtual machine using the configuration preset:
+
+    * provision
+
+Run a complete cycle inclduing the previous provisioning and destruction of a virtual machine running *Taxigirl*:
 
     * test
 
-Goes furthers than `reset` by cleaning up most but leaving caches and downloaded files intact:
+Cleaning up most, removing the virtualenv - but leaving caches and downloaded files intact:
 
     * distclean
 
-##### Minor Targets
+> This target shouldn't remove your work. Please ensure proper commits before running this task in any case!
 
 The above targets wrap around the actual targets used to compose the setup as a whole. Most of these can be called directly to ease your development work.
 
-> Instead of remembering, copy-pasting or yelling shell-code to coworkers these targets provide a error-resilient way of working with *Taxigirl*. Of course, all commands can be called in whatever way you prefer.
-
-List of targets:
-
-    * ansible-galaxy
-    * ansible-lint
-    * ansible-test
-    * brew-cask-upgrade
-    * brew-clean
-    * brew-install
-    * brew-uninstall
-    * brew-update
-    * check
-    * clean
-    * clobber
-    * gem-bundle
-    * gem-clean
-    * gem-remove
-    * gem-update
-    * git-secrets-scan
-    * git-update
-    * pip-install
-    * pip-uninstall
-    * pip-update
-    * precommit-clean
-    * precommit-run
-    * precommit-update
-    * provide
-    * python-install
-    * python-uninstall
-    * vagrant-destroy
-    * vagrant-halt
-    * vagrant-provision
-    * vagrant-up
-    * vagrant-update
-    * versions
-    * virtualenv-create
-    * virtualenv-provide
-    * virtualenv-remove
-
-`...`
-
 > Using `virutalenv` is best practice to separate concerns and project domains. Otherwise, all `python` and `pip` packages would be shared globally.
+
+Some targets are not called by any others due to their dedicated purposes.
+
+Basically, same as `vagrant provision` but calls `ansible` directly:
+
+    * ansible-test
+
+Uninstall homebrew (including *Cask*):
+
+    * brew-uninstall
+
+Uninstalls the python version preset:
+
+    * python-uninstall
+
+This tagret really tidies up, including all caches.
+
+    * clobber
+
+> Ensure you will not loose anything importing before executing this target!
 
 #### AWS Credentials
 
