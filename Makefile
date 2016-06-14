@@ -235,8 +235,12 @@ python-uninstall:
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
 	@-mkdir files tmp log
-	curl $(VENV_URI) -o $(VENV_TGZ)
-	tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
+	curl -s $(VENV_URI) -o $(VENV_TGZ)
+	ifeq ($(sys_name),Linux)
+		tar xzf $(VENV_TGZ) --wildcards --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
+	else
+		tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
+	endif
 	chmod +x $(VENV_SCRIPT)
 	# virtualenv check
 	$(BIN_PATH)/virtualenv.py --version
