@@ -235,16 +235,18 @@ virtualenv-provide:
 	$(BIN_PATH)/virtualenv.py --version
 
 # get python prefix
-python_prefix := $(shell pyenv prefix $(PYTHON_VERSION))
-ifeq ($(python_prefix),)
+pyenv_prefix := $(shell pyenv prefix $(PYTHON_VERSION))
+ifeq ($(pyenv_prefix),)
 $(info unable to retrive pyenv prefix, using system)
-python_prefix := /usr
+sys_python := $(shell which python)
+else
+sys_python := $(pyenv_prefix)/bin/python
 endif
 
 .PHONY: virtualenv-create
 virtualenv-create:
 	$(info $@: creating virtual environment)
-	@$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(python_prefix)/bin/python .
+	@$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(sys_python) .
 	@$(BIN_PATH)/python -m ensurepip -U
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
 
@@ -261,9 +263,10 @@ virtualenv-remove:
 
 pip-update pip-install: $(PIP_REQ_FILE)
 	$(info $@: installing requirements)
-	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_PRE_FREEZE_FILE)
+	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_PRE_FREEZE_FILE) >/dev/null
+	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U -r $(PIP_REQ_FILE)
-	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_FREEZE_FILE)
+	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_FREEZE_FILE) >/dev/null
 	@# returns non-zero on difference
 	@-diff -N $(PIP_PRE_FREEZE_FILE) $(PIP_FREEZE_FILE)
 
@@ -277,10 +280,11 @@ pip-uninstall: $(PIP_REQ_FILE)
 
 vagrant-update: Vagrantfile
 	$(info $@: updating plugins and boxen, pruning outdated)
+	@vagrant version
 	@vagrant plugin update
 	@vagrant box update
 	@# returns non-zero when nothing to remove
-	@-vagrant remove-old-check
+	@-vagrant remove-old-check >/dev/null
 
 vagrant-up: Vagrantfile
 	$(info $@: bring the box up)
