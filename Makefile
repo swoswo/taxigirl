@@ -156,8 +156,8 @@ brew-install:
 
 brew-update: $(BREW_BUNDLE_FILE)
 	$(info $@: resolving $(BREW_BUNDLE_FILE))
-	@brew update >/dev/null
-	@brew bundle --file=$(BREW_BUNDLE_FILE) >/dev/null
+	@brew update
+	@brew bundle --file=$(BREW_BUNDLE_FILE)
 	@brew upgrade --cleanup
 	@# returns non-zero if nothing to link
 	@-brew linkapps >/dev/null
@@ -190,7 +190,7 @@ gem-update:
 	@-gem update --quiet --no-document --env-shebang --wrappers --system
 	@yes | gem update  --quiet --no-document --env-shebang --wrappers
 	@gem check -q --doctor
-	@gem install bundler >/dev/null
+	@gem install bundler
 
 gem-bundle: $(GEM_BUNDLE_FILE)
 	$(info $@: bundler might take some time)
@@ -240,7 +240,7 @@ virtualenv-provide:
 virtualenv-create:
 	$(info $@: creating virtual environment)
 	@$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(pyenv_prefix)/$(BIN_PATH)/python .
-	@$(BIN_PATH)/python -m ensurepip -U >/dev/null
+	@$(BIN_PATH)/python -m ensurepip -U
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
 
 .ONESHELL: virtualenv-remove
@@ -273,9 +273,9 @@ pip-uninstall: $(PIP_REQ_FILE)
 vagrant-update: Vagrantfile
 	$(info $@: updating plugins and boxen, pruning outdated)
 	@vagrant plugin update
-	@vagrant box update >/dev/null
+	@vagrant box update
 	@# returns non-zero when nothing to remove
-	@-vagrant remove-old-check >/dev/null
+	@-vagrant remove-old-check
 
 vagrant-up: Vagrantfile
 	$(info $@: bring the box up)
@@ -330,7 +330,7 @@ ansible-test:
 precommit-update: $(PRE_COMMIT_CONFIG)
 	$(info $@: update and build pre-commit environments)
 	@$(BIN_PATH)/pre-commit-validate-config
-	@$(BIN_PATH)/pre-commit autoupdate >/dev/null
+	@$(BIN_PATH)/pre-commit autoupdate
 	@# TODO: ensure proper hooks
 	@$(BIN_PATH)/pre-commit install
 
@@ -423,7 +423,7 @@ clobber:
 	$(warning $@: are you sure? press any key to continue)
 	@read -t 10
 	$(info $@: wiping it all away)
-	@-vagrant destroy -f >/dev/null
+	@-vagrant destroy -f
 	@-pre-commit clean >/dev/null
 	@-rm -f .revision *.spec
 	@-rm -f pip-selfcheck.json $(PIP_FREEZE_FILE) $(PIP_PRE_FREEZE_FILE)
