@@ -14,7 +14,9 @@
 ### # defaults
 ###
 
+ANSIBLE_EXTRA_ARGS	?= @config/test.yml
 ANSIBLE_INVENTORY_FILE	?= inventory/vagrant.ini
+ANSIBLE_OPTIONS		?= --skip-tags='apt_upgrade'
 ANSIBLE_PLAYBOOK_FILE	?= playbooks/main.yml
 BIN_PATH 		?= ./bin
 BREW_BUNDLE_FILE 	?= Brewfile
@@ -85,19 +87,20 @@ bootstrap_tasks +=	git-check \
 install_tasks +=	virtualenv-provide \
 			virtualenv-create \
 			pip-install \
-			precommit-update \
-			precommit-run \
 			versions \
+			precommit-update \
 			_revision
 
 check_tasks += 		git-secrets-scan \
 			precommit-run
 
-provision_tasks +=	install \
-			vagrant-up \
+provision_tasks +=	vagrant-up \
 			ansible-galaxy \
 			ansible-lint \
 			vagrant-provision
+
+run_tasks +=		provision \
+			ansible-run
 
 distclean_tasks +=	vagrant-halt \
 			gem-remove gem-clean \
@@ -107,15 +110,10 @@ distclean_tasks +=	vagrant-halt \
 
 test_tasks +=		git-check \
 			install \
-			vagrant-provision \
+			check \
+			provision \
 			vagrant-destroy \
 			distclean
-
-travis_tasks +=		virtualenv-provide \
-			virtualenv-create \
-			pip-install \
-			versions \
-			ansible-test
 
 .PHONY: install reset update check install distclean test
 update:			$(update_tasks)
@@ -123,9 +121,9 @@ bootstrap:		$(bootstrap_tasks)
 install:		$(install_tasks)
 check:			$(check_tasks)
 provision:		$(provision_tasks)
+run:			$(run_tasks)
 distclean:		$(distclean_tasks)
 test:			$(test_tasks)
-travis:			$(travis_tasks)
 
 list help:
 	$(info $@: available targets)
@@ -325,11 +323,11 @@ ansible-lint:
 		provisioning/* sbin/*
 	@$(BIN_PATH)/ansible-lint $(ANSIBLE_PLAYBOOK_FILE)
 
-.PHONY: ansible-test
-ansible-test:
+.PHONY: ansible-run
+ansible-run:
 	$(info $@: run test on guest)
 	@# TODO: abstraction
-	$(BIN_PATH)/ansible-playbook -C -i $(ANSIBLE_INVENTORY_FILE) -e "@config/test.yml" --skip-tags="apt_upgrade" $(ANSIBLE_PLAYBOOK_FILE)
+	$(BIN_PATH)/ansible-playbook -C -i $(ANSIBLE_INVENTORY_FILE) -e $(ANSIBLE_EXTRA_ARGS) $(ANSIBLE_PLAYBOOK_FILE) $(ANSIBLE_OPTIONS)
 
 ###
 ### # pre-commit
