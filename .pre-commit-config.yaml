@@ -3,7 +3,7 @@
     hooks:
     -   id: reorder-python-imports
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    sha: 6b1aa19425b35f8c34f43ada8f1045b028dc19a5
+    sha: 6dfcb89af3c9b4d172cc2e5a8a2fa0f54615a338
     hooks:
     -   id: check-merge-conflict
     -   id: check-added-large-files
@@ -58,6 +58,7 @@
     -   id: vault
         name: Ansible Vault Check
         language: script
-        description: Pre-commit hook that verifies if all files containing 'vault' in the name are encrypted
+        description: Pre-commit hook that verifies if all files containing 'vault'
+            in the name are encrypted
         files: .*vault.*$
         entry: pre-commit-hooks/vault.sh

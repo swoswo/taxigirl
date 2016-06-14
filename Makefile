@@ -91,10 +91,17 @@ endif
 ### # tasks
 ###
 
-install_tasks +=	clean \
+update_tasks +=		git-update \
+			$(brew_tasks) \
+			$(gem_tasks) \
+			$(vagrant_tasks)
+
+bootstrap_tasks +=	clean \
 			update \
 			python-install \
-			virtualenv-provide \
+			virtualenv-provide
+
+install_tasks +=	virtualenv-provide \
 			virtualenv-create \
 			pip-install \
 			precommit-update \
@@ -103,20 +110,10 @@ install_tasks +=	clean \
 			_revision \
 			_notify
 
-reset_tasks += 		virtualenv-create \
-			pip-install \
-			clean \
-			_notify
-
-update_tasks +=		git-update \
-			$(brew_tasks) \
-			$(gem_tasks) \
-			$(vagrant_tasks)
-
 check_tasks += 		git-secrets-scan \
 			precommit-run
 
-provide_tasks +=	install \
+provision_tasks +=	install \
 			vagrant-up \
 			ansible-galaxy \
 			ansible-lint
@@ -127,17 +124,17 @@ distclean_tasks +=	vagrant-halt \
 			virtualenv-remove \
 			clean
 
-test_tasks +=		provide \
+test_tasks +=		install \
 			vagrant-provision \
 			vagrant-destroy \
 			distclean
 
-.PHONY: install reset update check provide distclean test
-install:		$(install_tasks)
-reset:			$(reset_tasks)
+.PHONY: install reset update check install distclean test
 update:			$(update_tasks)
+bootstrap:		$(bootstrap_tasks)
+install:		$(install_tasks)
 check:			$(check_tasks)
-provide:		$(provide_tasks)
+provision:		$(provision_tasks)
 distclean:		$(distclean_tasks)
 test:			$(test_tasks)
 
@@ -258,7 +255,7 @@ virtualenv-remove:
 ###
 
 pip-update pip-install: $(PIP_REQ_FILE)
-	$(info $@: installing requirements via pip)
+	$(info $@: installing requirements)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_PRE_FREEZE_FILE)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U -r $(PIP_REQ_FILE)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_FREEZE_FILE)
@@ -275,7 +272,7 @@ pip-uninstall: $(PIP_REQ_FILE)
 
 vagrant-update: Vagrantfile
 	$(info $@: updating plugins and boxen, pruning outdated)
-	@vagrant plugin update >/dev/null
+	@vagrant plugin update
 	@vagrant box update >/dev/null
 	@# returns non-zero when nothing to remove
 	@-vagrant remove-old-check >/dev/null

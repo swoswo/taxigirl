@@ -1,0 +1,365 @@
+# Emetriq's Taxi Girl
+
+## Ambivalent Meta-Provisioning and Deployment Tool based on Ansible
+
+### Introduction
+
+Let's see what the *Internet* says about her:
+
+> [Taxi Girl](https://en.wikipedia.org/wiki/Taxi_Girl) were a French new wave band, adopting the New Romantic aesthetics of the time, such as clashing red and black clothing ... :fr:
+
+> ... locally abundant [freelance](http://www.urbandictionary.com/define.php?term=Taxi+Girl) working girls found in parks, bars, clubs, and public places ... :girl:
+
+> ... an attractive girl [employed by the management](http://www.thefreedictionary.com/bar+girl) of a bar to befriend male customers and encourage them to buy drinks ... :purple_heart:
+
+That's quite a lot, so let's get her over and see for ourselves:
+
+```
+$ git clone https://github.com/emetriq/taxigirl
+$ cd taxigirl
+$ direnv allow
+```
+
+Wait, you don't have `direnv` installed? Let's take care of your toolbox! :wrench:
+
+#### Prerequisites
+
+##### Makefile
+
+> On OSX the repository containts a `Makefile` which automates most of the tasks required to bootstrap the toolchain.
+
+```
+$ make install
+```
+
+> While the `Makefile` is not very complex it bundles a lot of functionality -
+> please read the file before using it.
+
+##### Major Targets
+
+Outputs a list of all available targets:
+
+    * help
+
+Provides toolchain required to run *Taxigirl*:
+
+    * install
+
+Updates all components of the toolchain:
+
+    * update
+
+Resets the `virtualenv` as thorough as possible without taking too much time on following iterations:
+
+    * reset
+
+Run a complete cycle inclduing provisioning and destruction of a virtual machine running *Taxigirl*:
+
+    * test
+
+Goes furthers than `reset` by cleaning up most but leaving caches and downloaded files intact:
+
+    * distclean
+
+##### Minor Targets
+
+The above targets wrap around the actual targets used to compose the setup as a whole. Most of these can be called directly to ease your development work.
+
+> Instead of remembering, copy-pasting or yelling shell-code to coworkers these targets provide a error-resilient way of working with *Taxigirl*. Of course, all commands can be called in whatever way you prefer.
+
+List of targets:
+
+    * ansible-galaxy
+    * ansible-lint
+    * ansible-test
+    * brew-cask-upgrade
+    * brew-clean
+    * brew-install
+    * brew-uninstall
+    * brew-update
+    * check
+    * clean
+    * clobber
+    * gem-bundle
+    * gem-clean
+    * gem-remove
+    * gem-update
+    * git-secrets-scan
+    * git-update
+    * pip-install
+    * pip-uninstall
+    * pip-update
+    * precommit-clean
+    * precommit-run
+    * precommit-update
+    * provide
+    * python-install
+    * python-uninstall
+    * vagrant-destroy
+    * vagrant-halt
+    * vagrant-provision
+    * vagrant-up
+    * vagrant-update
+    * versions
+    * virtualenv-create
+    * virtualenv-provide
+    * virtualenv-remove
+
+`...`
+
+> Using `virutalenv` is best practice to separate concerns and project domains. Otherwise, all `python` and `pip` packages would be shared globally.
+
+#### AWS Credentials
+
+> Ansible makes uses of [boto: A Python interface to Amazon Web Services](http://boto.cloudhackers.com/en/latest/boto_config_tut.html) - similar to what `fog` does on `Ruby`.
+
+A defacto-standard on how to share AWS credentials between the SDKs and many open-source frameworks has been established. For our case, we are going to jump on that train and use [`~/.aws/credentials`](http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/credentials.html) to set the credentials:
+
+```
+[default]
+aws_access_key_id=DONOTSHAREYOURKEY
+aws_secret_access_key=ANDTAKECAREOFTHESECRET
+```
+
+Ensure minimal file permissions:
+
+`$ chmod 0400 ~/.aws/credentials`
+
+> _Do not_ put this file in any place shared with more than your user or commit it to any version control or continuous integration system! If in doubt please revoke your credentials immediately.
+
+Boto comes with a bunch of [commandline tools](http://boto.cloudhackers.com/en/latest/commandline.html) which can be used to verify proper authentication and access rights, i.e.:
+
+```
+$ list_instances -r eu-west-1 -H ID,Zone,T:Name,T:xpl:service,State | less
+ID             Zone           T:Name                        T:xpl:service                 State
+---------------------------------------------------------------------------------------------------------
+i-6c9ffed4     eu-west-1a     Cassandra34                   Cassandra                     running
+i-2e468b82     eu-west-1b     Cassandra17                   Cassandra                     running
+i-5808a7d4     eu-west-1a     elasticsearch_new_az_0_0      Kibana                        running
+...
+```
+Looks like a tie! :bowtie:
+
+#### Directory Based Environments (Direnv)
+
+[comment]: # (Copy part from graphite on direnv)
+
+Let's run `direnv` and check it's output:
+
+```
+$ direnv allow
+direnv: loading ~/.direnvrc
+...
+direnv: loading .envrc
+direnv: export +ANSIBLE_ERROR_ON_UNDEFINED_VARS +ANSIBLE_FORCE_COLOR +EDITOR +PYENV_VIRTUALENV_DISABLE_PROMPT +PYTHONUNBUFFERED ~PATH ~PYENV_SHELL
+
+$ pyenv version
+taxigirl-2.7.11 (set by /Users/gretel/Sync/prjcts/xpl/emq_taxigirl/.python-version)
+
+$ which python; python -V
+/Users/gretel/.pyenv/shims/python
+Python 2.7.11
+```
+
+Great, `pyenv-virtualenv` has detected and activated the `virtualenv` automatically as it was triggered by `direnv`. The shims do wrap the calls of `python` and delegate them in accordance to the environment variables set by `pyenv`.
+
+> Any errors at this point will eventually lead to failure. Please ensure proper function of `direnv`!
+
+#### Setup Ansible
+
+* inventory
+* hosts
+  * `ansible_python_interpreter`
+
+#### Play with the books
+
+Ok, let's get on with the business:
+
+```
+$ ansible-playbook -C -v playbooks/provision.yml --extra-vars 'config=@config/minimal.json'
+```
+
+#### Vagrant
+
+Vagrant is used to provision virtual machines on the fly. These can be used for development, testing or even production purposes. While the `Vagrantfile` as supplied suppports mainly development the changes required to i.e. set network configuration statically is very well documented.
+
+> Currently, `libvirt` is now working as reliable as `VirtualBox` does on `OSX`. Though, i do recommend getting there some time not only because *Oracle* is a debatable company but for portability.
+
+### Permissions and `sudo`
+
+For please and comfort the `Vagrantfile` sports some features:
+
+* suppport high-performance `NFS` file system _synchronization_ for the host and guest system, bidirectonally
+* automatically adjust `/etc/hosts` on the hosts in accordance to the network configuration of the `Vagrant` instances for easy reachabilty
+
+Both require superuser priviliges to be set-up during the provisioning - `sudo` is invoked and you are required to enter your system password. As this can be annoying and prevent automated testing it is recommended to configure `sudo` as follows:
+
+```
+$ whoami
+gretel
+$ sudo visudo -f /private/etc/sudoers.d/vagrant
+Password:
+# https://www.vagrantup.com/docs/synced-folders/nfs.html
+Cmnd_Alias VAGRANT_NFSD = /sbin/nfsd restart
+Cmnd_Alias VAGRANT_EXPORTS_ADD = /usr/bin/tee -a /etc/exports
+Cmnd_Alias VAGRANT_EXPORTS_REMOVE = /usr/bin/sed -E -e /*/ d -ibak /etc/exports
+
+# https://github.com/cogitatio/vagrant-hostsupdater
+# TODO: still in use?
+Cmnd_Alias VAGRANT_HOSTS_ADD = /bin/sh -c echo "*" >> /etc/hosts
+Cmnd_Alias VAGRANT_HOSTS_REMOVE = /usr/bin/sed -i -e /*/ d /etc/hosts
+
+# https://github.com/vagrant-landrush/landrush
+Cmnd_Alias VAGRANT_LANDRUSH_HOST_MKDIR = /bin/mkdir /etc/resolver/*
+Cmnd_Alias VAGRANT_LANDRUSH_HOST_CP = /bin/cp /*/vagrant_landrush_host_config /etc/resolver/*
+Cmnd_Alias VAGRANT_LANDRUSH_HOST_CHMOD = /bin/chmod 644 /etc/resolver/*
+
+%admin ALL=(root) NOPASSWD: VAGRANT_EXPORTS_ADD, VAGRANT_NFSD, VAGRANT_EXPORTS_REMOVE, VAGRANT_HOSTS_ADD, VAGRANT_HOSTS_REMOVE, VAGRANT_LANDRUSH_HOST_MKDIR, VAGRANT_LANDRUSH_HOST_CP, VAGRANT_LANDRUSH_HOST_CHMOD
+<save and quit editor>
+"vagrant.tmp" 11L, 492C written
+```
+
+> DO NOT edit the file direclty, always use `visudo`. Otherwise you might find yourself locked out of any superuser privilges. (Hint: Use the Finder to eset permissions of the `sudoers.d/vagrant` file to read/write for everyone.)
+
+### Vagrant Plugins
+
+> A working installation of some recent-enough `ruby` is required by `vagrant` to manage it's own plugins. Please ensure a proper setup!
+
+On the first call to `vagrant` the required plugins will be installed automagically:
+
+```
+Installing plugins: vagrant-cachier vagrant-faster vagrant-hosts vagrant-hostsupdater vagrant-vbguest vagrant-reload vagrant-sshfs
+...
+```
+
+### The Vagrantfile
+
+We are going to have a look at the `Vagrantfile` focussing on the Ansible related part:
+
+```
+  config.vm.provision "ansible" do |ansible|
+    ansible.verbose = "v"
+    ansible.playbook = "playbooks/main.yml"
+    ansible.inventory_path = "inventory/vagrant"
+    ansible.limit = "local"
+    ansible.extra_vars = "@config/test.yml"
+  end
+```
+
+`...`
+
+#### Up
+
+Now we can proceed to boot the virtual machine:
+
+```
+$ make vagrant-up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: [vagrant-faster] Setting CPUs: 4, Memory: 2048
+==> default: Importing base box 'ubuntu/xenial64'...
+...
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:2222...
+...
+```
+
+`...`
+
+#### Provision
+
+```
+$ make vagrant-provision
+==> default: Configuring cache buckets...
+==> default: Running provisioner: ansible...
+    default: Running ansible-playbook...
+...
+Using ~/emq_taxigirl/ansible.cfg as config file
+...
+```
+
+### Update Vagrant Box
+
+On `vagrant up` the installed virtual machine ('*box*') is checked for an updated image:
+
+```
+==> default: A newer version of the box 'ubuntu/xenial64' is available! You currently
+==> default: have version '20160502.0.0'. The latest is version '20160509.0.0'. Run
+==> default: `vagrant box update` to update.
+```
+
+Let's follow the hint:
+```
+$ make vagrant-update
+...
+==> default: Successfully added box 'ubuntu/xenial64' (v20160509.0.0) for 'virtualbox'!
+```
+
+`...`
+
+#### Concept
+
+**Taxigirl** tries to do each job in exactly the same way, following the client's intentions as close as possible.
+
+Typical Flow:
+
+* Intention
+
+      The customer defines what **Taxigirl** will actually do. Each step can have a distinctive set of parameters she will stick to. A typical flow consists of the following phases:
+
+* Provision
+
+    **Taxigirl** takes good care of setting up the right environment. She knows what different types of customers require and how to set them up. While local ones usually require less steps remote ones can be quite intensive.
+
+* Deployment
+
+    This step is the essence of her work. She brings up something new to a system that might not have done much before. While there is no guarantee that the customer will actually appreciate the service she tries for the best.
+
+* Service
+
+    When everything went fine the customer should be happy about the service. **Taxigirl** is ready to call it a day while the customer should continue to head on happily until further notice.
+
+* Destruction
+
+    Nothing stays forever - so is the fun. At some point the customer will vanish and won't require **Taxigirl** anymore. Nonetheless **Taxigirl** may assist to let her customers fade away depending on the environment she set up during provisioning.
+
+#### Configuration
+
+More technically speaking, the _intention_ is a configuration file either in `JSON` or `YAML` format located in the `config/` directory of the project:
+
+* each file represents a different intention
+* each intention can be applied to a group
+* each group consists of at least one host
+* the extent of a group can be limited or have a single member
+* each group is bound to a certain environment
+* each environment is related to the various Ansible modules
+
+In the end, it's quite simple. Let's have a look at a configuration file to reflect our intention to have a [`rundeck`]() service realized:
+
+`...`
+
+#### Commands
+
+**Taxigirl** will ensure proper communication protocols and executes a set of predefined commands. As she is skilled with linguistics the set of commands is flexible and can be adjusted to almost any demands. The limit is what is [implemented in Ansible](http://docs.ansible.com/ansible/modules_core.html) - or can be [added as modules](http://docs.ansible.com/ansible/developing_modules.html).
+
+The projects comes with a mix of `playbooks` and `roles` while the playbooks will include the `roles` if applicable.
+
+The configuration is shared. It's up to the customer to have his the extent of his intentions clearly stated. For instance
+
+* virtual machines (in the cloud) might require *provisioning* before *deployment* can take place
+* dedicated bare metal machines are usually _pre-provisioned_ and won't require as much care but milage varies
+* usually dedicated machines will not require _destruction_ :money:
+* while virtual ones can be prone to destruction (i.e. to replace them)
+* if in doubt an _inventory_ can be helpful as well as `list` command to gather facts about all machines
+
+Enough of theory. Let's get touchy:
+
+`...`
+
+#### Development
+
+### git-secrets
+
+### pre-commit
+
+#### Further Readings
