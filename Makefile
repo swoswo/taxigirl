@@ -240,7 +240,7 @@ endif
 .PHONY: virtualenv-provide
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
-	@-mkdir files tmp log
+	@-mkdir bin files log tmp
 	curl -s $(VENV_URI) -o $(VENV_TGZ)
 	tar xzf $(VENV_TGZ) $(tar_options) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
 	chmod +x $(VENV_SCRIPT)
