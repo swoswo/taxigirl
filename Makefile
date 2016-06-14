@@ -77,7 +77,7 @@ endif
 # get pyenv prefix or warn
 pyenv_prefix := $(shell pyenv prefix $(PYTHON_VERSION))
 ifeq ($(pyenv_prefix),)
-$(warning unable to retrive pyenv prefix, using system)
+$(info unable to retrive pyenv prefix, using system)
 pyenv_prefix := /usr/bin
 endif
 
