@@ -14,6 +14,8 @@
 ### # defaults
 ###
 
+ANSIBLE_INVENTORY_FILE	?= inventory/vagrant.ini
+ANSIBLE_PLAYBOOK_FILE	?= playbooks/main.yml
 BIN_PATH 		?= ./bin
 BREW_BUNDLE_FILE 	?= Brewfile
 BREW_INSTALL_FILE 	?= ./sbin/brew-install
@@ -25,13 +27,11 @@ PIP_BIN_NAME 		?= pip
 PIP_FREEZE_FILE 	?= requirements_freeze.txt
 PIP_PRE_FREEZE_FILE 	?= requirements_pre_freeze.txt
 PIP_REQ_FILE 		?= requirements.txt
-ANSIBLE_PLAYBOOK_FILE	?= playbooks/main.yml
-ANSIBLE_INVENTORY_FILE	?= inventory/vagrant.ini
 PRE_COMMIT_CONFIG	?= .pre-commit-config.yaml
 PYTHON_VERSION 		?= 2.7.11
 VENV_SCRIPT 		?= ./bin/virtualenv.py
 VENV_TGZ 		?= ./files/virtualenv.tgz
-VENV_URI 		?= 'https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d6e1f02db352f3facf907d9eb614fb80e9virtualenv-15.0.2.tar.gz#md5=0ed59863994daf1292827ffdbba80a63'
+VENV_URI 		?= https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d6e1f02db352f3facf907d9eb614fb80e9virtualenv-15.0.2.tar.gz
 
 ###
 ### # intialization
