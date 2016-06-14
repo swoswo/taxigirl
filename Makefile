@@ -88,8 +88,7 @@ install_tasks +=	virtualenv-provide \
 			precommit-update \
 			precommit-run \
 			versions \
-			_revision \
-			_notify
+			_revision
 
 check_tasks += 		git-secrets-scan \
 			precommit-run
@@ -361,14 +360,13 @@ ifeq ($(git_rev),)
 $(warning unable to retrive git revision)
 endif
 # compose tag to set if this recipe succeeds
-git_tag := $(git_rev)_$(shell date +%s)
+rev_tag := $(git_rev)_$(shell date +%s)
 
 .DELETE_ON_ERROR: _revision
 .PHONY: _revision
 _revision:
-	$(info $@: tagging as $(git_tag))
-	@test -n "$(git_rev)" && echo $(git_tag) > .revision
-	@test -n "$(git_rev)" && git tag "Makefile_$(git_tag)"
+	$(info $@: storing tag $(rev_tag))
+	@test -n "$(git_rev)" && echo $(rev_tag) > .revision
 
 .PHONY: git-secrets-scan
 git-secrets-scan:
@@ -391,15 +389,7 @@ git-update:
 	@-git gc --auto
 
 ###
-### # notification
-###
-
-.PHONY: _notify
-_notify:
-	@-terminal-notifier -message 'All done!' -title 'Taxigirl - Makefile' -subtitle '🚖👧🔧💟'
-
-###
-### # 'test'
+### # versions
 ###
 
 .ONESHELL: versions
