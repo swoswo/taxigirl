@@ -3,7 +3,7 @@
 FILES_PATTERN='.travis.yml$'
 
 for f in $(git diff --cached --name-only | grep -E "$FILES_PATTERN"); do
-    if ! bundle exec travis lint -qx "$f"; then
+    if ! bundle exec travis lint "$f"; then
         exit 1
     fi
 done

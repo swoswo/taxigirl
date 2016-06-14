@@ -19,13 +19,13 @@ env:
   - ANSIBLE_INVENTORY_FILE=inventory/travis.ini TAXIGIRL_CONFIG=@config/test.yml
 
 before_install:
-  - 'echo $TRAVIS_BUILD_DIR'
 #  - 'sudo apt-get update -y'
 
 install:
   - 'sudo apt-get install -y curl'
 
 script:
+  - 'pwd; ls'
 #  - 'git clone --depth 1 https://github.com/nickjj/rolespec'
 #  - 'cd rolespec ; bin/rolespec -r https://github.com/gretel/taxigirl'
   - 'make install'
