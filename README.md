@@ -12,7 +12,7 @@ Let's see what the *Internet* says about her:
 
 > ... an attractive girl [employed by the management](http://www.thefreedictionary.com/bar+girl) of a bar to befriend male customers and encourage them to buy drinks ... :purple_heart:
 
-That's quite a lot, so let's get her over and see for ourselves:
+That's quite a lot! Let's get her over and see for ourselves:
 
 ```
 $ git clone https://github.com/emetriq/taxigirl
@@ -107,6 +107,18 @@ This tagret really tidies up, including all caches.
     * clobber
 
 > Ensure you will not loose anything importing before executing this target!
+
+##### Autobitch
+
+`...`
+
+##### pyenv
+
+`...`
+
+##### ry
+
+`...`
 
 #### AWS Credentials
 
@@ -340,8 +352,6 @@ Enough of theory. Let's get touchy:
 
 #### Development
 
-### git-secrets
+##### git-secrets
 
-### pre-commit
-
-#### Further Readings
+##### pre-commit
