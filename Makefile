@@ -68,7 +68,7 @@ endif
 python_prefix := $(shell pyenv prefix $(PYTHON_VERSION))
 ifeq ($(python_prefix),)
 $(info unable to retrive pyenv prefix, using system)
-python_prefix := /usr/bin
+python_prefix :=
 endif
 
 brew_tasks :=
