@@ -413,21 +413,23 @@ versions:
 	# bundler
 	@-command -v bundle; bundle -v
 	# vagrant
-	@command -v vagrant; vagrant --version
+	@-command -v vagrant; vagrant --version
 	# virtualbox
-	@command -v VBoxManage; VBoxManage --version
+	@-command -v VBoxManage; VBoxManage --version
+	# pyenv
+	@-command -v pyenv; pyenv -v; pyenv version
+	# pyenv
+	@-command -v ry; ry version
 	# git
 	@command -v git; git --version
-	# pyenv
-	@command -v pyenv; pyenv -v; pyenv version
+	# python
+	@command -v python; $(BIN_PATH)/python -V
 	# python virtualenv
 	@command -v virtualenv; $(BIN_PATH)/virtualenv --version
 	# python pip
 	@command -v pip; $(BIN_PATH)/$(PIP_BIN_NAME) --version
 	# yelp pre-commit
 	@command -v pre-commit; $(BIN_PATH)/pre-commit --version
-	# python
-	@command -v python; $(BIN_PATH)/python -V
 	# ansible
 	@command -v ansible; $(BIN_PATH)/ansible --version
 
