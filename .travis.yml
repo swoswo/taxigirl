@@ -5,13 +5,14 @@ python: '2.7'
 virtualenv:
   system_site_packages: True
 
+git:
+  depth: 1
+
 env:
-  - TAXIGIRL_CONFIG=@config/test.yml
-  - ANSIBLE_INVENTORY_FILE=inventory/travis.ini
+  - ANSIBLE_INVENTORY_FILE=inventory/travis.ini TAXIGIRL_CONFIG=@config/test.yml
 
 before_install:
   - 'sudo apt-get update -y'
-  - 'make bootstrap'
 
 install:
   - 'make install'

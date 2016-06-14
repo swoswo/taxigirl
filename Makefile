@@ -133,6 +133,12 @@ test_tasks +=		git-check \
 			vagrant-destroy \
 			distclean
 
+travis_tasks +=		virtualenv-provide \
+			virtualenv-create \
+			pip-install \
+			versions \
+			ansible-test
+
 .PHONY: install reset update check install distclean test
 update:			$(update_tasks)
 bootstrap:		$(bootstrap_tasks)
@@ -141,6 +147,7 @@ check:			$(check_tasks)
 provision:		$(provision_tasks)
 distclean:		$(distclean_tasks)
 test:			$(test_tasks)
+travis:			$(travis_tasks)
 
 list help:
 	$(info $@: available targets)
