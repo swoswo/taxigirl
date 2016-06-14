@@ -4,7 +4,7 @@ language: 'python'
 python: '2.7.11'
 # matrix:
 #   include:
-#     - python: '2.7'
+#     - python: '2.7.11'
 #       env: TEST_SUITE=suite_2_7
 #     - python: '3.5'
 #       env: TEST_SUITE=suite_3_5
@@ -20,13 +20,14 @@ env:
 
 before_install:
 #  - 'sudo apt-get update -y'
+#  - 'sudo apt-get upgrade -y'
+  - 'which python'
 
 install:
   - 'sudo apt-get install -y curl'
 
 script:
-  - 'pwd; ls'
-  - 'which python'
+  - 'pwd; ls -la'
 #  - 'git clone --depth 1 https://github.com/nickjj/rolespec'
 #  - 'cd rolespec ; bin/rolespec -r https://github.com/gretel/taxigirl'
   - 'make install'
