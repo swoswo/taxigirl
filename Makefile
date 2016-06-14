@@ -65,10 +65,10 @@ vagrant_tasks := vagrant-update
 endif
 
 # get pyenv prefix or warn
-pyenv_prefix := $(shell pyenv prefix $(PYTHON_VERSION))
-ifeq ($(pyenv_prefix),)
+python_prefix := $(shell pyenv prefix $(PYTHON_VERSION))
+ifeq ($(python_prefix),)
 $(info unable to retrive pyenv prefix, using system)
-pyenv_prefix := /usr/bin
+python_prefix := /usr/bin
 endif
 
 brew_tasks :=
@@ -243,7 +243,7 @@ virtualenv-provide:
 .PHONY: virtualenv-create
 virtualenv-create:
 	$(info $@: creating virtual environment)
-	@$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(pyenv_prefix)/$(BIN_PATH)/python .
+	@$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(python_prefix)/$(BIN_PATH)/python .
 	@$(BIN_PATH)/python -m ensurepip -U
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
 
