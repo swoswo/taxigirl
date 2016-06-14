@@ -89,9 +89,10 @@ install_tasks +=	virtualenv-provide \
 			pip-install \
 			versions \
 			precommit-update \
+			lint \
 			_revision
 
-check_tasks += 		git-secrets-scan \
+lint_tasks += 		git-secrets-scan \
 			precommit-run
 
 provision_tasks +=	vagrant-up \
@@ -110,7 +111,6 @@ distclean_tasks +=	vagrant-halt \
 
 test_tasks +=		git-check \
 			install \
-			check \
 			provision \
 			vagrant-destroy \
 			distclean
@@ -119,7 +119,7 @@ test_tasks +=		git-check \
 update:			$(update_tasks)
 bootstrap:		$(bootstrap_tasks)
 install:		$(install_tasks)
-check:			$(check_tasks)
+lint:			$(lint_tasks)
 provision:		$(provision_tasks)
 run:			$(run_tasks)
 distclean:		$(distclean_tasks)
@@ -243,8 +243,8 @@ endif
 .PHONY: virtualenv-create
 virtualenv-create:
 	$(info $@: creating virtual environment)
-	@$(VENV_SCRIPT) -q --clear --no-setuptools --no-wheel --no-pip --always-copy -p $(sys_python) .
-	@$(BIN_PATH)/python -m ensurepip -U
+	@$(VENV_SCRIPT) -q --clear --always-copy -p $(sys_python) .
+	@-$(BIN_PATH)/python -m ensurepip -U
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
 
 .ONESHELL: virtualenv-remove
