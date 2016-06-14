@@ -90,10 +90,11 @@ install_tasks +=	virtualenv-provide \
 			pip-install \
 			versions \
 			precommit-update \
-			lint \
+			precommit-run \
 			_revision
 
-lint_tasks += 		git-secrets-scan \
+lint_tasks += 		git-check \
+			git-secrets-scan \
 			precommit-run
 
 provision_tasks +=	vagrant-up \
