@@ -1,12 +1,11 @@
 ---
-language: 'python'
+language: python
 cache:
   - bundler
   - pip
+  - ccache
   - directories:
-    - bin
-    - files
-    - lib
+    - vendor/cache
 
 python: '2.7.11'
 # matrix:
