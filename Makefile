@@ -16,7 +16,7 @@
 
 ANSIBLE_EXTRA_ARGS	?= @config/test.yml
 ANSIBLE_INVENTORY_FILE	?= inventory/vagrant.ini
-ANSIBLE_OPTIONS		?= --skip-tags='apt_upgrade'
+ANSIBLE_OPTIONS		?= --skip-tags='apt_upgrade' -C
 ANSIBLE_PLAYBOOK_FILE	?= playbooks/main.yml
 BIN_PATH 		?= ./bin
 BREW_BUNDLE_FILE 	?= Brewfile
@@ -33,6 +33,7 @@ PRE_COMMIT_CONFIG	?= .pre-commit-config.yaml
 PYTHON_VERSION 		?= 2.7.11
 VENV_SCRIPT 		?= ./bin/virtualenv.py
 VENV_TGZ 		?= ./files/virtualenv.tgz
+# note: hashes need to be escaped!
 VENV_URI 		?= https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d6e1f02db352f3facf907d9eb614fb80e9/virtualenv-15.0.2.tar.gz\#md5=0ed59863994daf1292827ffdbba80a63
 
 ###
@@ -326,8 +327,7 @@ ansible-lint:
 .PHONY: ansible-run
 ansible-run:
 	$(info $@: run test on guest)
-	@# TODO: abstraction
-	$(BIN_PATH)/ansible-playbook -C -i $(ANSIBLE_INVENTORY_FILE) -e $(ANSIBLE_EXTRA_ARGS) $(ANSIBLE_PLAYBOOK_FILE) $(ANSIBLE_OPTIONS)
+	$(BIN_PATH)/ansible-playbook -i $(ANSIBLE_INVENTORY_FILE) -e $(ANSIBLE_EXTRA_ARGS) $(ANSIBLE_PLAYBOOK_FILE) $(ANSIBLE_OPTIONS)
 
 ###
 ### # pre-commit
@@ -337,7 +337,6 @@ precommit-update: $(PRE_COMMIT_CONFIG)
 	$(info $@: update and build pre-commit environments)
 	@$(BIN_PATH)/pre-commit-validate-config
 	@$(BIN_PATH)/pre-commit autoupdate
-	@# TODO: ensure proper hooks
 	@$(BIN_PATH)/pre-commit install
 
 precommit-run: $(PRE_COMMIT_CONFIG)
