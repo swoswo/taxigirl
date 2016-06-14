@@ -45,20 +45,10 @@ VENV_URI 		?= https://pypi.python.org/packages/5c/79/5dae7494b9f5ed061cff9a8ab8d
 # if no target is specified on commandline
 .DEFAULT_GOAL := list
 
-# some tasks provide multicore options
-core_count := 1
 # get system name (platform)
 sys_name := $(shell uname -s)
-ifeq ($(sys_name),)
-$(error unable to retrive system name)
-else ifeq ($(sys_name),Darwin)
-# overwrite with actual amount of cores
-core_count := $(shell sysctl -n hw.physicalcpu)
-else ifeq ($(sys_name),Linux)
-core_count := $(shell grep -c ^processor /proc/cpuinfo)
-else
-$(warning system $(sys_name) is not supported)
-endif
+# some tasks provide multicore options
+core_count := $(shell getconf _NPROCESSORS_ONLN)
 
 # get git rev id or fail
 git_rev := $(shell git rev-parse --short HEAD)
