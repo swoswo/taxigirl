@@ -234,6 +234,7 @@ python-uninstall:
 .PHONY: virtualenv-provide
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
+	@-mkdir files tmp log
 	curl $(VENV_URI) -o $(VENV_TGZ)
 	tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
 	chmod +x $(VENV_SCRIPT)
