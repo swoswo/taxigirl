@@ -40,7 +40,7 @@
     -   id: bashate
         name: Bashate
         language: script
-        description: A pep8 equivalent for bash scripts
+        description: A PEP8 equivalent for Bash scripts
         files: \.(sh|bash|envrc)$
         entry: pre-commit-hooks/bashate.sh
     -   id: shellcheck
@@ -58,7 +58,12 @@
     -   id: vault
         name: Ansible Vault Check
         language: script
-        description: Pre-commit hook that verifies if all files containing 'vault'
-            in the name are encrypted
+        description: Verifies if all files containing 'vault' in the name are encrypted
         files: .*vault.*$
         entry: pre-commit-hooks/vault.sh
+    -   id: travis
+        name: Travis YML
+        language: script
+        description: Validating your .travis.yml file before committing it reduces common build errors
+        files: .travis.yml$
+        entry: pre-commit-hooks/travis.sh
