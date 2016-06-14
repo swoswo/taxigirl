@@ -231,16 +231,18 @@ python-uninstall:
 ### # virtualenv
 ###
 
+ifeq ($(sys_name),Linux)
+tar_options := --wildcards
+else
+tar_options :=
+endif
+
 .PHONY: virtualenv-provide
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
 	@-mkdir files tmp log
 	curl -s $(VENV_URI) -o $(VENV_TGZ)
-	ifeq ($(sys_name),Linux)
-		tar xzf $(VENV_TGZ) --wildcards --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
-	else
-		tar xzf $(VENV_TGZ) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
-	endif
+	tar xzf $(VENV_TGZ) $(tar_options) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
 	chmod +x $(VENV_SCRIPT)
 	# virtualenv check
 	$(BIN_PATH)/virtualenv.py --version
