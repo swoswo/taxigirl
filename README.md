@@ -86,7 +86,7 @@ Cleaning up most, removing the virtualenv - but leaving caches and downloaded fi
 
 The above targets wrap around the actual targets used to compose the setup as a whole. Most of these can be called directly to ease your development work.
 
-> Using `virutalenv` is best practice to separate concerns and project domains. Otherwise, all `python` and `pip` packages would be shared globally.
+##### Special Targets
 
 Some targets are not called by any others due to their dedicated purposes.
 
@@ -143,24 +143,7 @@ Looks like a tie! :bowtie:
 
 [comment]: # (Copy part from graphite on direnv)
 
-Let's run `direnv` and check it's output:
-
-```
-$ direnv allow
-direnv: loading ~/.direnvrc
-...
-direnv: loading .envrc
-direnv: export +ANSIBLE_ERROR_ON_UNDEFINED_VARS +ANSIBLE_FORCE_COLOR +EDITOR +PYENV_VIRTUALENV_DISABLE_PROMPT +PYTHONUNBUFFERED ~PATH ~PYENV_SHELL
-
-$ pyenv version
-taxigirl-2.7.11 (set by /Users/gretel/Sync/prjcts/xpl/emq_taxigirl/.python-version)
-
-$ which python; python -V
-/Users/gretel/.pyenv/shims/python
-Python 2.7.11
-```
-
-Great, `pyenv-virtualenv` has detected and activated the `virtualenv` automatically as it was triggered by `direnv`. The shims do wrap the calls of `python` and delegate them in accordance to the environment variables set by `pyenv`.
+`...`
 
 > Any errors at this point will eventually lead to failure. Please ensure proper function of `direnv`!
 
