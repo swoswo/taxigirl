@@ -25,7 +25,8 @@ PIP_BIN_NAME 		?= pip
 PIP_FREEZE_FILE 	?= requirements_freeze.txt
 PIP_PRE_FREEZE_FILE 	?= requirements_pre_freeze.txt
 PIP_REQ_FILE 		?= requirements.txt
-PLAYBOOK_FILE		?= playbooks/main.yml
+ANSIBLE_PLAYBOOK_FILE	?= playbooks/main.yml
+ANSIBLE_INVENTORY_FILE	?= inventory/vagrant.ini
 PRE_COMMIT_CONFIG	?= .pre-commit-config.yaml
 PYTHON_VERSION 		?= 2.7.11
 VENV_SCRIPT 		?= ./bin/virtualenv.py
@@ -96,7 +97,8 @@ update_tasks +=		git-update \
 			$(gem_tasks) \
 			$(vagrant_tasks)
 
-bootstrap_tasks +=	clean \
+bootstrap_tasks +=	git-check \
+			clean \
 			update \
 			python-install \
 			virtualenv-provide
@@ -125,7 +127,8 @@ distclean_tasks +=	vagrant-halt \
 			virtualenv-remove \
 			clean
 
-test_tasks +=		install \
+test_tasks +=		git-check \
+			install \
 			vagrant-provision \
 			vagrant-destroy \
 			distclean
@@ -316,13 +319,13 @@ ansible-lint:
 		playbooks/** roles/** tests/** \
 		pre-commit-hooks/* \
 		provisioning/* sbin/*
-	@$(BIN_PATH)/ansible-lint $(PLAYBOOK_FILE)
+	@$(BIN_PATH)/ansible-lint $(ANSIBLE_PLAYBOOK_FILE)
 
 .PHONY: ansible-test
 ansible-test:
 	$(info $@: run test on guest)
 	@# TODO: abstraction
-	$(BIN_PATH)/ansible-playbook -C -i inventory/vagrant.ini -e "@config/test.yml" --skip-tags="apt_upgrade" $(PLAYBOOK_FILE)
+	$(BIN_PATH)/ansible-playbook -C -i $(ANSIBLE_INVENTORY_FILE) -e "@config/test.yml" --skip-tags="apt_upgrade" $(ANSIBLE_PLAYBOOK_FILE)
 
 ###
 ### # pre-commit
@@ -360,11 +363,18 @@ git-secrets-scan:
 	@# returns non-zero if something is revealed
 	@git secrets --scan --cached .
 
+.PHONY: git-check
+git-check:
+	$(info $@: checking state of $(git_rev))
+	@-git fetch
+	# returns non-zero if our local copy is outdated
+	@git log HEAD.. --oneline
+
 .PHONY: git-update
 git-update:
 	$(info $@: updating $(git_rev))
 	@# returns non-zero if host is unreachable
-	@-git pull
+	@git pull
 	@-git gc --auto
 
 ###
