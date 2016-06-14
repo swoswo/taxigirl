@@ -54,6 +54,8 @@ $(error unable to retrive system name)
 else ifeq ($(sys_name),Darwin)
 # overwrite with actual amount of cores
 core_count := $(shell sysctl -n hw.physicalcpu)
+else ifeq ($(sys_name),Linux)
+core_count := $(shell grep -c ^processor /proc/cpuinfo)
 else
 $(warning system $(sys_name) is not supported)
 endif
