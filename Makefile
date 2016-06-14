@@ -243,8 +243,8 @@ endif
 .PHONY: virtualenv-create
 virtualenv-create:
 	$(info $@: creating virtual environment)
-	@$(VENV_SCRIPT) -q --clear --always-copy -p $(sys_python) .
-	@-$(BIN_PATH)/python -m ensurepip -U
+	@$(VENV_SCRIPT) -q --clear --always-copy --no-setuptools --no-wheel --no-pip -p $(sys_python) .
+	@$(BIN_PATH)/python -m ensurepip -U
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
 
 .ONESHELL: virtualenv-remove
