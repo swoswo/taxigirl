@@ -26,6 +26,7 @@ install:
 
 script:
   - 'pwd; ls'
+  - 'which python'
 #  - 'git clone --depth 1 https://github.com/nickjj/rolespec'
 #  - 'cd rolespec ; bin/rolespec -r https://github.com/gretel/taxigirl'
   - 'make install'
