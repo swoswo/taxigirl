@@ -12,7 +12,8 @@ env:
   - ANSIBLE_INVENTORY_FILE=inventory/travis.ini TAXIGIRL_CONFIG=@config/test.yml
 
 before_install:
-  - 'sudo apt-get update -y'
+ - 'sudo apt-get update -y'
+ - 'sudo apt-get install -y curl'
 
 install:
   - 'make install'
