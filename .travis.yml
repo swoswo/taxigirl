@@ -1,0 +1,22 @@
+---
+language: 'python'
+python: '2.7'
+
+virtualenv:
+  system_site_packages: True
+
+env:
+  - TAXIGIRL_CONFIG=@config/test.yml
+  - ANSIBLE_INVENTORY_FILE=inventory/travis.ini
+
+before_install:
+  - 'sudo apt-get update -y'
+  - 'make bootstrap'
+
+install:
+  - 'make install'
+
+script:
+#  - 'git clone --depth 1 https://github.com/nickjj/rolespec'
+#  - 'cd rolespec ; bin/rolespec -r https://github.com/gretel/taxigirl'
+  - 'make ansible-test'
