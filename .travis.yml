@@ -38,4 +38,4 @@ script:
 #  - 'git clone --depth 1 https://github.com/nickjj/rolespec'
 #  - 'cd rolespec ; bin/rolespec -r https://github.com/gretel/taxigirl'
   - 'make install'
-  - 'make ansible-test'
+  - 'make ansible-run'
