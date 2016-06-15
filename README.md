@@ -14,7 +14,7 @@ Let's see what the *Internet* says about her:
 
 That's quite a lot! Let's get her over and see for ourselves:
 
-```
+```bash
 $ git clone https://github.com/emetriq/taxigirl
 $ cd taxigirl
 $ direnv allow
@@ -126,7 +126,7 @@ This tagret really tidies up, including all caches.
 
 A defacto-standard on how to share AWS credentials between the SDKs and many open-source frameworks has been established. For our case, we are going to jump on that train and use [`~/.aws/credentials`](http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/credentials.html) to set the credentials:
 
-```
+```ini
 [default]
 aws_access_key_id=DONOTSHAREYOURKEY
 aws_secret_access_key=ANDTAKECAREOFTHESECRET
@@ -140,7 +140,7 @@ Ensure minimal file permissions:
 
 Boto comes with a bunch of [commandline tools](http://boto.cloudhackers.com/en/latest/commandline.html) which can be used to verify proper authentication and access rights, i.e.:
 
-```
+```bash
 $ list_instances -r eu-west-1 -H ID,Zone,T:Name,T:xpl:service,State | less
 ID             Zone           T:Name                        T:xpl:service                 State
 ---------------------------------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ Looks like a tie! :bowtie:
 
 Ok, let's get on with the business:
 
-```
+```bash
 $ ansible-playbook -C -v playbooks/provision.yml --extra-vars 'config=@config/minimal.json'
 ```
 
@@ -188,7 +188,7 @@ For please and comfort the `Vagrantfile` sports some features:
 
 Both require superuser priviliges to be set-up during the provisioning - `sudo` is invoked and you are required to enter your system password. As this can be annoying and prevent automated testing it is recommended to configure `sudo` as follows:
 
-```
+```bash
 $ whoami
 gretel
 $ sudo visudo -f /private/etc/sudoers.d/vagrant
@@ -221,7 +221,7 @@ Cmnd_Alias VAGRANT_LANDRUSH_HOST_CHMOD = /bin/chmod 644 /etc/resolver/*
 
 On the first call to `vagrant` the required plugins will be installed automagically:
 
-```
+```bash
 Installing plugins: vagrant-cachier vagrant-faster vagrant-hosts vagrant-hostsupdater vagrant-vbguest vagrant-reload vagrant-sshfs
 ...
 ```
@@ -230,60 +230,33 @@ Installing plugins: vagrant-cachier vagrant-faster vagrant-hosts vagrant-hostsup
 
 We are going to have a look at the `Vagrantfile` focussing on the Ansible related part:
 
-```
-  config.vm.provision "ansible" do |ansible|
-    ansible.verbose = "v"
-    ansible.playbook = "playbooks/main.yml"
-    ansible.inventory_path = "inventory/vagrant"
-    ansible.limit = "local"
-    ansible.extra_vars = "@config/test.yml"
-  end
-```
-
-`...`
-
-#### Up
-
-Now we can proceed to boot the virtual machine:
-
-```
-$ make vagrant-up
-Bringing machine 'default' up with 'virtualbox' provider...
-==> default: [vagrant-faster] Setting CPUs: 4, Memory: 2048
-==> default: Importing base box 'ubuntu/xenial64'...
-...
-==> default: Booting VM...
-==> default: Waiting for machine to boot. This may take a few minutes...
-    default: SSH address: 127.0.0.1:2222...
-...
+```ruby
+  config.vm.provision 'ansible' do |ansible|
+    ansible.extra_vars = ENV['TAXIGIRL_EXTRA_ARGS']
+    ansible.inventory_path = ENV['TAXIGIRL_INVENTORY_PATH']
+    ansible.limit = ENV['TAXIGIRL_LIMIT']
+    ansible.playbook = ENV['TAXIGIRL_PLAYBOOK']
+    ansible.verbose = ENV['TAXIGIRL_VERBOSE']
+  end # provision
 ```
 
 `...`
 
 #### Provision
 
+```bash
+$ make vagrant-up vagrant-provision
 ```
-$ make vagrant-provision
-==> default: Configuring cache buckets...
-==> default: Running provisioner: ansible...
-    default: Running ansible-playbook...
-...
-Using ~/emq_taxigirl/ansible.cfg as config file
-...
+
+```bash
+$ env ANSIBLE_EXTRA_ARGS=@config/test.yml make vagrant-up vagrant-provision
 ```
 
 ### Update Vagrant Box
 
-On `vagrant up` the installed virtual machine ('*box*') is checked for an updated image:
+Let's check for updates:
 
-```
-==> default: A newer version of the box 'ubuntu/xenial64' is available! You currently
-==> default: have version '20160502.0.0'. The latest is version '20160509.0.0'. Run
-==> default: `vagrant box update` to update.
-```
-
-Let's follow the hint:
-```
+```bash
 $ make vagrant-update
 ...
 ==> default: Successfully added box 'ubuntu/xenial64' (v20160509.0.0) for 'virtualbox'!
