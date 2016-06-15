@@ -1,6 +1,8 @@
 # Emetriq's Taxi Girl
 
-## Ambivalent Meta-Provisioning and Deployment Tool based on Ansible
+## Ambivalent Provisioning and Deployment Tool based on Ansible
+
+[![Build Status](https://travis-ci.org/emetriq/taxigirl.svg?branch=master)](https://travis-ci.org/emetriq/taxigirl)
 
 ### Introduction
 
