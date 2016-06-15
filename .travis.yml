@@ -11,11 +11,11 @@ git:
 
 env:
   global:
-  - TAXIGIRL_EXTRA_ARGS=@./config/test.yml
-  - TAXIGIRL_INVENTORY_PATH=./inventory/travis.ini
-  - TAXIGIRL_LIMIT=local
-  - TAXIGIRL_PLAYBOOK=./playbooks/main.yml
-  - TAXIGIRL_VERBOSE=vv
+  - ANSIBLE_EXTRA_ARGS=@./config/test.yml
+  - ANSIBLE_INVENTORY_PATH=./inventory/travis.ini
+  - ANSIBLE_LIMIT=local
+  - ANSIBLE_PLAYBOOK=./playbooks/main.yml
+  - ANSIBLE_VERBOSE=vv
 
 matrix:
   include:
