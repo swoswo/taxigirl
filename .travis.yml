@@ -48,4 +48,4 @@ install:
 script:
 - 'pwd; ls -la'
 - 'make install'
-- 'make ansible-run'
+- 'if [[ "$TOXENV" != "py35" ]]; then make ansible-run; fi'
