@@ -6,7 +6,7 @@ provision:
     install:
     - build-essential
 deploy:
-  target: '/opt/test'
+  dest: '/opt/test'
   tasks:
   - packages
   - shell
