@@ -49,7 +49,7 @@ To list all targets available (including aliases which bundle a group of targets
 ```bash
 $ make help
 help: available targets
-ansible-galaxy ansible-lint ansible-test bootstrap brew-cask-upgrade brew-clean brew-install brew-uninstall brew-update check clean clobber distclean gem-bundle gem-clean gem-remove gem-update git-secrets-scan git-update install list pip-install pip-uninstall pip-update precommit-clean precommit-run precommit-update provision python-install python-uninstall reset test update vagrant-destroy vagrant-halt vagrant-provision vagrant-up vagrant-update versions virtualenv-create virtualenv-provide virtualenv-remove
+ansible-galaxy ansible-lint ansible-run bootstrap brew-cask-upgrade brew-clean brew-install brew-uninstall brew-update check clean clobber distclean gem-bundle gem-clean gem-remove gem-update git-check git-secrets-scan git-update install lint list pip-install pip-uninstall pip-update precommit-clean precommit-run precommit-update provision python-install python-uninstall reset run test update vagrant-destroy vagrant-halt vagrant-provision vagrant-up vagrant-update versions virtualenv-create virtualenv-provide virtualenv-remove
 ```
 
 ##### Meta Targets
@@ -76,6 +76,10 @@ Including the `install` target this one brings up a virtual machine using the co
 
     * provision
 
+Provision box, lint- and run *Ansible*:
+
+    * run
+
 Run a complete cycle inclduing the previous provisioning and destruction of a virtual machine running *Taxigirl*:
 
     * test
@@ -94,7 +98,7 @@ Some targets are not called by any others due to their dedicated purposes.
 
 Basically, same as `vagrant provision` but calls `ansible` directly:
 
-    * ansible-test
+    * ansible-run
 
 Uninstall homebrew (including *Cask*):
 
