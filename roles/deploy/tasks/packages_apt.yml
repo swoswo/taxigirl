@@ -1,4 +1,5 @@
 ---
+# TODO: assertion
 - name: Remove Packages
   apt:
     name: "{{ remove_name }}"

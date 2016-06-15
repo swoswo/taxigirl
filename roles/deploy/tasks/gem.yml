@@ -1,4 +1,5 @@
 ---
+# TODO: assertion
 - name: Update Gem system
   command: gem update --system --no-document
   become: True
@@ -11,8 +12,9 @@
   gem:
     name: "{{ gem_name }}"
     state: latest
-  with_items: "{{ deploy.gem|default(['bundler']) }}"
+  with_items: "{{ deploy.gem.packages|default(['bundler']) }}"
   loop_control:
     loop_var: gem_name
-  when: deploy.gem is defined
+  when: deploy.gem.packages is defined
+  become: "{{ deploy.gem.with_sudo|default(omit) }}"
   tags: [provision, ruby, ruby_install, ruby_install, gem, gem_install]

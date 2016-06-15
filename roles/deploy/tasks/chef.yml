@@ -1,4 +1,5 @@
 ---
+# TODO: assertion+
 - assert: { that: "(deploy.dest is defined and deploy.dest is not none and deploy.dest | trim != '')" }
 
 - name: Create temporary directory
@@ -55,7 +56,7 @@
 
 - name: Adjust permissions
   file:
-    path: "{{ deploy.target }}"
+    path: "{{ deploy.dest }}"
     recurse: True
     owner: "{{ ansible_user }}"
     mode: 0755
