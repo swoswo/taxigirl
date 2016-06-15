@@ -17,6 +17,16 @@
   become: True
   when: (ansible_os_family == 'Debian') or (ansible_os_family == 'Ubuntu')
 
+- name: Create base directory
+  file:
+    path: "{{ deploy.dest }}"
+    recurse: True
+    owner: "{{ ansible_user }}"
+    mode: 0755
+    state: directory
+  become: True
+  tags: [deploy, deploy_target]
+
 - name: Include Task
   include: ../roles/provision/tasks/{{ inc_p_task }}.yml
   with_items: "{{ provision.tasks }}"

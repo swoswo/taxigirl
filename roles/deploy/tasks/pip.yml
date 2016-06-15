@@ -1,10 +1,12 @@
 ---
+# TODO: assertion
 - name: Install PiP Packages
   pip:
     name: "{{ pip_name }}"
     state: latest
-  with_items: "{{ deploy.pip }}"
+  with_items: "{{ deploy.pip.packages }}"
   loop_control:
     loop_var: pip_name
-  when: deploy.pip is defined
+  become: "{{ deploy.pip.with_sudo|default(omit) }}"
+  when: deploy.pip.packages is defined
   tags: [deploy, python, python_install, python_complete, pip, pip_install]

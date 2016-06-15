@@ -5,7 +5,7 @@
   register: shell_commands
   shell: "{{ shell_command }}"
   args:
-    chdir: "{{ deploy.target }}"
+    chdir: "{{ deploy.dest }}"
   become: "{{ deploy.shell.with_sudo|default(omit) }}"
   with_items: "{{ deploy.shell.commands }}"
   loop_control:

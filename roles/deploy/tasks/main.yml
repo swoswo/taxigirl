@@ -1,7 +1,7 @@
 ---
 - name: Create base directory
   file:
-    path: "{{ deploy.target }}"
+    path: "{{ deploy.dest }}"
     recurse: True
     owner: "{{ ansible_user }}"
     mode: 0755

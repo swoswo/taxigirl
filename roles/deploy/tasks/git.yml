@@ -1,4 +1,5 @@
 ---
+# TODO: assertion
 - name: Install Git
   package:
     name: git
