@@ -11,7 +11,7 @@ env:
   global:
   - ANSIBLE_EXTRA_ARGS=@./config/test.yml
   - ANSIBLE_INVENTORY_PATH=./inventory/travis.ini
-  - ANSIBLE_LIMIT=local
+  - ANSIBLE_LIMIT=localhost
   - ANSIBLE_PLAYBOOK=./playbooks/main.yml
   - ANSIBLE_VERBOSE=v
 matrix:
