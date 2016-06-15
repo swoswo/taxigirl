@@ -1,12 +1,12 @@
 ---
-- name: Update package cache
+- name: Update APT Cache
   apt:
     update_cache: True
     cache_valid_time: '3600'
   register: apt_update
   tags: [provision, apt, apt_update]
 
-- name: Ugrade packages
+- name: Upgrade APT packages
   apt:
     upgrade: dist
     dpkg_options: 'force-confold,force-confdef,force-confmiss'

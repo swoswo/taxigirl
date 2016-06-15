@@ -8,7 +8,7 @@
   with_items: "{{ provision.packages.remove }}"
   loop_control:
     loop_var: remove_name
-  when: provision.packages.remove is defined
+  when: (provision.packages.remove is defined and provision.packages.remove is not none and provision.packages.remove | trim != '')
   tags: [provision, packages, packages_remove]
 
 - name: Install Packages
@@ -20,5 +20,5 @@
   with_items: "{{ provision.packages.install }}"
   loop_control:
     loop_var: install_name
-  when: provision.packages.install is defined
+  when: (provision.packages.install is defined and provision.packages.install is not none and provision.packages.install | trim != '')
   tags: [provision, packages, packages_install]

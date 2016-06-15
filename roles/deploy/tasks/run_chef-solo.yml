@@ -1,4 +1,4 @@
-- name: Run Chef
+- name: Run Chef (Solo)
   command: "chef-solo --no-fork --no-color -c /etc/chef/solo.rb -o '{{ chef.run_list }}'"
   args:
     chdir: "{{ deploy.target }}"

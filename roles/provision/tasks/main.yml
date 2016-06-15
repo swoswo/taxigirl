@@ -17,13 +17,9 @@
   become: True
   when: (ansible_os_family == 'Debian') or (ansible_os_family == 'Ubuntu')
 
-- name: Bootstrap Debian-style
-  include: bootstrap_debian.yml
-  become: True
-  when: (ansible_os_family == 'Debian') or (ansible_os_family == 'Ubuntu')
-
 - name: Include Task
-  include: roles/provision/tasks/{{ inc_p_task }}.yml
+  include: ../roles/provision/tasks/{{ inc_p_task }}.yml
   with_items: "{{ provision.tasks }}"
   loop_control:
     loop_var: inc_p_task
+  when: (provision.tasks is defined and provision.tasks is not none and provision.tasks | trim != '')

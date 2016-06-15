@@ -1,18 +1,4 @@
 ---
-- name: Install Packages
-  apt:
-    name: "{{ install_name }}"
-    autoremove: True
-    dpkg_options: 'force-confold,force-confdef,force-confmiss'
-    state: latest
-  become: True
-  register: packages_install
-  with_items: "{{ deploy.packages.install }}"
-  loop_control:
-    loop_var: install_name
-  when: deploy.packages.install is defined
-  tags: [deploy, packages, packages_install]
-
 - name: Remove Packages
   apt:
     name: "{{ remove_name }}"
@@ -24,5 +10,19 @@
   with_items: "{{ deploy.packages.remove }}"
   loop_control:
     loop_var: remove_name
-  when: deploy.packages.remove is defined
+  when: (deploy.packages.remove is defined and deploy.packages.remove is not none and deploy.packages.remove | trim != '')
   tags: [deploy, packages, packages_remove]
+
+- name: Install Packages
+  apt:
+    name: "{{ install_name }}"
+    autoremove: True
+    dpkg_options: 'force-confold,force-confdef,force-confmiss'
+    state: latest
+  become: True
+  register: packages_install
+  with_items: "{{ deploy.packages.install }}"
+  loop_control:
+    loop_var: install_name
+  when: (deploy.packages.install is defined and deploy.packages.install is not none and deploy.packages.install | trim != '')
+  tags: [deploy, packages, packages_install]

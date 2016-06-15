@@ -1,5 +1,4 @@
 ---
-# TODO: sanity check
 - assert: { that: "(provision.shell.commands is defined and provision.shell.commands is not none and provision.shell.commands | trim != '')" }
 
 - name: Run shell commands

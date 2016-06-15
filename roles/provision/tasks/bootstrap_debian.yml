@@ -4,15 +4,11 @@
   register: dpkg
   until: dpkg|success
   retries: 3
-  delay: 10
+  delay: 5
   tags: [provision, apt, apt_dpkg]
 
-- name: Install Python (Minimal)
+- name: Install minimal Python
   raw: apt-get -qq install python
+  retries: 2
   register: python_minimal
-  tags: [provision, apt, python, python_minimal]
-
-- set_fact:
-    python_minimal: "{{ python_minimal }}"
-  when: python_minimal|changed
   tags: [provision, apt, python, python_minimal]
