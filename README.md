@@ -176,7 +176,7 @@ Looks like a tie! :bowtie:
 Ok, let's get on with the business:
 
 ```bash
-$ ansible-playbook -C -v playbooks/provision.yml --extra-vars 'config=@config/test.json'
+$ ansible-playbook -C -v playbooks/provision.yml --extra-vars 'config=@config/test.yml'
 ```
 
 #### Vagrant
@@ -240,7 +240,6 @@ We are going to have a look at the `Vagrantfile` focussing on the Ansible relate
   config.vm.provision 'ansible' do |ansible|
     ansible.extra_vars = ENV['TAXIGIRL_EXTRA_ARGS']
     ansible.inventory_path = ENV['TAXIGIRL_INVENTORY_PATH']
-    ansible.limit = ENV['TAXIGIRL_LIMIT']
     ansible.playbook = ENV['TAXIGIRL_PLAYBOOK']
     ansible.verbose = ENV['TAXIGIRL_VERBOSE']
   end # provision
@@ -333,4 +332,6 @@ Enough of theory. Let's get touchy:
 
 ##### git-secrets
 
-##### pre-commit
+##### Yelp's pre-commit
+
+##### Travis CI
