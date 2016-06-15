@@ -14,6 +14,7 @@
 ### # defaults
 ###
 
+MKDIR_LIST		?= bin files log roles.galaxy persistent sync tmp vendor
 ANSIBLE_EXTRA_ARGS	?= @config/test.yml
 ANSIBLE_INVENTORY_FILE	?= inventory/vagrant.ini
 ANSIBLE_OPTIONS		?= --skip-tags='apt_upgrade' -C
@@ -226,7 +227,7 @@ endif
 .PHONY: virtualenv-provide
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
-	@-mkdir bin files log tmp
+	@-mkdir $(MKDIR_LIST) >/dev/null
 	@curl -s $(VENV_URI) -o $(VENV_TGZ)
 	@tar xzf $(VENV_TGZ) $(tar_options) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
 	@chmod +x $(VENV_SCRIPT)
