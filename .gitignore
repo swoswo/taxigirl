@@ -141,6 +141,7 @@ lib/
 log/*
 Logs/
 lost+found/
+.bundle
 mail/
 Network Trash Folder/
 nohup.out
