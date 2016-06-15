@@ -91,7 +91,6 @@ install_tasks +=	virtualenv-provide \
 			pip-install \
 			versions \
 			precommit-update \
-			precommit-run \
 			_revision
 
 lint_tasks += 		git-check \
