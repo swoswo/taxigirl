@@ -154,10 +154,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # ansible provisioning
   config.vm.provision 'ansible' do |ansi|
-    ansi.extra_vars = ENV['TAXIGIRL_EXTRA_ARGS']
-    ansi.inventory_path = ENV['TAXIGIRL_INVENTORY_PATH']
-    ansi.limit = ENV['TAXIGIRL_LIMIT']
-    ansi.playbook = ENV['TAXIGIRL_PLAYBOOK']
-    ansi.verbose = ENV['TAXIGIRL_VERBOSE']
+    ansi.extra_vars = ENV['ANSIBLE_EXTRA_ARGS']
+    ansi.inventory_path = ENV['ANSIBLE_INVENTORY_PATH']
+    ansi.limit = ENV['ANSIBLE_LIMIT']
+    ansi.playbook = ENV['ANSIBLE_PLAYBOOK']
+    ansi.verbose = ENV['ANSIBLE_VERBOSE']
   end # provision
 end
