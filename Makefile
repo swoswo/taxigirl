@@ -227,7 +227,7 @@ endif
 .PHONY: virtualenv-provide
 virtualenv-provide:
 	$(info $@: providing virtualenv script)
-	@-mkdir $(MKDIR_LIST) >/dev/null
+	@-mkdir $(MKDIR_LIST) 2>/dev/null
 	@curl -s $(VENV_URI) -o $(VENV_TGZ)
 	@tar xzf $(VENV_TGZ) $(tar_options) --strip-components=1 -C $(BIN_PATH) \*\*/virtualenv.py
 	@chmod +x $(VENV_SCRIPT)
