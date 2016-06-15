@@ -16,7 +16,7 @@
 
 MKDIR_LIST		?= bin files log roles.galaxy persistent sync tmp vendor
 ANSIBLE_EXTRA_ARGS	?= @config/test.yml
-ANSIBLE_INVENTORY_FILE	?= inventory/vagrant.ini
+ANSIBLE_INVENTORY_PATH	?= inventory/vagrant.ini
 ANSIBLE_OPTIONS		?= --skip-tags='apt_upgrade' -C
 ANSIBLE_PLAYBOOK_FILE	?= playbooks/main.yml
 BIN_PATH 		?= ./bin
@@ -104,6 +104,7 @@ provision_tasks +=	vagrant-up \
 			vagrant-provision
 
 run_tasks +=		provision \
+			ansible-lint \
 			ansible-run
 
 distclean_tasks +=	vagrant-halt \
@@ -330,7 +331,7 @@ ansible-lint:
 .PHONY: ansible-run
 ansible-run:
 	$(info $@: running test of ansible)
-	$(BIN_PATH)/ansible-playbook -i $(ANSIBLE_INVENTORY_FILE) -e $(ANSIBLE_EXTRA_ARGS) $(ANSIBLE_PLAYBOOK_FILE) $(ANSIBLE_OPTIONS)
+	$(BIN_PATH)/ansible-playbook -i $(ANSIBLE_INVENTORY_PATH) -e $(ANSIBLE_EXTRA_ARGS) $(ANSIBLE_PLAYBOOK_FILE) $(ANSIBLE_OPTIONS)
 
 ###
 ### # pre-commit
