@@ -145,7 +145,7 @@ brew-install:
 	@brew tap Homebrew/bundle >/dev/null
 
 brew-update: $(BREW_BUNDLE_FILE)
-	$(info $@: resolving $(BREW_BUNDLE_FILE))
+	$(info $@: resolving $(BREW_BUNDLE_FILE) requirements)
 	@brew update
 	@brew bundle --file=$(BREW_BUNDLE_FILE)
 	@brew upgrade --cleanup
@@ -183,7 +183,7 @@ gem-update:
 	@gem install bundler
 
 gem-bundle: $(GEM_BUNDLE_FILE)
-	$(info $@: bundler might take some time)
+	$(info $@: resolving $(GEM_BUNDLE_FILE) requirements)
 	@bundle --binstubs --clean --jobs=${core_count} --retry=2 --path $(BUNDLER_CACHE_PATH)
 	@bundle up
 
@@ -210,7 +210,7 @@ python-install:
 
 .PHONY: python-uninstall
 python-uninstall:
-	$(info $@: uninstalling python $(PYTHON_VERSION))
+	$(info $@: removing installation of python $(PYTHON_VERSION))
 	@pyenv uninstall $(PYTHON_VERSION)
 
 ###
@@ -262,7 +262,7 @@ virtualenv-remove:
 ###
 
 pip-update pip-install: $(PIP_REQ_FILE)
-	$(info $@: installing requirements)
+	$(info $@: resolving $(PIP_REQ_FILE) requirements)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_PRE_FREEZE_FILE) >/dev/null
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U -r $(PIP_REQ_FILE)
@@ -272,7 +272,7 @@ pip-update pip-install: $(PIP_REQ_FILE)
 	@-cat log/pip_diff.txt
 
 pip-uninstall: $(PIP_REQ_FILE)
-	$(info $@: remove all packages)
+	$(info $@: removing all packages)
 	@-$(BIN_PATH)/$(PIP_BIN_NAME) uninstall -q -y -r $(PIP_FREEZE_FILE)
 
 ###
@@ -288,11 +288,11 @@ vagrant-update: Vagrantfile
 	@-vagrant remove-old-check >/dev/null
 
 vagrant-up: Vagrantfile
-	$(info $@: bring the box up)
+	$(info $@: bringing the box up)
 	@vagrant up --no-provision
 
 vagrant-provision: Vagrantfile
-	$(info $@: provision the box)
+	$(info $@: provisioning the box)
 	@vagrant provision
 
 vagrant-halt: Vagrantfile
@@ -300,7 +300,7 @@ vagrant-halt: Vagrantfile
 	@-vagrant halt --force
 
 vagrant-destroy: Vagrantfile
-	$(info $@: bringing the box down)
+	$(info $@: bringing the box down for destruction)
 	@-vagrant destroy --force
 
 ###
@@ -313,7 +313,7 @@ ansible-galaxy: $(GALAXY_REQ_FILE)
 
 .PHONY: ansible-lint
 ansible-lint:
-	$(info $@: checking ansible related files)
+	$(info $@: linting ansible components)
 	@# TODO: abstraction
 	@pre-commit run --no-stash --allow-unstaged-config --files \
 		.envrc \
@@ -329,7 +329,7 @@ ansible-lint:
 
 .PHONY: ansible-run
 ansible-run:
-	$(info $@: run test on guest)
+	$(info $@: running test of ansible)
 	$(BIN_PATH)/ansible-playbook -i $(ANSIBLE_INVENTORY_FILE) -e $(ANSIBLE_EXTRA_ARGS) $(ANSIBLE_PLAYBOOK_FILE) $(ANSIBLE_OPTIONS)
 
 ###
@@ -337,7 +337,7 @@ ansible-run:
 ###
 
 precommit-update: $(PRE_COMMIT_CONFIG)
-	$(info $@: update and build pre-commit environments)
+	$(info $@: building pre-commit environments)
 	@$(BIN_PATH)/pre-commit-validate-config
 	@$(BIN_PATH)/pre-commit autoupdate
 	@$(BIN_PATH)/pre-commit install
@@ -347,7 +347,7 @@ precommit-run: $(PRE_COMMIT_CONFIG)
 	@$(BIN_PATH)/pre-commit run --all-files --allow-unstaged-config
 
 precommit-clean: $(PRE_COMMIT_CONFIG)
-	$(info $@: cleanup pre-commit)
+	$(info $@: cleaning up pre-commit)
 	@$(BIN_PATH)/pre-commit clean
 
 ###
@@ -370,7 +370,7 @@ _revision:
 
 .PHONY: git-secrets-scan
 git-secrets-scan:
-	$(info $@: scanning for secrects psst)
+	$(info $@: scanning for secrects.. psst)
 	@# returns non-zero if something is revealed
 	@git-secrets --scan --cached .
 
@@ -438,7 +438,7 @@ clean:
 clobber:
 	$(warning $@: are you sure? press any key to continue)
 	@read -t 10
-	$(info $@: wiping it all away)
+	$(info $@: wiping all away)
 	@-vagrant destroy -f
 	@-pre-commit clean >/dev/null
 	@-rm -f .revision *.spec
