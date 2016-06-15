@@ -1,0 +1,11 @@
+---
+- name: Bundler
+  bundler:
+    state: present
+    chdir: "{{ deploy.dest }}"
+    clean: "{{ bundler.clean|default(True) }}"
+    gem_path: "{{ bundler.gem_path|default('vendor/cache') }}"
+    extra_args: "{{ bundler.extra_args|default('--jobs 2') }}"
+    binstub_directory: "{{ bundler.binstub_directory|default('bin') }}"
+    exclude_groups: "{{ bundler.exclude_groups|default(['test','integration','development','openstack','tools']) }}"
+  tags: ['deploy', 'chef', 'chef_bundler']

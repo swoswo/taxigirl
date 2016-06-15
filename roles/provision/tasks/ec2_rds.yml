@@ -1,0 +1,20 @@
+---
+- name: rds
+  rds:
+    instance_type: "{{ aws_rds_instance_type }}"
+    db_engine: "{{ aws_rds_db_engine }}"
+    region: "{{ aws_rds_region }}"
+    wait: "{{ aws_rds_wait | default(omit) }}"
+    wait_timeout: "{{ aws_rds_wait_timeout | default(omit) }}"
+    tags: "{{ aws_rds_instance_tags | default(omit) }}"
+    publicly_accessible: "{{ aws_rds_publicly_accessible | default(omit) }}"
+    zone: "{{ aws_rds_zone | default(omit) }}"
+    command: "{{ aws_rds_command | default('create') }}"
+    instance_name: "{{ aws_rds_instance_name | default(omit) }}"
+    new_instance_name: "{{ aws_rds_new_instance_name | default(omit) }}"
+    aws_rds_access_key: "{{ aws_rds_access_key | default(omit) }}"
+    aws_rds_secret_key: "{{ aws_rds_secret_key | default(omit) }}"
+    source_instance: "{{ aws_rds_source_instance | default(omit) }}"
+    port: "{{ aws_rds_port | default(omit) }}"
+    character_set_name: "{{ aws_rds_character_set_name | default(omit) }}"
+  register: rds_server

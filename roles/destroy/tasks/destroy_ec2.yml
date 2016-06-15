@@ -1,0 +1,60 @@
+---
+- name: Destroy on EC2
+  hosts: ec2
+  gather_facts: False
+  remote_user: "{{ ssh.user }}"
+  any_errors_fatal: True
+
+  vars_prompt:
+    - name: "id"
+      prompt: "id of instance to terminate?"
+      confirm: True
+
+  tasks:
+
+    - name: Sanity check on instance id
+      fail: msg="variable 'id' has to be set"
+      no_log: True
+      when: (id is undefined) or (id is none) or (id|trim == '')
+      tags: [destroy, ec2, ec2_destroy_sanity]
+
+    - name: Confirmation
+      action: ask_key prompt="THINK AGAIN - are you sure? [n,Y]" accepted_keys="['n','Y']"
+      register: confirm
+      tags: [destroy, ec2, ec2_destroy_confirm]
+
+    - name: Abort
+      fail: msg="Not confirmed - aborting."
+      when: (confirm is defined) and (confirm.key != 'Y')
+      tags: [destroy, ec2, ec2_destroy_abort]
+
+    - name: Terminate instance on EC2
+      local_action:
+        module: ec2
+        # state: stopped
+        state: absent
+        instance_ids: "{{ id|default(omit) }}"
+        region: "{{ ec2.region }}"
+        wait: True
+      register: ec2_destroy
+      # TODO: beware
+      when: False
+      tags: [destroy, ec2, ec2_destroy]
+
+    - name: Send notification to Slack
+      slack:
+        token: "{{ slack.token }}"
+        msg: "Destroyed instance(s)"
+        attachments:
+          - title: "Info"
+            text: "{{ ec2.instance_tags.Name }}"
+            color: good
+            fields:
+              - title: "Instance ID"
+                value: "{{ id }}"
+                short: "true"
+        username: "{{ slack.username }}"
+        channel: "{{ slack.channel }}"
+        icon_emoji: "{{ slack.icon_emoji }}"
+      when: slack.token is defined
+      tags: [destroy, ec2, slack, ec2_destroy_slack]

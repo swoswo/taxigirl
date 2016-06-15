@@ -1,0 +1,10 @@
+---
+- name: Playbook Test
+  hosts: localhost
+  # TODO: abstraction
+  remote_user: ubuntu
+  roles:
+    - { role: provision }
+    - { role: deploy }
+    - { role: list }
+    - { role: destroy }

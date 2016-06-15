@@ -1,0 +1,7 @@
+---
+- name: Playbook List
+  hosts: "{{ hosts }}"
+  gather_facts: True
+  strategy: free
+  roles:
+    - { role: list }

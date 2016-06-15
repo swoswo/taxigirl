@@ -1,0 +1,86 @@
+---
+- name: Sanity check ssh dictionary
+  fail: msg="'ssh' has to be set"
+  no_log: True
+  when: (ssh is undefined) or (ssh is none) or (ssh|trim == '')
+  tags: [provision, ec2, ec2_create, ec2_ssh_sanity]
+
+- name: Create instance on EC2
+  local_action:
+    module: ec2
+    assign_public_ip: False
+    group_id: "{{ ec2.group_id }}"
+    image: "{{ ec2.image }}"
+    instance_tags: "{{ ec2.instance_tags }}"
+    instance_type: "{{ ec2.instance_type }}"
+    key_name: "{{ ec2.key_name }}"
+    monitoring: "{{ ec2.monitoring|default(False) }}"
+    private_ip: "{{ ec2.private_ip }}"
+    region: "{{ ec2.region|default('eu-west-1') }}"
+    termination_protection: "{{ ec2.termination_protection|default(True) }}"
+    vpc_subnet_id: "{{ ec2.vpc_subnet_id }}"
+    # instance_profile_name: "{{ ec2.iam_role}}"
+    count: "{{ ec2.count|default('1') }}"
+    count_tag:
+      Group: "{{ ec2.count_tag }}"
+    user_data: "{{ lookup('template', 'user_data.j2')|default(omit) }}"
+    wait: True
+  register: ec2_create
+  tags: [provision, ec2, ec2_create]
+
+- name: Sanity check
+  fail:
+    msg: 'No instances to operate on'
+  when: (ec2_create.instances is undefined or ec2_create.instances is none or ec2_create.instances | trim == '')
+  tags: [provision, ec2, ec2_create, ec2_create_sanity]
+
+- name: List of instances
+  debug: var=item
+  with_items: "{{ ec2_create.instances }}"
+  tags: [provision, ec2, ec2_list]
+
+- name: Wait for SSH to be accessible
+  wait_for:
+    port: "{{ ssh.port|default('22') }}"
+    host: "{{ item.private_ip }}"
+    search_regex: OpenSSH
+    delay: 5
+    timeout: 300
+    delegate_to: localhost
+  with_items: "{{ ec2_create.instances }}"
+  when: ec2_create|changed
+  tags: [provision, ec2, ec2_wait_for]
+
+# TODO: delegate_to?
+- name: Add new instance to dynamic inventory
+  local_action:
+    module: add_host
+    hostname: "{{ item.private_dns_name }}"
+    groups: ['ec2']
+    ansible_ssh_user: "{{ ssh.user|default('root') }}"
+    ansible_ssh_port: "{{ ssh.port|default('22') }}"
+    ansible_ssh_private_key_file: "{{ ec2.key_name }}"
+  register: add_host
+  with_items: "{{ ec2_create.instances }}"
+  tags: [provision, ec2, ec2_add_host]
+
+- name: Send notification to Slack
+  slack:
+    token: "{{ slack.token }}"
+    msg: "Created instance(s)"
+    attachments:
+      - title: "Info"
+        text: "{{ ec2.instance_tags.Name }}"
+        color: "#00ff00"
+        fields:
+          - title: "AMI ID"
+            value: "{{ ec2_create.instances|map(attribute='image_id')|join(', ') }}"
+            short: "true"
+          - title: "Instance ID"
+            value: "{{ ec2_create.instances|map(attribute='id')|join(', ') }}"
+            short: "true"
+    username: "{{ slack.username }}"
+    channel: "{{ slack.channel }}"
+    icon_emoji: "{{ slack.icon_emoji }}"
+  when: slack.token is defined
+  tags: [provision, ec2, slack, slack_provision_ec2]

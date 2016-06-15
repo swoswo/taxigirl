@@ -1,0 +1,11 @@
+---
+#- debug: var=hostvars[inventory_hostname]
+
+- include: list_ec2.yml
+  when: hosts == 'ec2'
+
+- include: list_local.yml
+  when: hosts == 'local'
+
+- name: Group Hosts by Distribution
+  group_by: key="distribution_{{ ansible_distribution }}_{{ ansible_distribution_version }}"

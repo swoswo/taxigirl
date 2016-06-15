@@ -1,0 +1,6 @@
+---
+- include: provision.yml
+
+- include: list.yml
+
+- include: deploy.yml
