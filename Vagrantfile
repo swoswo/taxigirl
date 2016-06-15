@@ -73,14 +73,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network :private_network, auto_network: true
   # config.vm.network :forwarded_port, guest: 3000, host: 8300, auto_correct: true
 
-  # # pre-provisiong scripts
-  # config.vm.provision 'Fix Xenial issues', type: 'shell', path: 'provisioning/fix_xenial.sh'
-  # SSH_PUBLIC_KEY = "#{Dir.home}/.ssh/id_rsa_dev_dev_keypair.pem".freeze
-  # ssh_pub_key = File.readlines(SSH_PUBLIC_KEY).first.strip
-  # config.vm.provision 'Authorize SSH Key', type: 'shell', path: 'provisioning/authorize_key.sh', args: [ssh_pub_key], privileged: false
-  # config.vm.provision 'Wait for unattended-upgrades', type: 'shell', path: 'provisioning/wait_unattended_upgrades.sh'
-  # config.vm.provision 'Bootstrap Python', type: 'shell', path: 'provisioning/bootstrap_python.sh', args: ['2.7']
-
   # sync folders
   config.vm.synced_folder '.', '/vagrant', id: 'sync', type: 'rsync'
   config.vm.synced_folder './sync', '/sync', id: 'sync', type: 'rsync'
@@ -88,12 +80,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   if Vagrant.has_plugin?('landrush')
     config.landrush.enabled = true
     config.landrush.tld = 'taxigirl'
-    config.landrush.upstream '10.0.23.1' # FIXME
+    config.landrush.upstream '10.0.23.1' # FIXME TODO: abstraction
     # config.landrush.host 'myhost.example.com', '1.2.3.4'
   end
 
   if Vagrant.has_plugin?('vagrant-cachier')
-    # config.cache.scope = :box
     config.cache.scope = :machine
     config.cache.synced_folder_opts = {
       type: 'nfs',
@@ -163,10 +154,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # ansible provisioning
   config.vm.provision 'ansible' do |ansible|
-    ansible.verbose = 'v'
-    ansible.playbook = './playbooks/main.yml'
-    ansible.inventory_path = './inventory/vagrant.ini'
-    ansible.limit = 'local'
-    ansible.extra_vars = ENV['TAXIGIRL_CONFIG']
+    ansible.extra_vars = ENV['TAXIGIRL_EXTRA_ARGS']
+    ansible.inventory_path = ENV['TAXIGIRL_INVENTORY_PATH']
+    ansible.limit = ENV['TAXIGIRL_LIMIT']
+    ansible.playbook = ENV['TAXIGIRL_PLAYBOOK']
+    ansible.verbose = ENV['TAXIGIRL_VERBOSE']
   end # provision
 end
