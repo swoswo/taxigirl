@@ -10,10 +10,11 @@
   tags: [deploy, deploy_target]
 
 - name: Include Task
-  include: roles/deploy/tasks/{{ inc_d_task }}.yml
+  include: ../roles/deploy/tasks/{{ inc_d_task }}.yml
   with_items: "{{ deploy.tasks }}"
   loop_control:
     loop_var: inc_d_task
+  when: (deploy.tasks is defined and deploy.tasks is not none and deploy.tasks | trim != '')
 
 - name: Send notification to Slack
   slack:

@@ -1,5 +1,5 @@
 ---
-# - assert: { that: "(deploy.shell.commands is defined and deploy.shell.commands is not none and deploy.shell.commands | trim != '')" }
+- assert: { that: "(deploy.shell.commands is defined and deploy.shell.commands is not none and deploy.shell.commands | trim != '')" }
 
 - name: Run shell commands
   register: shell_commands
@@ -10,5 +10,4 @@
   with_items: "{{ deploy.shell.commands }}"
   loop_control:
     loop_var: shell_command
-  when: deploy.shell.commands is defined
   tags: [deploy, shell, shell_commands]
