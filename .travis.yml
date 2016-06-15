@@ -12,10 +12,10 @@ git:
 env:
   global:
   - TAXIGIRL_EXTRA_ARGS=@./config/test.yml
-  - TAXIGIRL_INVENTORY_PATH=./inventory/vagrant.ini
+  - TAXIGIRL_INVENTORY_PATH=./inventory/travis.ini
   - TAXIGIRL_LIMIT=local
   - TAXIGIRL_PLAYBOOK=./playbooks/main.yml
-  - TAXIGIRL_VERBOSE=v
+  - TAXIGIRL_VERBOSE=vv
 
 matrix:
   include:
@@ -48,6 +48,8 @@ before_install:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y -qq update; fi
 #- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y -qq upgrade; fi
+- git clone --depth 1 https://github.com/nickjj/rolespec
+- cd rolespec; sudo make install
 
 install:
 - 'uname -a; which python'
