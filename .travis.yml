@@ -47,5 +47,8 @@ script:
 - make install
 - if [[ "$TOXENV" != "py35" ]]; then make ansible-run; fi
 notifications:
-  slackj:
+  on_success: change
+  on_failure: chnage
+  on_start: change
+  slack:
     secure: xzB4z2TLIPSF0AdIqXvE+vZcsCOy/zdp40SSNmYMZM/bZP2HEunVMrQewKH6F8HZ3bf8UEB7Kn8xisyviB5rbviO5lEjLEGt+bcvK27TV4/I0DjVZbx0+xSXbEPGC7NQMA4+1WmKvSRtpTFlEcUGk+WXsHiFuFzvr5nPHj8YDVBMhmIwkYDTvp2+WHqF54Xl+6cT9T+YvwsVgGt9ZI0vHtIff4NY3oIy205+TGVKJE1NeiwdsV3v6jI2WZ0/vj2SPuUeHpjar5a47SO6mnlvHZyY+XS/szHnyEBdVKuxh4oUZw+wO3y27NyPxMC2IP7ItI9PcM+exQrM++fVedHSl/DiwIgM4FiyYbjWa/NwYXz0l6wbm95A2kMuw47MwRtCMEjoByHXFa5lGSi9gOegfUtEnCAeJHhgk0t3V7xhaL8ufOjJPcT2kNiTVcZqDjEyVKHZTlilsInQW4mTfQOe00X7cqVBHWRIak4rhZ3JAbVmbEmv8DrBrpFokh/wvL0135v5WF2Z2XgZErykKl9hLneMvu6h4R8w6mEFUckh9CNL8Pof2xyiuXDaV84ETjfPwNP+AM3sukMI3jqSjbe2CSx4Dfkw8I4FhPsMX92jY06jbT3MW+ynlTDanYqWm1H10DnJKCHAx0prI5j5aMdvx4z73NAdAHzBx2ZL3v1OG08=
