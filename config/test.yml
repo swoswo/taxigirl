@@ -2,14 +2,9 @@ hosts: 'local'
 provision:
   tasks:
   - packages
-  - shell
   packages:
     install:
     - build-essential
-  shell:
-    commands:
-    - echo 'what a ride!' | wall
-    with_sudo: False
 deploy:
   target: '/opt/test'
   tasks:
@@ -17,4 +12,7 @@ deploy:
   - shell
   packages:
   shell:
+    commands:
+    - echo 'what a ride!' | wall
+    with_sudo: False
 slack: []
