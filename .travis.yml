@@ -5,18 +5,15 @@ cache:
   ccache: true
   directories:
   - vendor/cache
-
 git:
   depth: 1
-
 env:
   global:
   - ANSIBLE_EXTRA_ARGS=@./config/test.yml
   - ANSIBLE_INVENTORY_PATH=./inventory/travis.ini
   - ANSIBLE_LIMIT=local
   - ANSIBLE_PLAYBOOK=./playbooks/main.yml
-  - ANSIBLE_VERBOSE=vv
-
+  - ANSIBLE_VERBOSE=v
 matrix:
   include:
   - os: linux
@@ -39,21 +36,15 @@ matrix:
     env: TOXENV=py27 CC=clang
     language: generic
     sudo: required
-
 virtualenv:
   system_site_packages: False
-
 before_install:
 - 'if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi'
 - 'if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python; fi'
 - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y -qq update; fi'
 #- 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y -qq upgrade; fi'
-#- 'git clone --depth 1 https://github.com/nickjj/rolespec'
-#- 'cd rolespec; bin/rolespec -h'
-
 install:
 - 'uname -a; which python'
-
 script:
 - 'pwd; ls -la'
 - 'make install'
