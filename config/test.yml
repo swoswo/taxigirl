@@ -1,11 +1,4 @@
 hosts: 'local'
-deploy:
-  target: '/opt/test'
-  tasks:
-  - packages
-  - shell
-  packages:
-  shell:
 provision:
   tasks:
   - packages
@@ -17,4 +10,11 @@ provision:
     commands:
     - echo 'what a ride!' | wall
     with_sudo: False
+deploy:
+  target: '/opt/test'
+  tasks:
+  - packages
+  - shell
+  packages:
+  shell:
 slack: []
