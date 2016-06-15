@@ -1,6 +1,6 @@
 ---
 - include: provision.yml
-
 - include: list.yml
-
+- include: harden.yml
+  when: (harden is defined) and (harden == True)
 - include: deploy.yml
