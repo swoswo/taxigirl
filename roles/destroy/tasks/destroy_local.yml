@@ -1,0 +1,9 @@
+---
+- name: Destroy locally
+  hosts: local
+  gather_facts: False
+  any_errors_fatal: False
+
+  tasks:
+
+    - fail: msg="Not supported"

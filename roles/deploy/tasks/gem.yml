@@ -1,0 +1,18 @@
+---
+- name: Update Gem system
+  command: gem update --system --no-document
+  become: True
+
+- name: Update Gems
+  command: gem update --env-shebang --no-document
+  become: True
+
+- name: Install or Upgrade Gem
+  gem:
+    name: "{{ gem_name }}"
+    state: latest
+  with_items: "{{ deploy.gem|default(['bundler']) }}"
+  loop_control:
+    loop_var: gem_name
+  when: deploy.gem is defined
+  tags: [provision, ruby, ruby_install, ruby_install, gem, gem_install]

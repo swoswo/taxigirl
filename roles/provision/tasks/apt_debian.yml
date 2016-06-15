@@ -1,0 +1,16 @@
+---
+- name: Update package cache
+  apt:
+    update_cache: True
+    cache_valid_time: '3600'
+  register: apt_update
+  tags: [provision, apt, apt_update]
+
+- name: Ugrade packages
+  apt:
+    upgrade: dist
+    dpkg_options: 'force-confold,force-confdef,force-confmiss'
+    autoremove: True
+    install_recommends: False
+  when: apt_update.cache_updated
+  tags: [provision, apt, apt_update, apt_upgrade]

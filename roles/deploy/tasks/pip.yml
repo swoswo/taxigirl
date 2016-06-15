@@ -1,0 +1,10 @@
+---
+- name: Install or Upgrade PIP
+  pip:
+    name: "{{ pip_name }}"
+    state: latest
+  with_items: "{{ deploy.pip }}"
+  loop_control:
+    loop_var: pip_name
+  when: deploy.pip is defined
+  tags: [deploy, python, python_install, python_complete, pip, pip_install]

@@ -1,0 +1,7 @@
+---
+- name: Playbook Destroy
+  hosts: "{{ hosts }}"
+  gather_facts: True
+  any_errors_fatal: True
+  roles:
+    - { role: destroy }

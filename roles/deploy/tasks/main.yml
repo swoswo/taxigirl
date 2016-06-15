@@ -1,0 +1,34 @@
+---
+- name: Create base directory
+  file:
+    path: "{{ deploy.target }}"
+    recurse: True
+    owner: "{{ ansible_user }}"
+    mode: 0755
+    state: directory
+  become: True
+  tags: [deploy, deploy_target]
+
+- name: Include Task
+  include: roles/deploy/tasks/{{ inc_d_task }}.yml
+  with_items: "{{ deploy.tasks }}"
+  loop_control:
+    loop_var: inc_d_task
+
+- name: Send notification to Slack
+  slack:
+    token: "{{ slack.token }}"
+    msg: "Deployment"
+    attachments:
+      - title: "Host"
+        text: "{{ ansible_default_ipv4.address }} | {{ ansible_hostname }} | {{ ansible_fqdn }}"
+        color: good
+        fields:
+          - title: "Facts"
+            value: "{{ hostvars[inventory_hostname] }}"
+            short: "true"
+    username: "{{ slack.username }}"
+    channel: "{{ slack.channel }}"
+    icon_emoji: "{{ slack.icon_emoji }}"
+  when: slack.token is defined
+  tags: [deploy, slack]

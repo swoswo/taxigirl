@@ -1,0 +1,8 @@
+---
+- name: Playbook Provision
+  hosts: "{{ hosts }}"
+  gather_facts: True
+  any_errors_fatal: True
+  strategy: "{{ provision.strategy|default('linear') }}"
+  roles:
+    - { role: provision }

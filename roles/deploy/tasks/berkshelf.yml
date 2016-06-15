@@ -1,0 +1,6 @@
+---
+- name: Berkshelf
+  shell: "bundle exec berks vendor {{ berkshelf.cookbook_path }}"
+  args:
+    chdir: "{{ deploy.dest }}"
+  tags: ['deploy', 'chef', 'chef_berkshelf']

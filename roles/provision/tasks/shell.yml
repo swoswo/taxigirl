@@ -1,0 +1,14 @@
+---
+# TODO: sanity check
+- assert: { that: "(provision.shell.commands is defined and provision.shell.commands is not none and provision.shell.commands | trim != '')" }
+
+- name: Run shell commands
+  register: shell_commands
+  shell: "{{ shell_command }}"
+  args:
+    chdir: "{{ deploy.target }}"
+  become: "{{ provision.shell.with_sudo|default(omit) }}"
+  with_items: "{{ provision.shell.commands }}"
+  loop_control:
+    loop_var: shell_command
+  tags: [provision, shell, shell_commands]

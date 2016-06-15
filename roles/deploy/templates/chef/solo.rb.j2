@@ -1,0 +1,21 @@
+{{ ansible_managed | comment }}
+
+# https://docs.chef.io/config_rb_solo.html
+
+current_dir = File.dirname(__FILE__)
+
+solo true
+
+file_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
+syntax_check_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
+
+# TODO: abstraction
+log_location STDOUT
+log_level '{{ chef.log_level|default('info') }}'.to_sym
+
+cookbook_path [
+               "#{current_dir}/cookbooks",
+               "{{ berkshelf.cookbook_path }}"
+              ]
+
+node_name '{{ ansible_hostname }}'

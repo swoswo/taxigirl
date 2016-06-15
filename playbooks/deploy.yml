@@ -1,0 +1,8 @@
+---
+- name: Playbook Deploy
+  hosts: "{{ hosts }}"
+  gather_facts: True
+  any_errors_fatal: True
+  strategy: "{{ deploy.strategy|default('linear') }}"
+  roles:
+    - { role: deploy }

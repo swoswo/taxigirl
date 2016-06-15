@@ -1,0 +1,53 @@
+---
+- name: Sanity check EC2 namespace
+  fail: msg="'ec2' has to be set"
+  no_log: True
+  # TODO assert
+  when: (ec2 is undefined) or (ec2 is none) or (ec2|trim == '')
+  tags: [list, ec2, ec2_sanity]
+
+- name: Sanity check EC2 variables
+  fail: msg='ec2.region needs to be defined'
+  # TODO assert
+  when: ec2.region is undefined
+  tags: [list, ec2, ec2_sanity]
+
+- name: Gather facts EC2 Instances
+  local_action:
+    module: ec2_remote_facts
+    region: "{{ ec2.region }}"
+    filters:
+      instance-state-name: 'running'
+      'tag:xpl:team': 'apm'
+  no_log: True
+  register: ec2_facts
+  tags: [list, ec2, ec2_facts]
+
+- assert: { that: "(ec2_facts.instances is defined and ec2_facts.instances is not none and ec2_facts.instances | trim != '')" }
+  tags: [ec2, ec2_facts]
+
+- name: EC2 Inventory Hostnames
+  debug: msg="{{ instance.id }} | {{ instance.private_ip_address }} | {{ instance.private_dns_name }} | {{ instance.image_id }}"
+  with_items: "{{ ec2_facts.instances }}"
+  loop_control:
+    loop_var: instance
+  tags: [list, ec2, ec2_inventory]
+
+- name: Gather facts on EC2 Volumes
+  local_action:
+    module: ec2_vol_facts
+    region: "{{ ec2.region }}"
+    filters:
+      attachment.status: attached
+      "tag:xpl:team": apm
+  no_log: True
+  register: ec2_volumes
+  tags: [list, ec2, ec2_facts_volumes]
+
+- name: Attached Volumes
+  debug: msg="{{ volume }}"
+  # debug: msg="{{ item.id }} | {{ item.status }} | {{ item.type }} | {{ item.size }} | {{ item.tags }} | {{ item.attachment_set }}"
+  with_items: "{{ ec2_volumes.volumes }}"
+  loop_control:
+    loop_var: volume
+  tags: [list, ec2, ec2_facts_volumes]
