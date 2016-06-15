@@ -24,10 +24,7 @@ ara
 testinfra
 
 saws
-
-lolcat
 fabric
 python-vagrant
 diagram
 click
-git+https://github.com/click-contrib/click-repl#egg=click-repl
