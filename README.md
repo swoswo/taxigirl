@@ -176,7 +176,7 @@ Looks like a tie! :bowtie:
 Ok, let's get on with the business:
 
 ```bash
-$ ansible-playbook -C -v playbooks/provision.yml --extra-vars 'config=@config/minimal.json'
+$ ansible-playbook -C -v playbooks/provision.yml --extra-vars 'config=@config/test.json'
 ```
 
 #### Vagrant
