@@ -19,25 +19,26 @@ REQUIRED_PLUGINS = %w( vagrant-auto_network
                        vbinfo ).freeze
 
 ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
+# TODO: abstraction
 VIRTUALBOX_GUI = true
 
 # manage plugins
-plugins_to_install = REQUIRED_PLUGINS.select {
-  |p| !Vagrant.has_plugin? p
-}
+plugins_to_install = REQUIRED_PLUGINS.select do |p|
+  !Vagrant.has_plugin? p
+end
 unless plugins_to_install.empty?
   puts "Installing: #{plugins_to_install.join(' ')}"
   if system "vagrant plugin install #{plugins_to_install.join(' ')}"
     exec "vagrant #{ARGV.join(' ')}"
   else
-    abort 'Plugin installation failed, aborting.'
+    abort 'Installation of plugin failed, aborting.'
   end
 end
 
 # ip pool to use
 AutoNetwork.default_pool = '172.16.1.0/24'
 
-Vagrant.require_version '>= 1.8.1'
+Vagrant.require_version '>= 1.8.3'
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define :taxigirl
   config.vm.provider :virtualbox do |vbox|
@@ -55,6 +56,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # allow symlinks in synced foldersnam
     vbox.customize ['setextradata', :id, 'VBoxInternal2/SharedFoldersEnableSymlinksCreate//vagrant', '1']
+    vbox.customize ['setextradata', :id, 'VBoxInternal2/SharedFoldersEnableSymlinksCreate//sync', '1']
     # do not sync time with host as the guest should run ntp
     vbox.customize ['setextradata', :id, 'VVBoxInternal/Devices/VMMDev/0/Config/GetHostTimeDisabled', '1']
 
@@ -80,7 +82,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   if Vagrant.has_plugin?('landrush')
     config.landrush.enabled = true
     config.landrush.tld = 'taxigirl'
-    config.landrush.upstream '10.0.23.1' # FIXME TODO: abstraction
+    config.landrush.upstream '10.0.23.1' # FIXME: TODO: abstraction
     # config.landrush.host 'myhost.example.com', '1.2.3.4'
   end
 
@@ -121,12 +123,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # translate command triggers to notifications
     {
-      [:up, :resume] => ['booting', 'up'],
-      :suspend       => ['suspending', 'suspended'],
-      :destroy       => ['deconstructing', 'destroyed'],
-      :reload        => ['reloading', 'reloaded'],
-      :provision     => ['provisioning', 'provisioned'],
-      :halt          => ['halting', 'halted']
+      [:up, :resume] => %w(booting up),
+      :suspend       => %w(suspending suspended),
+      :destroy       => %w(deconstructing destroyed),
+      :reload        => %w(reloading reloaded),
+      :provision     => %w(provisioning provisioned),
+      :halt          => %w(halting halted)
     }.each do |command, message|
       config.trigger.before command do
         notify(message[0])
