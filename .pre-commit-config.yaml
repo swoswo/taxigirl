@@ -1,5 +1,5 @@
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    sha: 6dfcb89af3c9b4d172cc2e5a8a2fa0f54615a338
+    sha: 144c3857cdbba0b758f80aeee9f2adf42ea303ee
     hooks:
     -   id: check-merge-conflict
     -   id: check-added-large-files
@@ -10,14 +10,6 @@
     -   id: check-byte-order-marker
     -   id: check-json
     -   id: check-yaml
--   repo: https://github.com/asottile/reorder_python_imports
-    sha: 017e2f64306853ec7f000db52b8280da27eb3b96
-    hooks:
-    -   id: reorder-python-imports
--   repo: https://github.com/pre-commit/mirrors-yapf
-    sha: 316b795b2f32cbe80047aff7e842b72368d5a2c1
-    hooks:
-    -   id: yapf
 -   repo: https://github.com/guykisel/prospector-mirror
     sha: 00fbd80101566b1b9c873c71f2ab7b95b8bd0a7d
     hooks:
