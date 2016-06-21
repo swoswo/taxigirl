@@ -1,4 +1,5 @@
 $RECYCLE.BIN/
+**/*.pre-cvfix
 *-unix
 *.7z
 *.avi
@@ -71,20 +72,17 @@ $RECYCLE.BIN/
 ._*
 .apdisk
 .AppleD*
-.AppleDB
-.AppleDesktop
-.AppleDouble
 .aws/
 .berkshelf/
+.bundle
 .bzr/
 .cache/
 .colander
 .cvs/
 .directory
-.DocumentRevisions-V100/
+.DocumentRevisions-V100
 .DS_Store
 .DS_Store?
-.envrc
 .failurerequests
 .fseventsd/
 .fuse_hidden*
@@ -141,7 +139,6 @@ lib/
 log/*
 Logs/
 lost+found/
-.bundle
 mail/
 Network Trash Folder/
 nohup.out
@@ -159,7 +156,6 @@ private/
 random_seed
 rdoc/
 REVISION
-roles.emq/
 roles.galaxy/
 run/
 secrets
