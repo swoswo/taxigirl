@@ -1,9 +1,16 @@
 ---
+apt: []
 berkshelf: []
 bundler: []
 chef: []
 deploy: []
+ec2: []
+ec2_rds: []
+ec2_ssh: []
 git: []
+graphite: []
 provision: []
 slack: []
+unatttended_upgrades: []
 user_data: []
+version: ''

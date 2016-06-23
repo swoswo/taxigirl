@@ -1,12 +1,19 @@
 ---
-# FIXME: assertion
-- name: Bundler
+- name: Assert on 'git.dest'
+  assert: { that: "(git.dest is defined and git.dest is not none and git.dest | trim != '')" }
+  tags: ['deploy', 'bundler', 'bundler_assert']
+
+# FIXME: chdir
+- name: Run Bundler
   bundler:
-    state: latest
-    chdir: "{{ deploy.dest }}"
-    clean: "{{ bundler.clean|default(True) }}"
-    gem_path: "{{ bundler.gem_path|default('vendor/cache') }}"
-    extra_args: "{{ bundler.extra_args|default('--jobs 2') }}"
-    binstub_directory: "{{ bundler.binstub_directory|default('bin') }}"
+    state: present
+    chdir: "{{ git.dest }}"
+    clean: "{{ bundler.clean|default('yes') }}"
+    gem_path: "{{ bundler.gem_path|default(omit) }}"
+    extra_args: "{{ bundler.extra_args|default(omit) }}"
+    binstub_directory: "{{ bundler.binstub_directory|default(omit) }}"
     exclude_groups: "{{ bundler.exclude_groups|default(['test','integration','development','openstack','tools']) }}"
+  become: "{{ bundler.with_sudo|default(omit) }}"
+  delay: 5
+  retries: 2
   tags: ['deploy', 'bundler', bundler_install']

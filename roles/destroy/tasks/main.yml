@@ -1,6 +1,0 @@
----
-- include: destroy_ec2.yml
-  when: hosts == 'ec2'
-
-- include: destroy_local.yml
-  when: hosts == 'local'

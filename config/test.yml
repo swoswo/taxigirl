@@ -1,18 +1,15 @@
-hosts: 'travis'
-provision:
-  tasks:
-  - packages
-  packages:
-    install:
-    - build-essential
+version: 0.1.0
+apt: {upgrade: 'no'}
 deploy:
-  dest: '/opt/test'
-  tasks:
-  - packages
-  - shell
-  packages:
+  dest: /opt/test
+  packages: null
   shell:
-    commands:
-    - echo 'what a ride!' | wall
-    with_sudo: False
+    commands: [echo 'what a ride!' | wall]
+    with_sudo: false
+  tasks: [packages, shell]
+provision:
+  packages:
+    install: [tmux]
+  tasks: [packages]
+roles: {ntp: true, os_hardening: false, switch_apt_mirror: true, unattended_upgrades: true}
 slack: []

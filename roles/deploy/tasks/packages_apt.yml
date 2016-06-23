@@ -1,12 +1,11 @@
 ---
-# TODO: assertion
 - name: Remove Packages
   apt:
     name: "{{ remove_name }}"
-    autoremove: True
-    purge: True
+    autoremove: yes
+    purge: yes
     state: absent
-  become: True
+  become: yes
   register: packages_remove
   with_items: "{{ deploy.packages.remove }}"
   loop_control:
@@ -17,13 +16,15 @@
 - name: Install Packages
   apt:
     name: "{{ install_name }}"
-    autoremove: True
+    autoremove: yes
     dpkg_options: 'force-confold,force-confdef,force-confmiss'
     state: latest
-  become: True
+  become: yes
   register: packages_install
   with_items: "{{ deploy.packages.install }}"
   loop_control:
     loop_var: install_name
   when: (deploy.packages.install is defined and deploy.packages.install is not none and deploy.packages.install | trim != '')
+  delay: 5
+  retries: 2
   tags: [deploy, packages, packages_install]

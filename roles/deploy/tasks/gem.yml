@@ -2,11 +2,15 @@
 # TODO: assertion
 - name: Update Gem system
   command: gem update --system --no-document
-  become: True
+  become: yes
+  tags: [deploy, ruby, gem, gem_update, gem_update_system]
 
 - name: Update Gems
-  command: gem update --env-shebang --no-document
-  become: True
+  command: gem update --env-shebang --no-document --conservative
+  delay: 3
+  retries: 2
+  become: "{{ deploy.gem.with_sudo|default(omit) }}"
+  tags: [deploy, ruby, gem, gem_update]
 
 - name: Install or Upgrade Gem
   gem:
@@ -17,4 +21,6 @@
     loop_var: gem_name
   when: deploy.gem.packages is defined
   become: "{{ deploy.gem.with_sudo|default(omit) }}"
-  tags: [provision, ruby, ruby_install, ruby_install, gem, gem_install]
+  delay: 3
+  retries: 2
+  tags: [deploy, ruby, gem, gem_install]

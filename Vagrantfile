@@ -59,7 +59,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # do not sync time with host as the guest should run ntp
     vbox.customize ['setextradata', :id, 'VVBoxInternal/Devices/VMMDev/0/Config/GetHostTimeDisabled', '1']
 
-    if ENV['VIRTUALBOX_GUI']
+    if ENV['VAGRANT_VIRTUALBOX_GUI']
       vbox.gui = true
       vbox.customize ['modifyvm', :id, '--clipboard', 'bidirectional']
     end
@@ -68,8 +68,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision 'Wait for unattended-upgrades', type: 'shell', path: './provisioning/wait_unattended_upgrades.sh', args: %w( dpkg apt unattended-upgrade )
   # config.vm.provision 'Bootstrap minimal Python', type: 'shell', path: './provisioning/bootstrap_python.sh', args: ['2.7', 'python python-pkg-resources']
 
-  config.vm.box = ENV['VM_BOX'] || 'geerlingguy/ubuntu1604' # https://github.com/geerlingguy/packer-ubuntu-1604
-  config.vm.hostname = ENV['VM_HOSTNAME'] || 'vagrant.taxigirl'
+  config.vm.box = ENV['VAGRANT_VM_BOX'] || 'geerlingguy/ubuntu1604' # https://github.com/geerlingguy/packer-ubuntu-1604
+  config.vm.hostname = ENV['VAGRANT_VM_HOSTNAME'] || 'vagrant.taxigirl'
   config.ssh.forward_agent = true
   config.vm.network :private_network, auto_network: true
   # config.vm.network :forwarded_port, guest: 3000, host: 8300, auto_correct: true
@@ -79,12 +79,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder './sync', '/sync', id: 'sync', type: 'rsync'
 
   if Vagrant.has_plugin?('vagrant-persistent-storage')
-    config.persistent_storage.enabled = ENV['PERSISTENT_STORAGE_ENABLED'] || false
+    config.persistent_storage.enabled = ENV['VAGRANT_PERSISTENT_STORAGE_ENABLED'] || false
     # config.persistent_storage.filesystem = 'xfs'
     config.persistent_storage.location = './persistent/vbox_persistent.vdi'
     config.persistent_storage.mount = false
     config.persistent_storage.format = false
-    config.persistent_storage.diskdevice = ENV['PERSISTENT_STORAGE_DISKDEVICE'] || '/dev/sdb'
+    config.persistent_storage.diskdevice = ENV['VAGRANT_PERSISTENT_STORAGE_DISKDEVICE'] || '/dev/sdb'
     config.persistent_storage.size = 2000
     config.persistent_storage.use_lvm = true
     config.persistent_storage.volgroupname = 'taxigirl'

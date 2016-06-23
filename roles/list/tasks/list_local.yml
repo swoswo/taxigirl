@@ -1,6 +1,0 @@
----
-# show all the hosts in the inventory
-- name: Inventory Hostnames
-  debug: msg="{{ item }}"
-  with_inventory_hostnames: all
-  tags: [list, local, local_inventory]

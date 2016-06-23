@@ -1,24 +1,26 @@
 ---
-- name: Install Packages
-  package:
-    name: "{{ install_name }}"
-    state: present
-  become: True
-  register: packages_install
-  with_items: "{{ deploy.packages.install }}"
-  loop_control:
-    loop_var: install_name
-  when: deploy.packages.install is defined
-  tags: [deploy, packages, packages_install]
-
 - name: Remove Packages
   package:
     name: "{{ remove_name }}"
     state: absent
-  become: True
+  become: yes
   register: packages_remove
   with_items: "{{ deploy.packages.remove }}"
   loop_control:
     loop_var: remove_name
-  when: deploy.packages.remove is defined
+  when: (deploy.packages.remove is defined and deploy.packages.remove is not none and deploy.packages.remove | trim != '')
   tags: [deploy, packages, packages_remove]
+
+- name: Install Packages
+  package:
+    name: "{{ install_name }}"
+    state: present
+  become: yes
+  register: packages_install
+  with_items: "{{ deploy.packages.install }}"
+  loop_control:
+    loop_var: install_name
+  when: (deploy.packages.install is defined and deploy.packages.install is not none and deploy.packages.install | trim != '')
+  retries: 2
+  delay: 5
+  tags: [deploy, packages, packages_install]

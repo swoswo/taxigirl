@@ -4,7 +4,6 @@ flake8
 flake8-deprecated
 flake8-format-ansi
 flake8-future
-flake8-import-order
 flake8-print
 flake8-string-format
 flake8-todo
@@ -16,15 +15,13 @@ PyYAML
 boto3
 httplib2
 Jinja2
+paramiko
 ansible
 ansible-ec2-inventory
 
 ansible-lint
-ara
-testinfra
 
 saws
 fabric
 python-vagrant
-diagram
 click

@@ -34,8 +34,8 @@ def parse_cli_args():
         description='Produce an Ansible Inventory file based on EC2')
     parser.add_argument('--config',
                         metavar='CONFIGFILE',
-                        default=PWD + '/ec2.ini',
-                        help='Config file (default: /etc/ansible/ec2.ini)')
+                        default=PWD + '/ec2_py.ini',
+                        help='Config file (default: $PWD/ec2_py.ini)')
     parser.add_argument('--list',
                         action='store_true',
                         default=True,

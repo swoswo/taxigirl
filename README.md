@@ -199,24 +199,9 @@ $ whoami
 gretel
 $ sudo visudo -f /private/etc/sudoers.d/vagrant
 Password:
-# https://www.vagrantup.com/docs/synced-folders/nfs.html
-Cmnd_Alias VAGRANT_NFSD = /sbin/nfsd restart
-Cmnd_Alias VAGRANT_EXPORTS_ADD = /usr/bin/tee -a /etc/exports
-Cmnd_Alias VAGRANT_EXPORTS_REMOVE = /usr/bin/sed -E -e /*/ d -ibak /etc/exports
+Cmnd_Alias VAGRANT_HOSTMANAGER_UPDATE = /bin/cp */.vagrant.d/tmp/hosts.local /etc/hosts
 
-# https://github.com/cogitatio/vagrant-hostsupdater
-# TODO: still in use?
-Cmnd_Alias VAGRANT_HOSTS_ADD = /bin/sh -c echo "*" >> /etc/hosts
-Cmnd_Alias VAGRANT_HOSTS_REMOVE = /usr/bin/sed -i -e /*/ d /etc/hosts
-
-# https://github.com/vagrant-landrush/landrush
-Cmnd_Alias VAGRANT_LANDRUSH_HOST_MKDIR = /bin/mkdir /etc/resolver/*
-Cmnd_Alias VAGRANT_LANDRUSH_HOST_CP = /bin/cp /*/vagrant_landrush_host_config /etc/resolver/*
-Cmnd_Alias VAGRANT_LANDRUSH_HOST_CHMOD = /bin/chmod 644 /etc/resolver/*
-
-%admin ALL=(root) NOPASSWD: VAGRANT_EXPORTS_ADD, VAGRANT_NFSD, VAGRANT_EXPORTS_REMOVE, VAGRANT_HOSTS_ADD, VAGRANT_HOSTS_REMOVE, VAGRANT_LANDRUSH_HOST_MKDIR, VAGRANT_LANDRUSH_HOST_CP, VAGRANT_LANDRUSH_HOST_CHMOD
-<save and quit editor>
-"vagrant.tmp" 11L, 492C written
+%admin ALL=(ALL) NOPASSWD: VAGRANT_HOSTMANAGER_UPDATE
 ```
 
 > DO NOT edit the file direclty, always use `visudo`. Otherwise you might find yourself locked out of any superuser privilges. (Hint: Use the Finder to eset permissions of the `sudoers.d/vagrant` file to read/write for everyone.)
@@ -254,7 +239,7 @@ $ make vagrant-up vagrant-provision
 ```
 
 ```bash
-$ env ANSIBLE_EXTRA_ARGS=@config/test.yml make vagrant-up vagrant-provision
+$ env ANSIBLE_EXTRA_VARS=@config/test.yml make vagrant-up vagrant-provision
 ```
 
 ### Update Vagrant Box

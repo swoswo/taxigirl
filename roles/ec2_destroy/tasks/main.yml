@@ -1,0 +1,47 @@
+---
+- name: Destruction on EC2
+  hosts: make vec2
+  gather_facts: False
+  remote_user: "{{ ssh.user }}"
+  any_errors_fatal: True
+
+  vars_prompt:
+    - name: "id"
+      prompt: "Instance (ID) to terminate?"
+      confirm: True
+
+  tasks:
+    - name: Assert on 'id'
+      assert: { that: "(id is defined and id is not none and id | trim != '')" }
+      tags: [destroy, ec2, ec2_destroy, ec2_id_assert]
+
+    - pause: prompt="Make sure you are OK to Terminate Instance!"
+      when: (ec2_destroy.skip_confirmation is not defined or ec2_destroy.skip_confirmation is none or ec2_destroy.skip_confirmation | trim == '')
+
+    - name: Terminate Instance
+      local_action:
+        module: ec2
+        state: "{{ ec2_destroy.terminate_state|default('stopped') }}"
+        instance_ids: "{{ id }}"
+        region: "{{ ec2.region|default('eu-west-1') }}"
+        wait: true
+      register: ec2_destroy
+      tags: [destroy, ec2, ec2_destroy, ec2_destroy_terminate]
+
+    - name: Send notification to Slack
+      slack:
+        token: "{{ slack.token }}"
+        msg: "Destroyed instance(s)"
+        attachments:
+          - title: "Info"
+            text: "{{ ec2.instance_tags.Name }}"
+            color: good
+            fields:
+              - title: "Instance ID"
+                value: "{{ id }}"
+                short: "true"
+        username: "{{ slack.username }}"
+        channel: "{{ slack.channel }}"
+        icon_emoji: "{{ slack.icon_emoji }}"
+      when: slack.token is defined
+      tags: [destroy, ec2, ec2_destroy, slack, ec2_destroy_slack]

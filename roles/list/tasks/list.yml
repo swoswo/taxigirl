@@ -1,0 +1,7 @@
+---
+- name: Inventory Hostnames of "{{ hosts }}"
+  debug: msg="{{ inv_host }}"
+  with_inventory_hostnames: all
+  loop_control:
+    loop_var: inv_host
+  tags: [list, local, local_inventory]
