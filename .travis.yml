@@ -1,40 +1,40 @@
 cache:
-  bundler: true
-  pip: true
-  ccache: true
-  directories:
-  - vendor/cache
+    bundler: true
+    pip: true
+    ccache: true
+    directories:
+    - vendor/cache
 git:
-  depth: 1
+    depth: 1
 env:
-  global:
-  - ANSIBLE_EXTRA_VARS=@./config/test.yml
-  - ANSIBLE_INVENTORY_PATH=./inventory/travis.ini
-  - ANSIBLE_PLAYBOOK=./playbooks/main.yml
+    global:
+    - ANSIBLE_EXTRA_VARS=@./config/test.yml
+    - ANSIBLE_INVENTORY_PATH=./inventory/travis.ini
+    - ANSIBLE_PLAYBOOK=./playbooks/main.yml
 matrix:
-  include:
-  - os: linux
-    env: TOXENV=py27
-    language: python
-    python: 2.7.11
-  - os: linux
-    dist: trusty
-    env: TOXENV=py27
-    language: python
-    python: 2.7.11
-    sudo: required
-  - os: linux
-    dist: trusty
-    env: PYTHON_VERSION=3.5.1 PIP_BIN_NAME=pip3 TOXENV=py35
-    language: python
-    python: 3.5.1
-    sudo: required
-  - os: osx
-    env: TOXENV=py27 CC=clang
-    language: generic
-    sudo: required
+    include:
+    -   os: linux
+        env: TOXENV=py27
+        language: python
+        python: 2.7.11
+    -   os: linux
+        dist: trusty
+        env: TOXENV=py27
+        language: python
+        python: 2.7.11
+        sudo: required
+    -   os: linux
+        dist: trusty
+        env: PYTHON_VERSION=3.5.1 PIP_BIN_NAME=pip3 TOXENV=py35
+        language: python
+        python: 3.5.1
+        sudo: required
+    -   os: osx
+        env: TOXENV=py27 CC=clang
+        language: generic
+        sudo: required
 virtualenv:
-  system_site_packages: false
+    system_site_packages: false
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python; fi
@@ -47,8 +47,8 @@ script:
 - if [[ "$TOXENV" == "py35" ]]; then make ansible-check; fi
 - if [[ "$TOXENV" != "py35" ]]; then make ansible-galaxy ansible-run; fi
 notifications:
-  on_success: always
-  on_failure: change
-  on_start: change
-  slack:
-    secure: Br7cqlKk9VOL3Tu2ZWFfJeH4oetTQlaST5Qk7JRxfoIkKL7uGP+YNbtOHDk9UC0n4++ATG2bFNwAe2CKZ22bVRQsRJTzubHQKbk1bU4Aj2ty9bVsWJ+IYQ7T3B86M8PPS6UNfZUZWz1EHmSCMA8pbcY7L6drkL2DbXDmFUCtU+TYKRnZe02A7CjRlmSo4G/B0Gt4OKqwAGGr6qwBswvLt78lYEKNbArBBJdWWl32j2dHRfoy9d9/IS1LnSEiqBZU+JIPIqE2QJWM7qaOhO+BvG9vqFY2oZobpU99O212pYH+Vw2UvCXgwODDyAxXiI2pvntcQ94tBOf+YoOTSQ4+W5WjxssVzLvesx6O8mrxT8YZp+hvQjRA1uSf8y5bILmWZ0AZVXZ5PEgIbyr3dlgq3fVm5ju2EXH0eDMiAvvECQVQnjatjgM+zjFJY/LPvHbpskk2hSlTTK5JgQy8XWfjIP+MALvLpcg/Mnm7z5Ltf03n+orMZ68FIli3bc+hZpRg+0pqzfFA0TqyqcNCnvrU9rxKW0OkhsxAPMQsrvh/nWxnwN5sXFcSf38V1xKgyhLAQf0wPsF4y6IK2oVt30vKTR/eMzm3j8HYhwwsqkrNZmIBS8Dgj2v/w1eFQTk/TCBxeUQ/5waPYbfjtAZefTKqh/gXfv4jKZOPdkASlVA1JlM=
+    on_success: always
+    on_failure: change
+    on_start: change
+    slack:
+        secure: Br7cqlKk9VOL3Tu2ZWFfJeH4oetTQlaST5Qk7JRxfoIkKL7uGP+YNbtOHDk9UC0n4++ATG2bFNwAe2CKZ22bVRQsRJTzubHQKbk1bU4Aj2ty9bVsWJ+IYQ7T3B86M8PPS6UNfZUZWz1EHmSCMA8pbcY7L6drkL2DbXDmFUCtU+TYKRnZe02A7CjRlmSo4G/B0Gt4OKqwAGGr6qwBswvLt78lYEKNbArBBJdWWl32j2dHRfoy9d9/IS1LnSEiqBZU+JIPIqE2QJWM7qaOhO+BvG9vqFY2oZobpU99O212pYH+Vw2UvCXgwODDyAxXiI2pvntcQ94tBOf+YoOTSQ4+W5WjxssVzLvesx6O8mrxT8YZp+hvQjRA1uSf8y5bILmWZ0AZVXZ5PEgIbyr3dlgq3fVm5ju2EXH0eDMiAvvECQVQnjatjgM+zjFJY/LPvHbpskk2hSlTTK5JgQy8XWfjIP+MALvLpcg/Mnm7z5Ltf03n+orMZ68FIli3bc+hZpRg+0pqzfFA0TqyqcNCnvrU9rxKW0OkhsxAPMQsrvh/nWxnwN5sXFcSf38V1xKgyhLAQf0wPsF4y6IK2oVt30vKTR/eMzm3j8HYhwwsqkrNZmIBS8Dgj2v/w1eFQTk/TCBxeUQ/5waPYbfjtAZefTKqh/gXfv4jKZOPdkASlVA1JlM=
