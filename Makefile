@@ -23,6 +23,7 @@ BREW_UNINSTALL_FILE 	?= ./sbin/brew-uninstall
 BUNDLER_CACHE_PATH 	?= ./vendor/cache
 GALAXY_REQ_FILE 	?= requirements.yml
 GEM_BUNDLE_FILE		?= Gemfile
+GIT_BRANCH		?= master
 PIP_BIN_NAME 		?= pip
 PIP_FREEZE_FILE 	?= requirements_freeze.txt
 PIP_PRE_FREEZE_FILE 	?= requirements_pre_freeze.txt
@@ -392,7 +393,7 @@ git-check:
 git-update:
 	$(info $@: updating from revision $(git_rev))
 	@# returns non-zero if host is unreachable
-	@-git pull
+	@-git pull origin $(GIT_BRANCH)
 	@-git gc --auto
 
 ###
