@@ -150,9 +150,9 @@ Boto comes with a bunch of [commandline tools](http://boto.cloudhackers.com/en/l
 $ list_instances -r eu-west-1 -H ID,Zone,T:Name,T:xpl:service,State | less
 ID             Zone           T:Name                        T:xpl:service                 State
 ---------------------------------------------------------------------------------------------------------
-i-6c9ffed4     eu-west-1a     Cassandra34                   Cassandra                     running
-i-2e468b82     eu-west-1b     Cassandra17                   Cassandra                     running
-i-5808a7d4     eu-west-1a     elasticsearch_new_az_0_0      Kibana                        running
+i-abcdefgh     eu-west-1a     HostAlpha                   Useful                     running
+i-ijklmnop     eu-west-1b     BetaHost                   Useless                     running
+i-qrstuvwx     eu-west-1c     SomeAncientBoxen      Webserver                        running
 ...
 ```
 Looks like a tie! :bowtie:
