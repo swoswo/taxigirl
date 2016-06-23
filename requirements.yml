@@ -1,7 +1,12 @@
----
-- src: https://github.com/dev-sec/ansible-os-hardening
-  path: roles.galaxy/
-  name: os-hardening
-- src: https://github.com/chusiang/switch-apt-mirror.ansible.role
-  path: roles.galaxy/
-  name: switch-apt-mirror
+-   name: switch-apt-mirror
+    path: roles.galaxy/
+    src: https://github.com/chusiang/switch-apt-mirror.ansible.role
+-   name: ntp
+    path: roles.galaxy/
+    src: https://github.com/ANXS/ntp
+-   name: os-hardening
+    path: roles.galaxy/
+    src: https://github.com/dev-sec/ansible-os-hardening
+-   name: unattended-upgrades
+    path: roles.galaxy/
+    src: https://github.com/jnv/ansible-role-unattended-upgrades
