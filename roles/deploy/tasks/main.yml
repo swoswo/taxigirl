@@ -2,11 +2,11 @@
 - name: Create base directory
   file:
     path: "{{ deploy.dest }}"
-    recurse: True
+    recurse: yes
     owner: "{{ ansible_user }}"
     mode: 0755
     state: directory
-  become: True
+  become: yes
   tags: [deploy, deploy_target]
 
 - name: Include Task
@@ -15,6 +15,7 @@
   loop_control:
     loop_var: inc_d_task
   when: (deploy.tasks is defined and deploy.tasks is not none and deploy.tasks | trim != '')
+  tags: [deploy, deploy_include_task]
 
 - name: Send notification to Slack
   slack:

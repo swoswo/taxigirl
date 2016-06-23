@@ -1,0 +1,25 @@
+---
+- name: Assert on 'ec2_rds'
+  assert: { that: "(ec2_rds is defined and ec2_rds is not none and ec2_rds | trim != '')" }
+  tags: [provision, ec2, ec2_rds, ec2_rds_assert]
+
+- name: Create RDS Instance
+  rds:
+    instance_type: "{{ ec2_rds.instance_type }}"
+    db_engine: "{{ ec2_rds.db_engine }}"
+    region: "{{ ec2_rds.region }}"
+    wait: "{{ ec2_rds.wait | default(omit) }}"
+    wait_timeout: "{{ ec2_rds.wait_timeout | default(omit) }}"
+    tags: "{{ ec2_rds.instance_tags | default(omit) }}"
+    publicly_accessible: "{{ ec2_rds.publicly_accessible | default(omit) }}"
+    zone: "{{ ec2_rds.zone | default(omit) }}"
+    command: "{{ ec2_rds.command | default('create') }}"
+    instance_name: "{{ ec2_rds.instance_name | default(omit) }}"
+    new_instance_name: "{{ ec2_rds.new_instance_name | default(omit) }}"
+    ec2_rds.access_key: "{{ ec2_rds.access_key | default(omit) }}"
+    ec2_rds.secret_key: "{{ ec2_rds.secret_key | default(omit) }}"
+    source_instance: "{{ ec2_rds.source_instance | default(omit) }}"
+    port: "{{ ec2_rds.port | default(omit) }}"
+    character_set_name: "{{ ec2_rds.character_set_name | default(omit) }}"
+  register: ec2_rds.server
+  tags: [provision, ec2, ec2_rds, ec2_rds_create]

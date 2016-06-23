@@ -1,7 +1,14 @@
 ---
-# TODO: assertion
-- name: Berkshelf
-  shell: "bundle exec berks vendor {{ berkshelf.cookbook_path }}"
+# FIXME: chdir
+
+- name: Assert on 'git.dest'
+  assert: { that: "(git.dest is defined and git.dest is not none and git.dest | trim != '')" }
+  tags: ['deploy', 'chef', 'chef_berkshelf', 'chef_berkshelf_assert']
+
+- name: Run Berkshelf
+  shell: "bin/berks vendor {{ berkshelf.cookbook_path }}"
   args:
-    chdir: "{{ deploy.dest }}"
-  tags: ['deploy', 'chef', 'chef_berkshelf']
+    chdir: "{{ git.dest }}"
+  delay: 5
+  retries: 2
+  tags: ['deploy', 'chef', 'chef_berkshelf', 'chef_berkshelf_run']

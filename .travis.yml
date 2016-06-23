@@ -8,7 +8,7 @@ git:
   depth: 1
 env:
   global:
-  - ANSIBLE_EXTRA_ARGS=@./config/test.yml
+  - ANSIBLE_EXTRA_VARS=@./config/test.yml
   - ANSIBLE_INVENTORY_PATH=./inventory/travis.ini
   - ANSIBLE_PLAYBOOK=./playbooks/main.yml
 matrix:
@@ -44,6 +44,7 @@ install:
 script:
 - pwd; ls -la
 - make install
+- if [[ "$TOXENV" == "py35" ]]; then make ansible-check; fi
 - if [[ "$TOXENV" != "py35" ]]; then make ansible-run; fi
 notifications:
   on_success: always

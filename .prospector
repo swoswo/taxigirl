@@ -1,0 +1,30 @@
+output-format: grouped
+
+strictness: medium
+doc-warnings: false
+test-warnings: false
+
+autodetect: false
+
+ignore-paths:
+  - .bundle/
+  - .vagrant/
+  - bin/
+  - include/
+  - lib/
+  - sync/
+  - vendor/
+
+pylint:
+  run: false
+
+pep8:
+  disable:
+    - E126
+    - E402
+    - F403
+  options:
+    max-line-length: 160
+
+pep257:
+  run: false

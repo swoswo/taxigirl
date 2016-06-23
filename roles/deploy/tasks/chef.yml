@@ -1,21 +1,20 @@
 ---
-# TODO: assertion+
-- assert: { that: "(deploy.dest is defined and deploy.dest is not none and deploy.dest | trim != '')" }
+- name: Assert on 'deploy.dest'
+  assert: { that: "(deploy.dest is defined and deploy.dest is not none and deploy.dest | trim != '')" }
+  tags: ['deploy', 'chef', 'chef_assert_dest']
 
-- name: Create temporary directory
-  file:
-    owner: "{{ ansible_user }}"
-    path: "{{ chef.tmp_dir }}"
-    state: directory
-  become: True
-  tags: ['deploy', 'chef', 'chef_config']
+- name: Assert on 'chef.tmp_dir'
+  assert: { that: "(chef.tmp_dir is defined and chef.tmp_dir is not none and chef.tmp_dir | trim != '')" }
+  tags: ['deploy', 'chef', 'chef_assert_tmp_dir']
 
 - name: Fetch installation script for Chef
   get_url:
     url: https://www.opscode.com/chef/install.sh
     dest: "{{ chef.tmp_dir }}/install.sh"
   register: chef_fetch
-  tags: ['deploy', 'chef', 'chef_fetch', chef_install']
+  delay: 3
+  retries: 2
+  tags: ['deploy', 'chef', 'chef_fetch']
 
 - name: Create directories for Chef
   file:
@@ -23,67 +22,79 @@
     state: directory
     owner: "{{ ansible_user }}"
   with_items:
-  - "{{ chef.config_dir }}"
-  - "{{ chef.file_cache_path }}"
+    - "{{ chef.tmp_dir }}"
+    - "{{ chef.config_dir }}"
+    - "{{ chef.file_cache_path }}"
   loop_control:
     loop_var: dir
-  become: True
-  tags: ['deploy', 'chef', 'chef_config']
+  become: yes
+  tags: ['deploy', 'chef', 'chef_directories']
 
 - name: Install Chef
   command: "/usr/bin/env bash {{ chef.tmp_dir }}/install.sh -d {{ chef.tmp_dir }}"
   register: chef_install
-  become: True
-  retries: 1
-  delay: 10
+  become: yes
+  delay: 5
+  retries: 2
   changed_when: "chef_install.stdout.find('checksum compare succeeded, using existing file') != -1"
   when: hostvars[ansible_hostname]['have_chef'] is undefined
   tags: ['deploy', 'chef', 'chef_install']
 
 # TODO: store and compare timestamp
+
 - set_fact:
     have_chef: True
   when: chef_install|changed
   tags: ['deploy', 'chef', 'chef_install', 'set_fact']
 
-- name: Create Chef configuration file
+- name: Create configuration file for chef-client (zero)
   template:
-    src: "chef/solo.rb.j2"
+    src: 'chef/client.rb.j2'
+    dest: "{{ chef.config_dir|default('/etc/chef') }}/client.rb"
+    mode: 0644
+  become: yes
+  tags: ['deploy', 'chef', 'chef_config', 'chef_zero']
+
+- name: Create configuration file for chef-solo
+  template:
+    src: 'chef/solo.rb.j2'
     dest: "{{ chef.config_dir|default('/etc/chef') }}/solo.rb"
     mode: 0644
-  become: True
-  tags: ['deploy', 'chef', 'chef_config']
+  become: yes
+  tags: ['deploy', 'chef', 'chef_config', 'chef_solo']
 
 - name: Adjust permissions
   file:
     path: "{{ deploy.dest }}"
-    recurse: True
+    recurse: yes
     owner: "{{ ansible_user }}"
     mode: 0755
     state: directory
-  become: True
+  become: yes
   tags: ['deploy', 'chef', 'chef_permissions']
 
-- name: Gather Chef version
+- name: Gather version of Chef
   command: chef-client -v
   register: chef_version
   tags: ['deploy', 'chef', 'chef_version']
 
-- set_fact:
+- name: Factize version of Chef
+  set_fact:
     chef_version: chef_version.stdout
     when: chef_version|success
-  tags: ['deploy', 'chef', 'chef_version', 'set_fact']
+  tags: ['deploy', 'chef', 'chef_version', 'chef_version_fact']
 
 # TODO: compare versions
 
-- name: Gather OHAI Facts
+- name: Run OHAI
   setup:
     filter: ohai
-  no_log: True
+  no_log: yes
   register: chef_ohai
   tags: ['deploy', 'chef', 'chef_ohai']
 
-- set_fact:
+- name: Factize output of OHAI
+  set_fact:
     chef_ohai: chef_ohai.stdout
     when: chef_ohai|success
-  tags: ['deploy', 'chef', 'chef_ohai', 'set_fact']
+  tags: ['deploy', 'chef', 'chef_ohai', 'chef_ohai_fact']

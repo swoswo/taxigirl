@@ -1,7 +1,7 @@
 ---
-- name: Playbook List
-  hosts: "{{ hosts }}"
-  gather_facts: True
+- name: 'Role: List'
+  hosts: "{{ hosts|default('all') }}"
+  gather_facts: yes
   strategy: free
   roles:
-    - { role: list }
+      - { role: list }

@@ -1,7 +1,6 @@
-# http://flake8.readthedocs.io/en/latest/config.html
 [flake8]
 ignore = E402,F403
 max-line-length = 160
-exclude = tests/*,.git,__pycache
+exclude = tests/*,lib/*,tmp/*
 max-complexity = 15
 format = \e[31mERROR:\e[0m %(path)s:%(row)d:%(col)d: \e[31m%(code)s\e[0m %(text)s

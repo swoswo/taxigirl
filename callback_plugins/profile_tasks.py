@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 """A plugin for timing tasks"""
+
 import datetime
 import os
 import time
@@ -9,6 +11,7 @@ from ansible.plugins.callback import CallbackBase
 
 
 class CallbackModule(CallbackBase):
+
     def __init__(self):
         super(CallbackModule, self).__init__()
         self.stats = {}
@@ -39,21 +42,16 @@ class CallbackModule(CallbackBase):
             self.stats[self.current] = time.time() - self.stats[self.current]
 
         # Sort the tasks by their running time
-        results = sorted(self.stats.items(),
-                         key=lambda value: value[1],
-                         reverse=True)
+        results = sorted(self.stats.items(), key=lambda value: value[1], reverse=True)
 
         # Just keep the top 10
         results = results[:10]
 
         # Print the timings
         for name, elapsed in results:
-            print '{0:-<70}{1:->9}'.format('{0} '.format(name),
-                                           ' {0:.02f}s'.format(elapsed))
+            print '{0:-<70}{1:->9}'.format('{0} '.format(name), ' {0:.02f}s'.format(elapsed))
 
         total_seconds = sum([x[1] for x in self.stats.items()])
         print """
 Playbook finished: {0}, {1} total tasks, {2} elapsed.
-""".format(time.asctime(),
-           len(self.stats.items()),
-           datetime.timedelta(seconds=int(total_seconds)))
+""".format(time.asctime(), len(self.stats.items()), datetime.timedelta(seconds=int(total_seconds)))

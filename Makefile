@@ -15,9 +15,6 @@
 ###
 
 MKDIR_LIST		?= bin files log roles.galaxy persistent sync tmp vendor
-ANSIBLE_EXTRA_ARGS	?= @config/test.yml
-ANSIBLE_INVENTORY_PATH	?= inventory/vagrant.ini
-ANSIBLE_OPTIONS		?= --skip-tags='apt_upgrade' -C
 ANSIBLE_PLAYBOOK_FILE	?= playbooks/main.yml
 BIN_PATH 		?= ./bin
 BREW_BUNDLE_FILE 	?= Brewfile
@@ -80,8 +77,7 @@ update_tasks +=		git-update \
 			$(gem_tasks) \
 			$(vagrant_tasks)
 
-bootstrap_tasks +=	git-check \
-			clean \
+bootstrap_tasks +=	clean \
 			update \
 			python-install \
 			virtualenv-provide
@@ -97,14 +93,13 @@ lint_tasks += 		git-check \
 			git-secrets-scan \
 			precommit-run
 
+run_tasks +=		ansible-lint \
+			vagrant-provision
+
 provision_tasks +=	vagrant-up \
 			ansible-galaxy \
 			ansible-lint \
 			vagrant-provision
-
-run_tasks +=		provision \
-			ansible-lint \
-			ansible-run
 
 distclean_tasks +=	vagrant-halt \
 			gem-remove gem-clean \
@@ -118,15 +113,21 @@ test_tasks +=		git-check \
 			vagrant-destroy \
 			distclean
 
+all_tasks += 		update \
+			install \
+			provision \
+			run
+
 .PHONY: install reset update check install distclean test
 update:			$(update_tasks)
 bootstrap:		$(bootstrap_tasks)
 install:		$(install_tasks)
 lint:			$(lint_tasks)
-provision:		$(provision_tasks)
 run:			$(run_tasks)
+provision:		$(provision_tasks)
 distclean:		$(distclean_tasks)
 test:			$(test_tasks)
+all:			$(all_tasks)
 
 list help:
 	$(info $@: available targets)
@@ -178,9 +179,9 @@ gem-update:
 	$(info $@: installing and updating gems)
 	@# returns non-zero if up-to-date
 	@-gem update --quiet --no-document --env-shebang --wrappers --system
-	@yes | gem update  --quiet --no-document --env-shebang --wrappers
+	@yes | gem update --quiet --no-document --env-shebang --wrappers
 	@gem check -q --doctor
-	@gem install bundler
+	@gem install --quiet bundler
 
 gem-bundle: $(GEM_BUNDLE_FILE)
 	$(info $@: resolving $(GEM_BUNDLE_FILE) requirements)
@@ -265,7 +266,7 @@ pip-update pip-install: $(PIP_REQ_FILE)
 	$(info $@: resolving $(PIP_REQ_FILE) requirements)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_PRE_FREEZE_FILE) >/dev/null
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U setuptools pip
-	@$(BIN_PATH)/$(PIP_BIN_NAME) install -q -U -r $(PIP_REQ_FILE)
+	@$(BIN_PATH)/$(PIP_BIN_NAME) install -U -r $(PIP_REQ_FILE)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_FREEZE_FILE) >/dev/null
 	@# returns non-zero on difference
 	@-diff -N $(PIP_PRE_FREEZE_FILE) $(PIP_FREEZE_FILE) > log/pip_diff.txt
@@ -290,10 +291,11 @@ vagrant-update: Vagrantfile
 vagrant-up: Vagrantfile
 	$(info $@: bringing the box up)
 	@vagrant up --no-provision
+	@-vagrant vbinfo
 
 vagrant-provision: Vagrantfile
-	$(info $@: provisioning the box)
-	@vagrant provision
+	$(info $@: running provisioner inside the box)
+	@source bin/activate; vagrant provision
 
 vagrant-halt: Vagrantfile
 	$(info $@: halting the box)
@@ -311,11 +313,12 @@ ansible-galaxy: $(GALAXY_REQ_FILE)
 	$(info $@: updating role dependencies)
 	$(BIN_PATH)/ansible-galaxy install -f -r $(GALAXY_REQ_FILE)
 
-.PHONY: ansible-lint
-ansible-lint:
-	$(info $@: linting ansible components)
+.PHONY: ansible-check
+ansible-check:
+	$(info $@: checking all components)
 	@# TODO: abstraction
-	@pre-commit run --no-stash --allow-unstaged-config --files \
+	@pre-commit run --no-stash --allow-unstaged-config \
+					--files \
 		.envrc \
 		ansible.cfg Makefile README.md Vagrantfile requirements.txt \
 		action_plugins/* callback_plugins/* \
@@ -325,12 +328,16 @@ ansible-lint:
 		playbooks/** roles/** tests/** \
 		pre-commit-hooks/* \
 		provisioning/* sbin/*
-	@$(BIN_PATH)/ansible-lint $(ANSIBLE_PLAYBOOK_FILE)
+
+.PHONY: ansible-lint
+ansible-lint:
+	$(info $@: linting playbook $(ANSIBLE_PLAYBOOK_FILE))
+	$(BIN_PATH)/ansible-lint --exclude=roles.galaxy --exclude=tests $(ANSIBLE_PLAYBOOK_FILE)
 
 .PHONY: ansible-run
 ansible-run:
-	$(info $@: running test of ansible)
-	$(BIN_PATH)/ansible-playbook -i $(ANSIBLE_INVENTORY_PATH) -e $(ANSIBLE_EXTRA_ARGS) $(ANSIBLE_PLAYBOOK_FILE) $(ANSIBLE_OPTIONS)
+	$(info $@: running playbook $(ANSIBLE_PLAYBOOK_FILE))
+	$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --inventory-file="inventory/localhost.ini" --extra-vars="@./config/test.yml" --timeout=60 -vvv
 
 ###
 ### # pre-commit
@@ -385,7 +392,7 @@ git-check:
 git-update:
 	$(info $@: updating $(git_rev))
 	@# returns non-zero if host is unreachable
-	@git pull
+	@-git pull
 	@-git gc --auto
 
 ###

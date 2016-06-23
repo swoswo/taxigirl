@@ -1,10 +1,11 @@
 {{ ansible_managed | comment }}
 
-# https://docs.chef.io/config_rb_solo.html
+# https://docs.chef.io/config_rb_client.html
 
 # The name of the node.
 node_name '{{ ansible_hostname }}'
 
+cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
 # The location in which cookbooks (and other transient data) files are stored when they are synchronized. This value can also be used in recipes to download files with the remote_file resource.
 file_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
 
@@ -22,5 +23,15 @@ log_level '{{ chef.log_level|default('info') }}'.to_sym
 # TODO: abstraction
 cookbook_path [ '/sync/cookbooks', "{{ berkshelf.cookbook_path }}" ]
 
-# Run the chef-client in chef-solo mode. This setting determines if the chef-client is to attempt to communicate with the Chef server.
-solo true
+# The location of the file that contains the client key.
+client_key '/opt/chef/embedded/ssl/cert.pem'
+
+# Enable chef-zero. This setting requires local_mode to be set to true.
+chef_zero.enabled true
+
+# Run the chef-client in local mode. This allows all commands that work against the Chef server to also work against the local chef-repo.
+local_mode true
+
+# Enable audit-mode. Set to audit-only to skip the converge phase of the chef-client run and only perform audits. Possible values: audit-only, disabled, and enabled.
+# TODO: abstraction
+audit_mode :enabled
