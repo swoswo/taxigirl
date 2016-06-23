@@ -383,14 +383,14 @@ git-secrets-scan:
 
 .PHONY: git-check
 git-check:
-	$(info $@: checking state of $(git_rev))
+	$(info $@: checking state of revision $(git_rev))
 	@-git fetch
-	# returns non-zero if our local copy is outdated
+	@# returns non-zero if our local copy is outdated
 	@git log HEAD.. --oneline
 
 .PHONY: git-update
 git-update:
-	$(info $@: updating $(git_rev))
+	$(info $@: updating from revision $(git_rev))
 	@# returns non-zero if host is unreachable
 	@-git pull
 	@-git gc --auto
