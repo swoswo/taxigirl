@@ -7,7 +7,7 @@
     state: absent
   become: yes
   register: packages_remove
-  with_items: "{{ deploy.packages.remove }}"
+  with_items: "{{ deploy.packages.remove|default({}) }}"
   loop_control:
     loop_var: remove_name
   when: (deploy.packages.remove is defined and deploy.packages.remove is not none and deploy.packages.remove | trim != '')
@@ -21,7 +21,7 @@
     state: latest
   become: yes
   register: packages_install
-  with_items: "{{ deploy.packages.install }}"
+  with_items: "{{ deploy.packages.install|default({}) }}"
   loop_control:
     loop_var: install_name
   when: (deploy.packages.install is defined and deploy.packages.install is not none and deploy.packages.install | trim != '')
