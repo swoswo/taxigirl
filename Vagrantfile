@@ -47,44 +47,56 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                     '--ioapic', 'on',
                     '--nictype1', 'virtio',
                     '--nictype2', 'virtio',
-                    '--rtcuseutc', 'on',
-                    '--natdnshostresolver1', 'on',
-                    '--natdnspassdomain1', 'off',
-                    '--natdnsproxy1', 'on']
+                    '--rtcuseutc', 'on']
 
     # allow symlinks in synced foldersnam
-    # vbox.customize ['setextradata', :id, 'VBoxInternal2/SharedFoldersEnableSymlinksCreate//vagrant', '1']
-    vbox.customize ['setextradata', :id, 'VBoxInternal2/SharedFoldersEnableSymlinksCreate//sync', '1']
+    vbox.customize ['setextradata', :id,
+                    'VBoxInternal2/SharedFoldersEnableSymlinksCreate//sync',
+                    '1']
 
     # do not sync time with host as the guest should run ntp
-    vbox.customize ['setextradata', :id, 'VVBoxInternal/Devices/VMMDev/0/Config/GetHostTimeDisabled', '1']
+    vbox.customize ['setextradata', :id,
+                    'VVBoxInternal/Devices/VMMDev/0/Config/GetHostTimeDisabled',
+                    '1']
 
     if ENV['VAGRANT_VIRTUALBOX_GUI']
       vbox.gui = true
-      vbox.customize ['modifyvm', :id, '--clipboard', 'bidirectional']
+      vbox.customize ['modifyvm', :id,
+                      '--clipboard', 'bidirectional']
     end
   end # provider
 
-  config.vm.provision 'Wait for unattended-upgrades', type: 'shell', path: './provisioning/wait_unattended_upgrades.sh', args: %w( dpkg apt unattended-upgrade )
-  # config.vm.provision 'Bootstrap minimal Python', type: 'shell', path: './provisioning/bootstrap_python.sh', args: ['2.7', 'python python-pkg-resources']
+  config.vm.provision 'Wait for unattended-upgrades',
+                      type: 'shell',
+                      path: './provisioning/wait_unattended_upgrades.sh',
+                      args: %w( dpkg apt unattended-upgrade )
+  # config.vm.provision 'Bootstrap minimal Python',
+  #                     type: 'shell',
+  #                     path: './provisioning/bootstrap_python.sh',
+  #                     args: ['2.7', 'python python-pkg-resources']
 
   config.vm.box = ENV['VAGRANT_VM_BOX'] || 'geerlingguy/ubuntu1604' # https://github.com/geerlingguy/packer-ubuntu-1604
   config.vm.hostname = ENV['VAGRANT_VM_HOSTNAME'] || 'vagrant.taxigirl'
   config.ssh.forward_agent = true
   config.vm.network :private_network, auto_network: true
-  # config.vm.network :forwarded_port, guest: 3000, host: 8300, auto_correct: true
+  config.vm.network :forwarded_port,
+                    guest: 3000,
+                    host: 8300,
+                    auto_correct: true
 
   # sync folders
   # config.vm.synced_folder '.', '/vagrant', id: 'sync', type: 'rsync'
   config.vm.synced_folder './sync', '/sync', id: 'sync', type: 'rsync'
 
   if Vagrant.has_plugin?('vagrant-persistent-storage')
-    config.persistent_storage.enabled = ENV['VAGRANT_PERSISTENT_STORAGE_ENABLED'] || false
+    config.persistent_storage.enabled =
+      ENV['VAGRANT_PERSISTENT_STORAGE_ENABLED'] || false
     # config.persistent_storage.filesystem = 'xfs'
     config.persistent_storage.location = './persistent/vbox_persistent.vdi'
     config.persistent_storage.mount = false
     config.persistent_storage.format = false
-    config.persistent_storage.diskdevice = ENV['VAGRANT_PERSISTENT_STORAGE_DISKDEVICE'] || '/dev/sdb'
+    config.persistent_storage.diskdevice =
+      ENV['VAGRANT_PERSISTENT_STORAGE_DISKDEVICE'] || '/dev/sdb'
     config.persistent_storage.size = 2000
     config.persistent_storage.use_lvm = true
     config.persistent_storage.volgroupname = 'taxigirl'
@@ -148,19 +160,25 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   def str_to_a(str)
-    str.gsub!(/(\,)(\S) /, "\\1 \\2")
+    str.gsub!(/(\,)(\S) /, '\\1 \\2')
     YAML::load(str) || nil
   end
 
   # ansible provisioning
   # https://www.vagrantup.com/docs/provisioning/ansible_common.html
   config.vm.provision 'ansible' do |ansi|
-    ansi.extra_vars = ENV['ANSIBLE_EXTRA_VARS'] || '@./config/test.yml'
-    ansi.inventory_path = ENV['ANSIBLE_INVENTORY_PATH'] || './inventory/vagrant.py'
-    ansi.limit = ENV['ANSIBLE_LIMIT'] unless ENV['ANSIBLE_LIMIT'].nil?
-    ansi.playbook = ENV['ANSIBLE_PLAYBOOK'] || './playbooks/main.yml'
-    ansi.start_at_task = ENV['ANSIBLE_START_AT_TASK'] unless ENV['ANSIBLE_START_AT_TASK'].nil?
-    ansi.verbose = ENV['ANSIBLE_VERBOSE'] || true
+    ansi.extra_vars =
+      ENV['ANSIBLE_EXTRA_VARS'] || '@./config/test.yml'
+    ansi.inventory_path =
+      ENV['ANSIBLE_INVENTORY_PATH'] || './inventory/vagrant.py'
+    ansi.limit =
+      ENV['ANSIBLE_LIMIT'] unless ENV['ANSIBLE_LIMIT'].nil?
+    ansi.playbook =
+      ENV['ANSIBLE_PLAYBOOK'] || './playbooks/main.yml'
+    ansi.start_at_task =
+      ENV['ANSIBLE_START_AT_TASK'] unless ENV['ANSIBLE_START_AT_TASK'].nil?
+    ansi.verbose =
+      ENV['ANSIBLE_VERBOSE'] || true
 
     # duplicate frozen string
     raw_args = ENV['ANSIBLE_RAW_ARGUMENTS'].dup
