@@ -150,9 +150,9 @@ Boto comes with a bunch of [commandline tools](http://boto.cloudhackers.com/en/l
 $ list_instances -r eu-west-1 -H ID,Zone,T:Name,T:my:service,State | less
 ID             Zone           T:Name                        T:my:service                 State
 ---------------------------------------------------------------------------------------------------------
-i-abcdefgh     eu-west-1a     HostAlpha                   Useful                     running
-i-ijklmnop     eu-west-1b     BetaHost                   Useless                     running
-i-qrstuvwx     eu-west-1c     SomeAncientBoxen      Webserver                        running
+i-abcdefgh     eu-west-1a     HostAlpha                     Useful                     running
+i-ijklmnop     eu-west-1b     BetaHost                      Useless                     running
+i-qrstuvwx     eu-west-1c     SomeAncientBoxen              Webserver                        running
 ...
 ```
 Looks like a tie! :bowtie:
