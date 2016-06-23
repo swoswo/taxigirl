@@ -45,7 +45,7 @@ script:
 - pwd; ls -la
 - make install
 - if [[ "$TOXENV" == "py35" ]]; then make ansible-check; fi
-- if [[ "$TOXENV" != "py35" ]]; then make ansible-run; fi
+- if [[ "$TOXENV" != "py35" ]]; then make ansible-galaxy ansible-run; fi
 notifications:
   on_success: always
   on_failure: change
