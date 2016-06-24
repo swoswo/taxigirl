@@ -4,7 +4,7 @@
 #     tags:
 #     - deploy
 #     - deploy_assert_dest
--   name: Create base directory
+-   name: Create Deployment directory II
     file:
         path: '{{ deploy.dest }}'
         recurse: true

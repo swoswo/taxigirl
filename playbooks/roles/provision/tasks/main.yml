@@ -17,7 +17,7 @@
     - provision
     - debian
     - provision_debian
--   name: Create base directory
+-   name: Create Deployment directory
     file:
         path: '{{ deploy.dest }}'
         recurse: yes
