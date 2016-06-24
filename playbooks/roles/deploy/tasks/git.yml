@@ -1,0 +1,56 @@
+# -   name: Assert on 'git.dest'
+#     assert:
+#         that: (git.dest is defined and git.dest is not none and git.dest | trim != '')
+#     tags:
+#     - deploy
+#     - git
+#     - git_assert_dest
+# -   name: Assert on 'git.repo'
+#     assert:
+#         that: (git.repo is defined and git.repo is not none and git.repo | trim != '')
+#     tags:
+#     - deploy
+#     - git
+#     - git_assert_repo
+-   name: Install Git
+    package:
+        name: git
+        state: latest
+    run_once: yes
+    tags:
+    - deploy
+    - git
+    - git_install
+-   name: Add Git server as a known host
+    file:
+        path: ~/.ssh/known_hosts
+        owner: '{{ ansible_user }}'
+        mode: 0600
+        state: touch
+    tags:
+    - deploy
+    - git
+    - git_known_hosts
+-   name: Scan for key of Git server
+    shell: ssh-keyscan -H -t dsa {{ git.server }} >> ~/.ssh/known_hosts
+    no_log: yes
+    when: (git.server is defined and git.server is not none and git.server | trim != '')
+    tags:
+    - deploy
+    - git
+    - git_ssh_keyscan
+-   name: Clone project from Git
+    git:
+        accept_hostkey: '{{ git.accept_hostkey|default(omit) }}'
+        depth: '{{ git.depth|default(omit) }}'
+        dest: '{{ git.dest }}'
+        force: '{{ git.force|default(True) }}'
+        recursive: '{{ git.recursive|default(False) }}'
+        repo: '{{ git.repo }}'
+        update: yes
+        version: '{{ git.version|default(omit) }}'
+    register: git_clone
+    tags:
+    - deploy
+    - git
+    - git_clone

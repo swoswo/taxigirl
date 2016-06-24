@@ -1,0 +1,20 @@
+# -   name: Assert on 'git.dest'
+#     assert:
+#         that: (git.dest is defined and git.dest is not none and git.dest | trim != '')
+#     tags:
+#     - deploy
+#     - chef
+#     - chef_berkshelf
+#     - chef_berkshelf_assert
+-   name: Run Berkshelf
+    shell: bundle exec berks vendor {{ berkshelf.cookbook_path }}
+    args:
+        chdir: '{{ git.dest }}'
+    register: run_berkshelf
+    changed_when: run_berkshelf.stdout.find('Nothing to update') != -1
+    become: '{{ berkshelf.with_sudo|default(omit) }}'
+    tags:
+    - deploy
+    - chef
+    - chef_berkshelf
+    - chef_berkshelf_run

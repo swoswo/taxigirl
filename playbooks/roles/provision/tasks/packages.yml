@@ -1,0 +1,24 @@
+---
+- name: Remove Packages for Provisioning
+  package:
+    name: "{{ remove_name }}"
+    state: absent
+  become: yes
+  register: packages_remove
+  with_items: "{{ provision.packages.remove|default({}) }}"
+  loop_control:
+    loop_var: remove_name
+  when: (provision.packages.remove is defined and provision.packages.remove is not none and provision.packages.remove | trim != '')
+  tags: [provision, packages, packages_remove]
+
+- name: Install Packages for Provisioning
+  package:
+    name: "{{ install_name }}"
+    state: present
+  become: yes
+  register: packages_install
+  with_items: "{{ provision.packages.install|default({}) }}"
+  loop_control:
+    loop_var: install_name
+  when: (provision.packages.install is defined and provision.packages.install is not none and provision.packages.install | trim != '')
+  tags: [provision, packages, packages_install]

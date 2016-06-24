@@ -1,0 +1,27 @@
+-   name: Resolve pip requirements
+    pip:
+        virtualenv: '{{ deploy.pip.virtualenv|default(omit) }}'
+        requirements: '{{ deploy.pip.requirements }}'
+        state: latest
+    become: '{{ deploy.pip.with_sudo|default(omit) }}'
+    when: deploy.pip.requirements is defined
+    tags:
+    - deploy
+    - python
+    - pip
+    - pip_requiremenets
+-   name: Install pip Packages
+    pip:
+        name: '{{ install_pip }}'
+        virtualenv: '{{ deploy.pip.virtualenv|default(omit) }}'
+        state: latest
+    with_items: '{{ deploy.pip.packages }}'
+    loop_control:
+        loop_var: install_pip
+    become: '{{ deploy.pip.with_sudo|default(omit) }}'
+    when: deploy.pip.packages is defined
+    tags:
+    - deploy
+    - python
+    - pip
+    - pip_packages

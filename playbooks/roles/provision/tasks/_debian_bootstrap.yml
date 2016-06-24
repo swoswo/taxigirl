@@ -1,0 +1,24 @@
+-   name: Ensure integrity of dpkg database
+    raw: dpkg --configure -a
+    register: dpkg_configure
+    changed_when: dpkg_configure.stdout != ''
+    until: dpkg_configure|success
+    run_once: yes
+    become: yes
+    tags:
+    - provision
+    - debian
+    - apt
+    - apt_dpkg
+-   name: Install minimal Python
+    raw: apt-get -q install python
+    register: python_minimal
+    changed_when: python_minimal.stdout.find('python is already the newest version') == -1
+    run_once: yes
+    become: yes
+    tags:
+    - provision
+    - debian
+    - apt
+    - python
+    - python_minimal

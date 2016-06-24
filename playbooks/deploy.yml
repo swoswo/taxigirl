@@ -1,8 +1,8 @@
 ---
 - name: 'Role: Deploy'
-  hosts: "{{ hosts|default(omit) }}"
+  hosts: all
   gather_facts: yes
   any_errors_fatal: yes
-  strategy: "{{ deploy.strategy|default('linear') }}"
+  # strategy: "{{ deploy.strategy|default('linear') }}"
   roles:
       - { role: deploy }

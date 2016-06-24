@@ -1,0 +1,39 @@
+-   name: Update Rubygems
+    command: gem update --system --no-document
+    register: gem_update_system
+    changed_when: gem_update_system.stdout.find('Successfully installed') != -1
+    run_once: yes
+    become: yes
+    tags:
+    - deploy
+    - ruby
+    - gem
+    - gem_update
+    - gem_update_system
+-   name: Update Gems
+    command: gem update --env-shebang --no-document --conservative
+    register: gem_update
+    changed_when: gem_update.stdout.find('Successfully installed') != -1
+    run_once: yes
+    become: '{{ deploy.gem.with_sudo|default(omit) }}'
+    tags:
+    - deploy
+    - ruby
+    - gem
+    - gem_update
+-   name: Install or Upgrade Gems
+    gem:
+        name: '{{ gem_name }}'
+        state: latest
+        build_flags: -j{{ ansible_processor_vcpus }}
+    with_items: '{{ deploy.gem.packages|default([''bundler'']) }}'
+    loop_control:
+        loop_var: gem_name
+    register: gem_install
+    become: '{{ deploy.gem.with_sudo|default(omit) }}'
+    when: deploy.gem.packages is defined
+    tags:
+    - deploy
+    - ruby
+    - gem
+    - gem_install

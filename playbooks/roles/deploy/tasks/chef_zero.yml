@@ -1,0 +1,28 @@
+# -   name: Assert on 'deploy.dest'
+#     assert:
+#         that: (deploy.dest is defined and deploy.dest is not none and deploy.dest | trim != '')
+#     tags:
+#     - deploy
+#     - chef
+#     - chef_zero
+#     - chef_assert_dest
+# -   name: Assert on 'chef.run_list'
+#     assert:
+#         that: (chef.run_list is defined and chef.run_list is not none and chef.run_list | trim != '')
+#     tags:
+#     - deploy
+#     - chef
+#     - chef_zero
+#     - chef_assert_tmp_dir
+-   name: Run Chef (Zero)
+    command: chef-client --no-fork --no-color -c /etc/chef/client.rb -o '{{ chef.run_list }}'
+    args:
+        chdir: '{{ deploy.dest }}'
+    become: '{{ chef.with_sudo|default(omit) }}'
+    register: run_chef_zero
+    tags:
+    - deploy
+    - chef
+    - chef_zero
+    - chef_run
+    - chef_run_zero

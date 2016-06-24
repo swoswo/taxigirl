@@ -1,6 +1,6 @@
 ---
 - name: 'Playbook for https://github.com/dev-sec/ansible-os-hardening'
-  hosts: "{{ hosts|default(omit) }}"
+  hosts: all
   gather_facts: yes
   any_errors_fatal: yes
   become: yes

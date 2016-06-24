@@ -1,12 +1,12 @@
 ---
 - name: Playbook for 'https://github.com/chusiang/switch-apt-mirror.ansible.role'
-  hosts: "{{ hosts|default(omit) }}"
+  hosts: all
   gather_facts: yes
   any_errors_fatal: yes
   become: yes
   roles:
       - { role: switch-apt-mirror }
   vars:
-      # ubuntu_apt_mirror: 'mirror.netcologne.de'
+      ubuntu_apt_mirror: 'ftp.hawo.stw.uni-erlangen.de'
       # ubuntu_apt_mirror: 'mirror2.tuxinator.org'
-      ubuntu_apt_mirror: 'de.archive.ubuntu.com'
+      # ubuntu_apt_mirror: 'archive.ubuntu.com'

@@ -177,10 +177,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ENV['ANSIBLE_EXTRA_VARS'] || '@./config/test.yml'
 
     ansi.inventory_path =
-      ENV['ANSIBLE_INVENTORY_PATH'] || './inventory/vagrant.py'
+      ENV['ANSIBLE_INVENTORY_PATH'] || './inventory/vagrant.ini'
 
-    ansi.limit =
-      ENV['ANSIBLE_LIMIT'] unless ENV['ANSIBLE_LIMIT'].nil?
+    # ansi.limit =
+    #   ENV['ANSIBLE_LIMIT'] unless ENV['ANSIBLE_LIMIT'].nil?
 
     ansi.playbook =
       ENV['ANSIBLE_PLAYBOOK'] || './playbooks/main.yml'

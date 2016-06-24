@@ -1,0 +1,26 @@
+{{ ansible_managed | comment }}
+
+# https://docs.chef.io/config_rb_solo.html
+
+# The name of the node.
+node_name '{{ ansible_hostname }}'
+
+# The location of the log file. Default value: STDOUT.
+# TODO: abstraction (in 'sync'?)
+log_location STDOUT
+
+# The level of logging to be stored in a log file. Possible levels: :auto (default), debug, info, warn, error, or fatal.
+log_level '{{ chef.log_level|default('info') }}'.to_sym
+
+# The sub-directory for cookbooks on the chef-client. This value can be a string or an array of file system locations, processed in the specified order. The last cookbook is considered to override local modifications.
+# TODO: abstraction
+cookbook_path [ "{{ berkshelf.cookbook_path }}" ]
+
+# Run the chef-client in chef-solo mode. This setting determines if the chef-client is to attempt to communicate with the Chef server.
+solo true
+
+# The location in which cookbooks (and other transient data) files are stored when they are synchronized. This value can also be used in recipes to download files with the remote_file resource.
+file_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
+
+# All files in a cookbook must contain valid Ruby syntax. Use this setting to specify the location in which knife caches information about files that have been checked for valid Ruby syntax.
+syntax_check_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"

@@ -1,21 +1,21 @@
----
-- include: provision_ec2.yml
-  when: (ec2 is defined)
-
-- include: unattended_upgrades.yml
-  when: (roles.unattended_upgrades is defined) and (roles.unattended_upgrades == True)
-
-- include: switch_apt_mirror.yml
-  when: (roles.switch_apt_mirror is defined) and (roles.switch_apt_mirror == True)
-
-- include: ntp.yml
-  when: (roles.ntp is defined) and (roles.ntp == True)
-
-- include: os-hardening.yml
-  when: (roles.os_hardening is defined) and (roles.os_hardening == True)
-
-- include: provision.yml
-
-- include: list.yml
-
-- include: deploy.yml
+-   include: provision_ec2.yml
+    when: (ec2 is defined)
+-   include: switch_apt_mirror.yml
+    run_once: yes
+    when: (roles.switch_apt_mirror is defined) and (roles.switch_apt_mirror == True)
+    tags: [galaxy, switch_apt_mirror]
+-   include: ntp.yml
+    run_once: yes
+    when: (roles.ntp is defined) and (roles.ntp == True)
+    tags: [galaxy, ntp]
+-   include: os_hardening.yml
+    run_once: yes
+    when: (roles.os_hardening is defined) and (roles.os_hardening == True)
+    tags: [galaxy, os_hardening]
+-   include: provision.yml
+-   include: list.yml
+-   include: deploy.yml
+-   include: unattended_upgrades.yml
+    run_once: yes
+    when: (roles.unattended_upgrades is defined) and (roles.unattended_upgrades == True)
+    tags: [galaxy, unattended_upgrades]

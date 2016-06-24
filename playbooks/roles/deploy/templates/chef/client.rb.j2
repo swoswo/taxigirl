@@ -1,0 +1,39 @@
+{{ ansible_managed | comment }}
+
+# https://docs.chef.io/config_rb_client.html
+
+# The name of the node.
+node_name '{{ ansible_hostname }}'
+
+# The location of the log file. Default value: STDOUT.
+# TODO: abstraction (in 'sync'?)
+log_location STDOUT
+
+# The level of logging to be stored in a log file. Possible levels: :auto (default), debug, info, warn, error, or fatal.
+log_level '{{ chef.log_level|default('info') }}'.to_sym
+
+# The sub-directory for cookbooks on the chef-client. This value can be a string or an array of file system locations, processed in the specified order. The last cookbook is considered to override local modifications.
+# TODO: abstraction
+cookbook_path [ "{{ berkshelf.cookbook_path }}" ]
+
+# The location of the file that contains the client key.
+client_key '/opt/chef/embedded/ssl/cert.pem'
+
+# Enable chef-zero. This setting requires local_mode to be set to true.
+chef_zero.enabled true
+
+# Run the chef-client in local mode. This allows all commands that work against the Chef server to also work against the local chef-repo.
+local_mode true
+
+# Enable audit-mode. Set to audit-only to skip the converge phase of the chef-client run and only perform audits. Possible values: audit-only, disabled, and enabled.
+# TODO: abstraction
+audit_mode :enabled
+
+# The home directory for the user that is running the chef-client as a non-root user.
+cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
+
+# The location in which cookbooks (and other transient data) files are stored when they are synchronized. This value can also be used in recipes to download files with the remote_file resource.
+file_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
+
+# All files in a cookbook must contain valid Ruby syntax. Use this setting to specify the location in which knife caches information about files that have been checked for valid Ruby syntax.
+syntax_check_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"

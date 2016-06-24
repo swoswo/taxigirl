@@ -1,10 +1,10 @@
 ---
 - name: 'Playbook for https://github.com/ANXS/ntp'
-  hosts: "{{ hosts|default(omit) }}"
+  hosts: all
   gather_facts: yes
   any_errors_fatal: yes
   become: yes
   roles:
       - { role: ntp }
   vars:
-      ntp_servers: [ntp.in.xplosion.de]
+      ntp_servers: [ntp.in.xplosion.de,2.ubuntu.pool.ntp.org]

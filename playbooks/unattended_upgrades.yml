@@ -1,6 +1,6 @@
 ---
 - name: Playbook for 'https://github.com/jnv/ansible-role-unattended-upgrades'
-  hosts: "{{ hosts|default(omit) }}"
+  hosts: all
   gather_facts: yes
   any_errors_fatal: yes
   become: yes
@@ -16,3 +16,4 @@
     unattended_mail: "{{ unattended_upgrades.mail|default('false') }}"
     unattended_mail_only_on_error: "{{ unattended_upgrades.mail_only_on_error|default('false') }}"
     unattended_minimal_steps: true
+    unattended_automatic_reboot_time: '07:00'

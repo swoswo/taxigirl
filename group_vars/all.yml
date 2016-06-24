@@ -13,4 +13,4 @@ provision: []
 slack: []
 unatttended_upgrades: []
 user_data: []
-version: ''
+version: '0.0.0'

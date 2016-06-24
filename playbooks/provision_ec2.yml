@@ -1,6 +1,6 @@
 ---
 - name: 'Role: Provision EC2'
-  hosts: "{{ hosts|default('ec2') }}"
+  hosts: all
   gather_facts: no
   any_errors_fatal: yes
   strategy: "{{ provision.strategy|default('linear') }}"

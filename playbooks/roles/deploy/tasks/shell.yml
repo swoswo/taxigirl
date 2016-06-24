@@ -1,0 +1,16 @@
+# -   name: Assert on 'deploy.shell.commands'
+#     assert:
+#         that: (deploy.shell.commands is defined and deploy.shell.commands is not none and deploy.shell.commands | trim != '')
+-   name: Run shell commands
+    register: shell_commands
+    shell: '{{ shell_command }}'
+    args:
+        chdir: '{{ deploy.dest }}'
+    become: '{{ deploy.shell.with_sudo|default(omit) }}'
+    with_items: '{{ deploy.shell.commands }}'
+    loop_control:
+        loop_var: shell_command
+    tags:
+    - deploy
+    - shell
+    - shell_commands
