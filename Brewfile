@@ -1,17 +1,26 @@
+brew 'brew-cask-completion'
+brew 'bundler-completion'
 brew 'direnv', args: ['HEAD']
+brew 'gem-completion'
 brew 'git'
 brew 'git-secrets'
+brew 'kitchen-completion'
 brew 'libffi'
 brew 'libyaml'
+brew 'pip-completion'
 brew 'pyenv', args: ['HEAD']
 brew 'readline'
+brew 'ruby-completion'
 brew 'ruby-install', args: ['HEAD']
 brew 'ry'
 brew 'shellcheck'
 brew 'terminal-notifier'
 brew 'tmux'
+brew 'vagrant-completion'
 cask 'vagrant'
-cask 'vagrant-manager', restart_service: :changed
-cask 'virtualbox', restart_service: :changed
+cask 'vagrant-manager'
+cask 'virtualbox'
 cask_args appdir: '/Applications'
 tap 'caskroom/cask'
+tap 'homebrew/completions'
+
