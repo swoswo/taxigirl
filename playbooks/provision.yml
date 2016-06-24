@@ -5,4 +5,6 @@
   any_errors_fatal: yes
   # strategy: "{{ provision.strategy|default('linear') }}"
   roles:
-      - { role: provision }
+      - { role: bootstrap, when: "'bootstrap' in provision.tasks" }
+      - { role: packages, when: "'packages' in provision.tasks" }
+      - { role: shell, chdir: "{{ deploy.dest }}", data: "{{ provision }}", when: "'shell' in provision.tasks" }

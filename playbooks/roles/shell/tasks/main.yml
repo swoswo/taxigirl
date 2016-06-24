@@ -1,0 +1,16 @@
+# -   name: Assert on 'data.shell.commands'
+#     assert:
+#         that: (data.shell.commands is defined and data.shell.commands is not none and data.shell.commands | trim != '')
+-   name: Run shell commands
+    raw: '{{ shell_command }}'
+    args:
+        chdir: '{{ chdir }}'
+    with_items: '{{ data.shell.commands }}'
+    loop_control:
+        loop_var: shell_command
+    register: shell_commands
+    when: data.shell.commands is defined
+    become: '{{ data.shell.with_sudo|default(omit) }}'
+    tags:
+    - shell
+    - shell_commands

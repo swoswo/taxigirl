@@ -3,6 +3,13 @@
   hosts: all
   gather_facts: yes
   any_errors_fatal: yes
-  # strategy: "{{ deploy.strategy|default('linear') }}"
+  # strategy: "{{ deploy.strategy|default('linear')"
   roles:
-      - { role: deploy }
+      - { role: packages, when: "'packages' in deploy.tasks" }
+      # - { role: pip, data: deploy.pip, when: "'pip' in deploy.tasks" }
+      # - { role: gem, when: "'gem' in deploy.tasks" }
+      # - { role: git, when: "'git' in deploy.tasks" }
+      # - { role: bundler, when: "'bundler' in deploy.tasks" }
+      # - { role: berkshelf, when: "'berkshelf' in deploy.tasks" }
+      # - { role: chef, when: "'chef' in deploy.tasks" }
+      # - { role: chef_zero, when: "'chef_zero' in deploy.tasks" }

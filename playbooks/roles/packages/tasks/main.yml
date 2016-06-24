@@ -1,0 +1,68 @@
+-   name: Update APT Cache for Provisioning
+    apt:
+        update_cache: yes
+        cache_valid_time: '{{ apt.cache_valid_time|default(''3600'') }}'
+    register: provision_apt_update
+    become: yes
+    tags:
+    - provision
+    - apt
+    - apt_update
+    - provision_apt_update
+-   name: Install Aptitude
+    apt:
+        name: aptitude
+        state: present
+    register: apt_aptitude
+    become: yes
+    when: (apt.install_aptitude is defined) and (apt.install_aptitude == True)
+    tags:
+    - provision
+    - apt
+    - apt_aptitude
+    - provision_apt_aptitude
+-   name: Remove Packages for Provisioning
+    package:
+        name: '{{ prov_package_remove }}'
+        state: absent
+        purge: yes
+    become: yes
+    register: packages_remove
+    with_items: '{{ provision.packages.remove|default({}) }}'
+    loop_control:
+        loop_var: prov_package_remove
+    when: (provision.packages.remove is defined and provision.packages.remove is not none and provision.packages.remove | trim != '')
+    tags:
+    - provision
+    - apt
+    - apt_remove
+    - provision_apt_remove
+-   name: Upgrade APT packages for Provisioning
+    apt:
+        upgrade: '{{ apt.upgrade|default(''yes'') }}'
+        dpkg_options: '{{ apt.dpkg_options|default(''force-confold,force-confdef,force-confmiss'') }}'
+        autoremove: '{{ apt.autoremove|default(''yes'') }}'
+        install_recommends: '{{ apt.install_recommends|default(''no'') }}'
+    register: apt_upgrade
+    become: yes
+    when: (provision_apt_update.cache_updated is defined and provision_apt_update.cache_updated == True)
+    tags:
+    - provision
+    - apt
+    - apt_upgrade
+    - provision_apt_upgrade
+-   name: Install APT Packages for Provisioning
+    package:
+        name: '{{ prov_package_install }}'
+        state: '{{ provision.packages.state|default(''present'') }}'
+    become: yes
+    register: packages_install
+    with_items: '{{ provision.packages.install|default({}) }}'
+    loop_control:
+        loop_var: prov_package_install
+    when: (provision.packages.install is defined and provision.packages.install is not none and provision.packages.install | trim != '')
+    tags:
+    - provision
+    - apt
+    - apt_install
+    - provision_apt_install

@@ -11,8 +11,9 @@
 #     - provision
 #     - provision_assert_dest
 -   name: Bootstrap Debian System
-    include: _debian_bootstrap.yml
+    include: bootstrap_debian.yml
     when: (ansible_os_family == 'Debian') or (ansible_os_family == 'Ubuntu')
+    run_once: true
     tags:
     - provision
     - debian
@@ -28,12 +29,12 @@
     tags:
     - provision
     - provision_base_directory
--   name: Include Provisioning Task
-    include: roles/provision/tasks/{{ provision_task }}.yml
-    with_items: '{{ provision.tasks }}'
-    loop_control:
-        loop_var: provision_task
-    when: (provision.tasks is defined and provision.tasks is not none and provision.tasks | trim != '')
-    tags:
-    - provision
-    - provision_include_task
+# -   name: Include Provisioning Task
+#     include: roles/provision/tasks/{{ provision_task }}.yml
+#     with_items: '{{ provision.tasks }}'
+#     loop_control:
+#         loop_var: provision_task
+#     when: (provision.tasks is defined and provision.tasks is not none and provision.tasks | trim != '')
+#     tags:
+#     - provision
+#     - provision_include_task

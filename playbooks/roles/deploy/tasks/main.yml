@@ -15,15 +15,15 @@
     tags:
     - deploy
     - deploy_dest
--   name: Include Deployment Task
-    include: roles/deploy/tasks/{{ deploy_task }}.yml
-    with_items: '{{ deploy.tasks }}'
-    loop_control:
-        loop_var: deploy_task
-    when: (deploy.tasks is defined and deploy.tasks is not none and deploy.tasks | trim != '')
-    tags:
-    - deploy
-    - deploy_include
+# -   name: Include Deployment Task
+#     include: roles/deploy/tasks/{{ deploy_task }}.yml
+#     with_items: '{{ deploy.tasks }}'
+#     loop_control:
+#         loop_var: deploy_task
+#     when: (deploy.tasks is defined and deploy.tasks is not none and deploy.tasks | trim != '')
+#     tags:
+#     - deploy
+#     - deploy_include
 -   name: Send notification to Slack
     slack:
         token: '{{ slack.token }}'
