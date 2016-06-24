@@ -33,7 +33,7 @@ unless plugins_to_install.empty?
 end
 
 # ip pool to use
-AutoNetwork.default_pool = '172.16.2.0/24'
+AutoNetwork.default_pool = '172.16.0.0/24'
 
 Vagrant.require_version '>= 1.8.3'
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -70,22 +70,24 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                       type: 'shell',
                       path: './provisioning/wait_unattended_upgrades.sh',
                       args: %w( dpkg apt unattended-upgrade )
-  # config.vm.provision 'Bootstrap minimal Python',
-  #                     type: 'shell',
-  #                     path: './provisioning/bootstrap_python.sh',
-  #                     args: ['2.7', 'python python-pkg-resources']
+  config.vm.provision 'Bootstrap minimal Python',
+                      type: 'shell',
+                      path: './provisioning/bootstrap_python.sh',
+                      args: ['2.7', 'python python-pkg-resources']
 
-  config.vm.box = ENV['VAGRANT_VM_BOX'] || 'geerlingguy/ubuntu1604' # https://github.com/geerlingguy/packer-ubuntu-1604
+  config.vm.box = ENV['VAGRANT_VM_BOX'] || 'geerlingguy/ubuntu1604'
+  # config.vm.box = ENV['VAGRANT_VM_BOX'] || 'bento/ubuntu-16.04'
   config.vm.hostname = ENV['VAGRANT_VM_HOSTNAME'] || 'vagrant.taxigirl'
   config.ssh.forward_agent = true
   config.vm.network :private_network, auto_network: true
-  config.vm.network :forwarded_port,
-                    guest: 3000,
-                    host: 8300,
-                    auto_correct: true
+  # TODO: abstraction
+  # config.vm.network :forwarded_port,
+  #                   guest: 3000,
+  #                   host: 8300,
+  #                   auto_correct: true
 
-  # sync folders
-  # config.vm.synced_folder '.', '/vagrant', id: 'sync', type: 'rsync'
+  # sync folder
+  # TODO: abstraction
   config.vm.synced_folder './sync', '/sync', id: 'sync', type: 'rsync'
 
   if Vagrant.has_plugin?('vagrant-persistent-storage')
@@ -167,21 +169,34 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # ansible provisioning
   # https://www.vagrantup.com/docs/provisioning/ansible_common.html
   config.vm.provision 'ansible' do |ansi|
+
+    ansi.galaxy_role_file = './requirements.yml'
+    ansi.galaxy_roles_path = './playbooks/roles.galaxy'
+
     ansi.extra_vars =
       ENV['ANSIBLE_EXTRA_VARS'] || '@./config/test.yml'
+
     ansi.inventory_path =
       ENV['ANSIBLE_INVENTORY_PATH'] || './inventory/vagrant.py'
+
     ansi.limit =
       ENV['ANSIBLE_LIMIT'] unless ENV['ANSIBLE_LIMIT'].nil?
+
     ansi.playbook =
       ENV['ANSIBLE_PLAYBOOK'] || './playbooks/main.yml'
-    ansi.start_at_task =
-      ENV['ANSIBLE_START_AT_TASK'] unless ENV['ANSIBLE_START_AT_TASK'].nil?
-    ansi.verbose =
-      ENV['ANSIBLE_VERBOSE'] || true
 
-    # duplicate frozen string
-    raw_args = ENV['ANSIBLE_RAW_ARGUMENTS'].dup
-    ansi.raw_arguments = str_to_a(raw_args) || ['-C', '-D']
+    ansi.tags =
+      ENV['ANSIBLE_TAGS'] unless ENV['ANSIBLE_TAGS'].nil?
+
+    ansi.skip_tags =
+      ENV['ANSIBLE_SKIP_TAGS'] unless ENV['ANSIBLE_SKIP_TAGS'].nil?
+
+    ansi.verbose =
+      ENV['ANSIBLE_VERBOSE'] || 'vv'
+      if ENV['ANSIBLE_RAW_ARGUMENTS']
+        # duplicate frozen string
+        raw_args = ENV['ANSIBLE_RAW_ARGUMENTS'].dup
+        ansi.raw_arguments = str_to_a(raw_args) unless raw_args.nil?
+      end
   end # provision
 end
