@@ -16,6 +16,7 @@
 
 ANSIBLE_GALAXY_REQ_FILE ?= requirements.yml
 ANSIBLE_PLAYBOOK_FILE	?= playbooks/main.yml
+ANSIBLE_INVENTORY_FILE	?= inventory/localhost.ini
 ANSIBLE_ROLES_GALAXY_PATH	?= playbooks/roles.galaxy
 BIN_PATH 		?= ./bin
 BREW_BUNDLE_FILE 	?= Brewfile
@@ -271,7 +272,7 @@ pip-update pip-install: $(PIP_REQ_FILE)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) install -U -r $(PIP_REQ_FILE)
 	@$(BIN_PATH)/$(PIP_BIN_NAME) freeze > $(PIP_FREEZE_FILE) >/dev/null
 	@# returns non-zero on difference
-	@-diff -N $(PIP_PRE_FREEZE_FILE) $(PIP_FREEZE_FILE) > log/pip_diff.txt
+	@-diff -uN $(PIP_PRE_FREEZE_FILE) $(PIP_FREEZE_FILE) > log/pip_diff.txt
 	@-cat log/pip_diff.txt
 
 pip-uninstall: $(PIP_REQ_FILE)
@@ -340,22 +341,22 @@ ansible-hosts:
 .PHONY: ansible-facts
 ansible-facts:
 	$(info $@: gather facts of localhost)
-	@$(BIN_PATH)/ansible --connection=local -m setup localhost
+	@$(BIN_PATH)/ansible --connection=local --inventory-file="$(ANSIBLE_INVENTORY_FILE)" -m setup localhost
 
 .PHONY: ansible-syntax
 ansible-syntax:
 	$(info $@: syntax check of playbook $(ANSIBLE_PLAYBOOK_FILE))
-	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --syntax-check --connection=local
+	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --syntax-check --connection=local --inventory-file="$(ANSIBLE_INVENTORY_FILE)"
 
 .PHONY: ansible-tasks
 ansible-tasks:
 	$(info $@: list tasks of and tags on playbook $(ANSIBLE_PLAYBOOK_FILE))
-	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --list-tags --list-tasks --connection=local
+	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --list-tags --list-tasks --connection=local --inventory-file="$(ANSIBLE_INVENTORY_FILE)"
 
 .PHONY: ansible-local
 ansible-local:
 	$(info $@: running playbook $(ANSIBLE_PLAYBOOK_FILE))
-	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --connection=local --diff --extra-vars="@./config/test.yml" -vv
+	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --connection=local --diff --extra-vars="@./config/test.yml" --inventory-file="$(ANSIBLE_INVENTORY_FILE)" -vvv
 
 ###
 ### # pre-commit

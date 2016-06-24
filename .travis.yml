@@ -8,8 +8,8 @@ git:
 env:
     global:
     - ANSIBLE_EXTRA_VARS=@./config/test.yml
-    - ANSIBLE_INVENTORY_PATH=./inventory/travis.ini
-    - ANSIBLE_PLAYBOOK=./playbooks/main.yml
+    # - ANSIBLE_INVENTORY_PATH=./inventory/travis.ini
+    # - ANSIBLE_PLAYBOOK=./playbooks/main.yml
 matrix:
     include:
     -   os: linux
