@@ -11,5 +11,5 @@ provision:
   packages:
     install: [tmux]
   tasks: [packages]
-roles: {ntp: true, os_hardening: false, switch_apt_mirror: true, unattended_upgrades: true}
+roles: {ntp: true, os_hardening: false, switch_apt_mirror: true, unattended_upgrades: false}
 slack: []
