@@ -11,17 +11,17 @@ mccabe
 pre-commit
 prospector
 PyYAML
+ansible-lint
 
-boto3
 httplib2
 Jinja2
 paramiko
-ansible
+git+https://github.com/ansible/ansible#egg=ansible
 ansible-ec2-inventory
 
-ansible-lint
-
+boto3
 saws
+
 fabric
 python-vagrant
 click
