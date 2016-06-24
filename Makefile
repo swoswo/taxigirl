@@ -341,7 +341,7 @@ ansible-hosts:
 .PHONY: ansible-facts
 ansible-facts:
 	$(info $@: gather facts of localhost)
-	@$(BIN_PATH)/ansible --connection=local --inventory-file="$(ANSIBLE_INVENTORY_FILE)" -m setup localhost
+	@$(BIN_PATH)/ansible --connection=local --inventory-file="$(ANSIBLE_INVENTORY_FILE)" -vvv -m setup localhost
 
 .PHONY: ansible-syntax
 ansible-syntax:
