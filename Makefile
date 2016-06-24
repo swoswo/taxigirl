@@ -319,27 +319,43 @@ ansible-galaxy: $(ANSIBLE_GALAXY_REQ_FILE)
 ansible-check:
 	$(info $@: checking all components)
 	@# TODO: abstraction
-	@pre-commit run --no-stash --allow-unstaged-config \
-					--files \
-		.envrc \
-		ansible.cfg Makefile README.md Vagrantfile requirements.txt \
-		action_plugins/* callback_plugins/* \
-		config/* group_vars/* \
-		inventory/* library/* \
-		meta/* \
-		playbooks/** playbooks/roles/** tests/** \
-		pre-commit-hooks/* \
-		provisioning/* sbin/*
+	@pre-commit run --no-stash --allow-unstaged-config --files \
+		ansible.cfg Makefile Vagrantfile requirements.txt \
+		action_plugins/* callback_plugins/*\
+		config/* group_vars/* inventory/* library/* meta/*\
+		playbooks/** playbooks/roles/** tests/**\
+		.envrc pre-commit-hooks/* provisioning/* sbin/* \
+		README.md
 
 .PHONY: ansible-lint
 ansible-lint:
 	$(info $@: linting playbook $(ANSIBLE_PLAYBOOK_FILE))
-	$(BIN_PATH)/ansible-lint --exclude=$(ANSIBLE_ROLES_GALAXY_PATH) --exclude=tests $(ANSIBLE_PLAYBOOK_FILE)
+	@$(BIN_PATH)/ansible-lint --exclude=$(ANSIBLE_ROLES_GALAXY_PATH) --exclude=tests $(ANSIBLE_PLAYBOOK_FILE)
+
+.PHONY: ansible-hosts
+ansible-hosts:
+	$(info $@: get inventory of hosts)
+	@$(BIN_PATH)/ansible --list-hosts all
+
+.PHONY: ansible-facts
+ansible-facts:
+	$(info $@: gather facts of localhost)
+	@$(BIN_PATH)/ansible --connection=local -m setup localhost
+
+.PHONY: ansible-syntax
+ansible-syntax:
+	$(info $@: syntax check of playbook $(ANSIBLE_PLAYBOOK_FILE))
+	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --syntax-check --connection=local
+
+.PHONY: ansible-tasks
+ansible-tasks:
+	$(info $@: list tasks of and tags on playbook $(ANSIBLE_PLAYBOOK_FILE))
+	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --list-tags --list-tasks --connection=local
 
 .PHONY: ansible-local
 ansible-local:
 	$(info $@: running playbook $(ANSIBLE_PLAYBOOK_FILE))
-	$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --connection=local --inventory-file="inventory/localhost.ini" --extra-vars="@./config/test.yml" -vvv
+	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --connection=local --diff --extra-vars="@./config/test.yml" -vv
 
 ###
 ### # pre-commit
