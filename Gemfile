@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '>=2.3'
 
 group :development do
-  gem 'rubocop'
+  gem 'rubocop', require: false
 
   gem 'rb-fsevent', require: false
   gem 'rb-inotify', require: false
