@@ -405,6 +405,8 @@ git-update:
 .PHONY: versions
 versions:
 	$(info $@: gathering version strings)
+	# homebrew
+	@-command -v brew; brew config
 	# ruby
 	@-command -v ruby; ruby -v
 	# ruby gems
