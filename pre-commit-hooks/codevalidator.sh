@@ -8,7 +8,7 @@ Gemfile|Brewfile.*|Vagrantfile$"
 
 # PY_PATTERN=".*\.(py)"
 
-for f in $(git diff git p--name-only | grep -E "$FILES_PATTERN"); do
+for f in $(git diff git --cached --name-only | grep -E "$FILES_PATTERN"); do
     if ! codevalidator -f -v "$f"; then
         exit 1
     fi
