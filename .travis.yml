@@ -25,7 +25,7 @@ matrix:
         sudo: required
     -   os: linux
         dist: trusty
-        env: PYTHON_VERSION=3.5.1 PIP_BIN_NAME=pip3 TOXENV=py35
+        env: PYTHON_VERSION=3.5.1 PIP_BIN_NAME=pip3 TOXENV=py35 ANSIBLE_PROFILE_DISABLE=1
         language: python
         python: 3.5.1
         sudo: required
@@ -37,6 +37,7 @@ virtualenv:
     system_site_packages: false
 before_install:
 - uname -a; which python; python -V
+- mkdir tmp
 install:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make brew-python; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make ubuntu-mirror; fi

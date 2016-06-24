@@ -2,20 +2,20 @@
     when: (ec2 is defined)
 -   include: switch_apt_mirror.yml
     run_once: yes
-    when: (roles.switch_apt_mirror is defined) and (roles.switch_apt_mirror == True)
+    when: ((ansible_os_family == 'Debian') or (ansible_os_family == 'Ubuntu')) and ((roles.switch_apt_mirror is defined) and (roles.switch_apt_mirror == True))
     tags: [galaxy, switch_apt_mirror]
 -   include: ntp.yml
     run_once: yes
-    when: (roles.ntp is defined) and (roles.ntp == True)
+    when: ((ansible_os_family == 'Debian') or (ansible_os_family == 'Ubuntu')) and ((roles.ntp is defined) and (roles.ntp == True))
     tags: [galaxy, ntp]
 -   include: os_hardening.yml
     run_once: yes
-    when: (roles.os_hardening is defined) and (roles.os_hardening == True)
+    when: ((ansible_os_family == 'Debian') or (ansible_os_family == 'Ubuntu')) and ((roles.os_hardening is defined) and (roles.os_hardening == True))
     tags: [galaxy, os_hardening]
 -   include: provision.yml
 -   include: list.yml
 -   include: deploy.yml
 -   include: unattended_upgrades.yml
     run_once: yes
-    when: (roles.unattended_upgrades is defined) and (roles.unattended_upgrades == True)
+    when: ((roles.unattended_upgrades is defined) and (roles.unattended_upgrades == True))
     tags: [galaxy, unattended_upgrades]
