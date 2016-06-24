@@ -1,7 +1,7 @@
 ---
-- name: Assert on 'ec2'
-  assert: { that: "(ec2 is defined and ec2 is not none and ec2 | trim != '')" }
-  tags: [list_ec2, ec2, ec2_create, ec2_assert]
+# - name: Assert on 'ec2'
+#   assert: { that: "(ec2 is defined and ec2 is not none and ec2 | trim != '')" }
+#   tags: [list_ec2, ec2, ec2_create, ec2_assert]
 
 - name: Gather facts EC2 Instances
   local_action:

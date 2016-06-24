@@ -5,7 +5,7 @@
   group_by: key="distribution_{{ ansible_distribution }}_{{ ansible_distribution_version }}"
 
 - include: list_ec2.yml
-  when: (hosts == 'ec2')
+  when: (hosts == 'ec2' and ec2 is defined)
 
 - include: list.yml
   when: (hosts != 'ec2')
