@@ -1,10 +1,10 @@
 ---
-- name: 'Role: Provision'
+- name: 'Playbook: Provision'
   hosts: all
   gather_facts: yes
   any_errors_fatal: yes
   # strategy: "{{ provision.strategy|default('linear') }}"
   roles:
       - { role: bootstrap, when: "'bootstrap' in provision.tasks" }
-      - { role: packages, when: "(('packages' in provision.tasks) and ((ansible_os_family == 'Debian') or (ansible_os_family == 'Ubuntu')))" }
-      - { role: shell, chdir: "{{ deploy.dest }}", data: "{{ provision }}", when: "('shell' in provision.tasks)" }
+      - { role: packages, data: "{{ provision.packages }}", when: "('shell' in provision.tasks)" }
+      - { role: shell, data: "{{ provision.shell }}", chdir: "{{ deploy.dest }}", when: "('shell' in provision.tasks)" }

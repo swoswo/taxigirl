@@ -20,9 +20,23 @@
         chdir: '{{ deploy.dest }}'
     become: '{{ chef.with_sudo|default(omit) }}'
     register: run_chef_zero
+    when: chef.variant == 'solo'
     tags:
     - deploy
     - chef
     - chef_zero
     - chef_run
     - chef_run_zero
+-   name: Run Chef (Solo)
+    command: chef-colo --no-fork --no-color -c /etc/chef/solo.rb -o '{{ chef.run_list }}'
+    args:
+        chdir: '{{ deploy.dest }}'
+    become: '{{ chef.with_sudo|default(omit) }}'
+    register: run_chef_solo
+    when: chef.variant == 'solo'
+    tags:
+    - deploy
+    - chef
+    - chef_solo
+    - chef_run
+    - chef_run_solo

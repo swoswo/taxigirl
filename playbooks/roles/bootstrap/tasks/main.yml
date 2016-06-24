@@ -18,3 +18,14 @@
     - bootstrap
     - debian
     - bootstrap_debian
+-   name: Create Deployment directory
+    file:
+        path: '{{ deploy.dest }}'
+        recurse: yes
+        owner: '{{ ansible_user }}'
+        mode: 0775
+        state: directory
+    become: yes
+    tags:
+    - provision
+    - provision_base_directory

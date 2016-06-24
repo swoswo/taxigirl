@@ -1,0 +1,9 @@
+-   name: 'Assert: ec2'
+    assert: { that: "(ec2 is defined and ec2 is not none and ec2 | trim != '')" }
+
+-   name: 'Create Instance: EC2'
+    include: create.yml
+
+-   name: 'Destroy Instance: EC2'
+    include: destroy.yml
+    when: "(ec2_destroy is defined and ec2_destroy == True)"

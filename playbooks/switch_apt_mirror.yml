@@ -5,8 +5,4 @@
   any_errors_fatal: yes
   become: yes
   roles:
-      - { role: switch-apt-mirror }
-  vars:
-      ubuntu_apt_mirror: 'ftp.hawo.stw.uni-erlangen.de'
-      # ubuntu_apt_mirror: 'mirror2.tuxinator.org'
-      # ubuntu_apt_mirror: 'archive.ubuntu.com'
+      - { role: switch-apt-mirror, ubuntu_apt_mirror: 'ftp.hawo.stw.uni-erlangen.de' }

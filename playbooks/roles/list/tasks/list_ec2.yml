@@ -1,45 +1,57 @@
----
-- name: Assert on 'ec2'
-  assert: { that: "(ec2 is defined and ec2 is not none and ec2 | trim != '')" }
-  tags: [list_ec2, ec2, ec2_create, ec2_assert]
-
-- name: Gather facts EC2 Instances
-  local_action:
-    module: ec2_remote_facts
-    region: "{{ ec2.region|default('eu-west-1') }}"
-    filters:
-      instance-state-name: 'running'
-      'tag:xpl:team': 'apm'
-  no_log: yes
-  register: ec2_facts
-  tags: [list_ec2, ec2, ec2_facts]
-
-- name: Assert on 'ec2_facts.instances'
-  assert: { that: "(ec2_facts.instances is defined and ec2_facts.instances is not none and ec2_facts.instances | trim != '')" }
-  tags: [list_ec2, ec2, ec2_facts]
-
-- name: EC2 Inventory Hostnames
-  debug: msg="{{ instance.id }} | {{ instance.private_ip_address }} | {{ instance.private_dns_name }} | {{ instance.image_id }}"
-  with_items: "{{ ec2_facts.instances }}"
-  loop_control:
-    loop_var: instance
-  tags: [list_ec2, ec2, ec2_inventory]
-
-- name: Gather facts on EC2 Volumes
-  local_action:
-    module: ec2_vol_facts
-    region: "{{ ec2.region }}"
-    filters:
-      attachment.status: attached
-      "tag:xpl:team": apm
-  no_log: yes
-  register: ec2_volumes
-  tags: [list_ec2, ec2, ec2_facts_volumes]
-
-- name: Attached Volumes
-  debug: msg="{{ volume }}"
-  # debug: msg="{{ item.id }} | {{ item.status }} | {{ item.type }} | {{ item.size }} | {{ item.tags }} | {{ item.attachment_set }}"
-  with_items: "{{ ec2_volumes.volumes }}"
-  loop_control:
-    loop_var: volume
-  tags: [list_ec2, ec2, ec2_facts_volumes]
+-   name: 'Assert: ec2'
+    assert:
+        that: (ec2 is defined and ec2 is not none and ec2 | trim != '')
+    tags:
+    - list
+    - ec2
+    - ec2_assert
+-   name: Gather Facts
+    local_action:
+        module: ec2_remote_facts
+        region: '{{ ec2.region|default(''eu-west-1'') }}'
+        filters:
+            instance-state-name: running
+            tag:xpl:team: apm
+    no_log: true
+    register: ec2_facts
+    tags:
+    - list
+    - ec2
+    - ec2_facts
+-   name: 'Assert: ec2_facts.instances'
+    assert:
+        that: (ec2_facts.instances is defined and ec2_facts.instances is not none and ec2_facts.instances | trim != '')
+    tags:
+    - list
+    - ec2
+    - ec2_assert_facts
+-   name: Inventory
+    debug: msg="{{ instance.id }} | {{ instance.private_ip_address }} | {{ instance.private_dns_name }} | {{ instance.image_id }}"
+    with_items: '{{ ec2_facts.instances }}'
+    loop_control:
+        loop_var: instance
+    tags:
+    - list
+    - ec2
+    - ec2_inventory
+-   name: Gather Facts on Volumes
+    local_action:
+        module: ec2_vol_facts
+        region: '{{ ec2.region }}'
+        filters:
+            attachment.status: attached
+    no_log: true
+    register: ec2_volumes
+    tags:
+    - list
+    - ec2
+    - ec2_facts_volumes
+-   name: Attached Volumes
+    debug: msg="{{ volume }}"
+    with_items: '{{ ec2_volumes.volumes }}'
+    loop_control:
+        loop_var: volume
+    tags:
+    - list
+    - ec2
+    - ec2_volumes

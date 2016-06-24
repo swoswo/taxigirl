@@ -1,0 +1,63 @@
+-   name: 'Update Cache: APT'
+    apt:
+        update_cache: yes
+        cache_valid_time: '{{ apt.cache_valid_time|default(''3600'') }}'
+    register: apt_update
+    become: yes
+    tags:
+    - packages
+    - apt
+    - apt_update
+-   name: 'Install Package: Aptitude'
+    apt:
+        name: aptitude
+        state: present
+    register: apt_aptitude
+    become: yes
+    when: (apt.install_aptitude is defined) and (apt.install_aptitude == True)
+    tags:
+    - packages
+    - apt
+    - apt_aptitude
+-   name: 'Remove Packages: APT'
+    apt:
+        name: '{{ remove_apt }}'
+        state: absent
+        purge: yes
+    become: yes
+    register: packages_remove
+    with_items: '{{ data.packages.remove|default({}) }}'
+    loop_control:
+        loop_var: remove_apt
+    when: (data.packages.remove is defined and data.packages.remove is not none and data.packages.remove | trim != '')
+    tags:
+    - packages
+    - apt
+    - apt_remove
+-   name: 'Upgrade Packages: APT'
+    apt:
+        upgrade: '{{ apt.upgrade|default(''yes'') }}'
+        dpkg_options: '{{ apt.dpkg_options|default(''force-confold,force-confdef,force-confmiss'') }}'
+        autoremove: '{{ apt.autoremove|default(''yes'') }}'
+        install_recommends: '{{ apt.install_recommends|default(''no'') }}'
+    register: apt_upgrade
+    become: yes
+    when: apt_update|cache_updated
+    tags:
+    - packages
+    - apt
+    - apt_upgrade
+-   name: 'Install Packages: APT'
+    package:
+        name: '{{ install_apt }}'
+        state: '{{ data.packages.state|default(''present'') }}'
+    become: yes
+    register: packages_install
+    with_items: '{{ data.packages.install|default({}) }}'
+    loop_control:
+        loop_var: install_apt
+    when: (data.packages.install is defined and data.packages.install is not none and data.packages.install | trim != '')
+    tags:
+    - packages
+    - apt
+    - apt_install

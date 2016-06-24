@@ -1,9 +1,0 @@
----
-- name: 'Role: Provision EC2'
-  hosts: all
-  gather_facts: no
-  any_errors_fatal: yes
-  strategy: "{{ provision.strategy|default('linear') }}"
-  roles:
-      - { role: ec2_create, when: (ec2_create is defined) }
-      - { role: ec2_rds, when: (ec2_rds is defined) }

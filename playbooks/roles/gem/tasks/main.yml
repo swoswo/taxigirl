@@ -15,7 +15,7 @@
     register: gem_update
     changed_when: gem_update.stdout.find('Successfully installed') != -1
     run_once: yes
-    become: '{{ deploy.gem.with_sudo|default(omit) }}'
+    become: '{{ data.with_sudo|default(omit) }}'
     tags:
     - deploy
     - ruby
@@ -26,12 +26,12 @@
         name: '{{ gem_name }}'
         state: latest
         build_flags: -j{{ ansible_processor_vcpus }}
-    with_items: '{{ deploy.gem.packages|default([''bundler'']) }}'
+    with_items: '{{ data.packages|default([''bundler'']) }}'
     loop_control:
         loop_var: gem_name
     register: gem_install
-    become: '{{ deploy.gem.with_sudo|default(omit) }}'
-    when: deploy.gem.packages is defined
+    become: '{{ data.with_sudo|default(omit) }}'
+    when: data.packages is defined
     tags:
     - deploy
     - ruby
