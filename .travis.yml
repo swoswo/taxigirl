@@ -25,7 +25,7 @@ matrix:
         sudo: required
     -   os: linux
         dist: trusty
-        env: PYTHON_VERSION=3.5.1 PIP_BIN_NAME=pip3 TOXENV=py35 ANSIBLE_PROFILE_DISABLE=1
+        env: PYTHON_VERSION=3.5.1 PIP_BIN_NAME=pip3 TOXENV=py35
         language: python
         python: 3.5.1
         sudo: required
@@ -43,12 +43,12 @@ install:
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make ubuntu-mirror; fi
 script:
 - make install
-- sudo make ansible-facts
 - if [[ "$TOXENV" == "py35" ]]; then make ansible-syntax ansible-tasks; fi
-- if [[ "$TOXENV" != "py35" ]]; then make ansible-galaxy ansible-tasks ansible-local; fi
+- if [[ "$TOXENV" == "py27" ]]; then sudo make ansible-facts; fi
+- if [[ "$TOXENV" == "py27" ]]; then make ansible-galaxy ansible-tasks ansible-local; fi
 notifications:
     on_success: always
     on_failure: change
-    on_start: change
+    on_start: always
     slack:
         secure: Br7cqlKk9VOL3Tu2ZWFfJeH4oetTQlaST5Qk7JRxfoIkKL7uGP+YNbtOHDk9UC0n4++ATG2bFNwAe2CKZ22bVRQsRJTzubHQKbk1bU4Aj2ty9bVsWJ+IYQ7T3B86M8PPS6UNfZUZWz1EHmSCMA8pbcY7L6drkL2DbXDmFUCtU+TYKRnZe02A7CjRlmSo4G/B0Gt4OKqwAGGr6qwBswvLt78lYEKNbArBBJdWWl32j2dHRfoy9d9/IS1LnSEiqBZU+JIPIqE2QJWM7qaOhO+BvG9vqFY2oZobpU99O212pYH+Vw2UvCXgwODDyAxXiI2pvntcQ94tBOf+YoOTSQ4+W5WjxssVzLvesx6O8mrxT8YZp+hvQjRA1uSf8y5bILmWZ0AZVXZ5PEgIbyr3dlgq3fVm5ju2EXH0eDMiAvvECQVQnjatjgM+zjFJY/LPvHbpskk2hSlTTK5JgQy8XWfjIP+MALvLpcg/Mnm7z5Ltf03n+orMZ68FIli3bc+hZpRg+0pqzfFA0TqyqcNCnvrU9rxKW0OkhsxAPMQsrvh/nWxnwN5sXFcSf38V1xKgyhLAQf0wPsF4y6IK2oVt30vKTR/eMzm3j8HYhwwsqkrNZmIBS8Dgj2v/w1eFQTk/TCBxeUQ/5waPYbfjtAZefTKqh/gXfv4jKZOPdkASlVA1JlM=
