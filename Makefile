@@ -100,7 +100,6 @@ run_tasks +=		ansible-lint \
 			vagrant-provision
 
 provision_tasks +=	vagrant-up \
-			ansible-galaxy \
 			lint \
 			vagrant-provision
 
