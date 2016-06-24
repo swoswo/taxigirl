@@ -98,6 +98,7 @@ lint_tasks += 		git-check \
 			ansible-lint
 
 run_tasks +=		ansible-lint \
+			ansible-syntax \
 			vagrant-provision
 
 provision_tasks +=	vagrant-up \
