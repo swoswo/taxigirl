@@ -9,6 +9,7 @@ autodetect: false
 ignore-paths:
   - .bundle/
   - .vagrant/
+  - .kitchen/
   - bin/
   - include/
   - lib/
