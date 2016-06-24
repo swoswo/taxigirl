@@ -8,4 +8,3 @@
   when: (hosts == 'ec2' and ec2 is defined)
 
 - include: list.yml
-  when: (hosts != 'ec2')

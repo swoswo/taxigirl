@@ -43,8 +43,8 @@ install:
 script:
 - pwd; ls -la
 - make install
-- if [[ "$TOXENV" == "py35" ]]; then make ansible-check; fi
-- if [[ "$TOXENV" != "py35" ]]; then make ansible-galaxy ansible-local; fi
+- if [[ "$TOXENV" == "py35" ]]; then make ansible-tasks ansible-facts; fi
+- if [[ "$TOXENV" != "py35" ]]; then make ansible-galaxy ansible-tasks ansible-local; fi
 notifications:
     on_success: always
     on_failure: change

@@ -1,4 +1,3 @@
-version: 0.1.0
 apt: {upgrade: 'no'}
 deploy:
   dest: /opt/test
@@ -7,9 +6,11 @@ deploy:
     commands: [echo 'what a ride!' | wall]
     with_sudo: false
   tasks: [packages, shell]
+hosts: all
 provision:
   packages:
     install: [tmux]
   tasks: [packages]
-roles: {ntp: true, os_hardening: false, switch_apt_mirror: true, unattended_upgrades: false}
+roles: {ntp: true, os_hardening: false, switch_apt_mirror: false, unattended_upgrades: false}
 slack: []
+version: 0.1.0
