@@ -15,11 +15,11 @@
     tags:
     - deploy
     - deploy_dest
--   name: Include Task
-    include: roles/deploy/tasks/{{ inc_d_task }}.yml
+-   name: Include Deployment Task
+    include: roles/deploy/tasks/{{ deploy_task }}.yml
     with_items: '{{ deploy.tasks }}'
     loop_control:
-        loop_var: inc_d_task
+        loop_var: deploy_task
     when: (deploy.tasks is defined and deploy.tasks is not none and deploy.tasks | trim != '')
     tags:
     - deploy

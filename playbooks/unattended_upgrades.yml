@@ -16,4 +16,4 @@
     unattended_mail: "{{ unattended_upgrades.mail|default('false') }}"
     unattended_mail_only_on_error: "{{ unattended_upgrades.mail_only_on_error|default('false') }}"
     unattended_minimal_steps: true
-    unattended_automatic_reboot_time: '07:00'
+    # unattended_automatic_reboot_time: '07:00'

@@ -28,11 +28,11 @@
     tags:
     - provision
     - provision_base_directory
--   name: Include Task
-    include: roles/provision/tasks/{{ inc_p_task }}.yml
+-   name: Include Provisioning Task
+    include: roles/provision/tasks/{{ provision_task }}.yml
     with_items: '{{ provision.tasks }}'
     loop_control:
-        loop_var: inc_p_task
+        loop_var: provision_task
     when: (provision.tasks is defined and provision.tasks is not none and provision.tasks | trim != '')
     tags:
     - provision
