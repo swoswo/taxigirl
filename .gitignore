@@ -156,7 +156,7 @@ private/
 random_seed
 rdoc/
 REVISION
-roles.galaxy/
+**/roles.galaxy/
 run/
 secrets
 sftp-config.json
