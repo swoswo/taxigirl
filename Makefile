@@ -14,16 +14,17 @@
 ### # defaults
 ###
 
-MKDIR_LIST		?= bin files log roles.galaxy persistent sync tmp vendor
+ANSIBLE_GALAXY_REQ_FILE ?= requirements.yml
 ANSIBLE_PLAYBOOK_FILE	?= playbooks/main.yml
+ANSIBLE_ROLES_GALAXY_PATH	?= playbooks/roles.galaxy
 BIN_PATH 		?= ./bin
 BREW_BUNDLE_FILE 	?= Brewfile
 BREW_INSTALL_FILE 	?= ./sbin/brew-install
 BREW_UNINSTALL_FILE 	?= ./sbin/brew-uninstall
 BUNDLER_CACHE_PATH 	?= ./vendor/cache
-GALAXY_REQ_FILE 	?= requirements.yml
 GEM_BUNDLE_FILE		?= Gemfile
 GIT_BRANCH		?= master
+MKDIR_LIST		?= bin files log persistent sync tmp vendor
 PIP_BIN_NAME 		?= pip
 PIP_FREEZE_FILE 	?= requirements_freeze.txt
 PIP_PRE_FREEZE_FILE 	?= requirements_pre_freeze.txt
@@ -92,14 +93,15 @@ install_tasks +=	virtualenv-provide \
 
 lint_tasks += 		git-check \
 			git-secrets-scan \
-			precommit-run
+			precommit-run \
+			ansible-lint
 
 run_tasks +=		ansible-lint \
 			vagrant-provision
 
 provision_tasks +=	vagrant-up \
 			ansible-galaxy \
-			ansible-lint \
+			lint \
 			vagrant-provision
 
 distclean_tasks +=	vagrant-halt \
@@ -310,9 +312,9 @@ vagrant-destroy: Vagrantfile
 ### # ansible
 ###
 
-ansible-galaxy: $(GALAXY_REQ_FILE)
+ansible-galaxy: $(ANSIBLE_GALAXY_REQ_FILE)
 	$(info $@: updating role dependencies)
-	$(BIN_PATH)/ansible-galaxy install -f -r $(GALAXY_REQ_FILE)
+	$(BIN_PATH)/ansible-galaxy install -f -r $(ANSIBLE_GALAXY_REQ_FILE)
 
 .PHONY: ansible-check
 ansible-check:
@@ -326,19 +328,19 @@ ansible-check:
 		config/* group_vars/* \
 		inventory/* library/* \
 		meta/* \
-		playbooks/** roles/** tests/** \
+		playbooks/** playbooks/roles/** tests/** \
 		pre-commit-hooks/* \
 		provisioning/* sbin/*
 
 .PHONY: ansible-lint
 ansible-lint:
 	$(info $@: linting playbook $(ANSIBLE_PLAYBOOK_FILE))
-	$(BIN_PATH)/ansible-lint --exclude=roles.galaxy --exclude=tests $(ANSIBLE_PLAYBOOK_FILE)
+	$(BIN_PATH)/ansible-lint --exclude=$(ANSIBLE_ROLES_GALAXY_PATH) --exclude=tests $(ANSIBLE_PLAYBOOK_FILE)
 
-.PHONY: ansible-run
-ansible-run:
+.PHONY: ansible-local
+ansible-local:
 	$(info $@: running playbook $(ANSIBLE_PLAYBOOK_FILE))
-	$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --inventory-file="inventory/localhost.ini" --extra-vars="@./config/test.yml" --timeout=60 -vvv
+	$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --connection=local --inventory-file="inventory/localhost.ini" --extra-vars="@./config/test.yml" -vvv
 
 ###
 ### # pre-commit
@@ -424,6 +426,15 @@ versions:
 	@command -v pip; $(BIN_PATH)/$(PIP_BIN_NAME) --version
 	# ansible
 	@command -v ansible; $(BIN_PATH)/ansible --version
+
+###
+### # misc
+###
+
+.PHONY: ubuntu-mirror
+ubuntu-mirror:
+	# 'fastest' ubuntu mirror
+	@-curl -s http://mirrors.ubuntu.com/mirrors.txt | xargs -n1 -I {} sh -c 'echo `curl -r 0-102400 -s -w %{speed_download} -o /dev/null {}/ls-lR.gz` {}' |sort -g -r |head -1| awk '{ print $2  }'
 
 ###
 ### # cleansing
