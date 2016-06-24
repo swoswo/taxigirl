@@ -148,6 +148,12 @@ brew-install:
 	@-$(BREW_INSTALL_FILE) 2>/dev/null
 	@brew tap Homebrew/bundle >/dev/null
 
+.PHONY: brew-python
+brew-python:
+	$(info $@: installing python via homebrew)
+	@brew update >/dev/null
+	@brew install python
+
 brew-update: $(BREW_BUNDLE_FILE)
 	$(info $@: resolving $(BREW_BUNDLE_FILE) requirements)
 	@brew update
@@ -333,6 +339,11 @@ ansible-lint:
 	$(info $@: linting playbook $(ANSIBLE_PLAYBOOK_FILE))
 	@$(BIN_PATH)/ansible-lint --exclude=$(ANSIBLE_ROLES_GALAXY_PATH) --exclude=tests $(ANSIBLE_PLAYBOOK_FILE)
 
+.PHONY: ansible-syntax
+ansible-syntax:
+	$(info $@: syntax check of playbook $(ANSIBLE_PLAYBOOK_FILE))
+	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --syntax-check --connection=local --inventory-file="$(ANSIBLE_INVENTORY_FILE)"
+
 .PHONY: ansible-hosts
 ansible-hosts:
 	$(info $@: get inventory of hosts)
@@ -342,11 +353,6 @@ ansible-hosts:
 ansible-facts:
 	$(info $@: gather facts of localhost)
 	@$(BIN_PATH)/ansible --connection=local --inventory-file="$(ANSIBLE_INVENTORY_FILE)" -vvv -m setup localhost
-
-.PHONY: ansible-syntax
-ansible-syntax:
-	$(info $@: syntax check of playbook $(ANSIBLE_PLAYBOOK_FILE))
-	@$(BIN_PATH)/ansible-playbook $(ANSIBLE_PLAYBOOK_FILE) --syntax-check --connection=local --inventory-file="$(ANSIBLE_INVENTORY_FILE)"
 
 .PHONY: ansible-tasks
 ansible-tasks:

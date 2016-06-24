@@ -8,6 +8,7 @@ git:
 env:
     global:
     - ANSIBLE_EXTRA_VARS=@./config/test.yml
+    # - ANSIBLE_SKIP_TAGS=apt_update,apt_upgrade
     # - ANSIBLE_INVENTORY_PATH=./inventory/travis.ini
     # - ANSIBLE_PLAYBOOK=./playbooks/main.yml
 matrix:
@@ -29,22 +30,20 @@ matrix:
         python: 3.5.1
         sudo: required
     -   os: osx
-        env: TOXENV=py27 CC=clang
+        env: TOXENV=py27
         language: generic
         sudo: required
 virtualenv:
     system_site_packages: false
 before_install:
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -y -qq update; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make brew-python; fi
 install:
-- uname -a; which python
+- make ubuntu-mirror
+- uname -a; which python; python -V
 script:
-- pwd; ls -la
 - make install
-- if [[ "$TOXENV" == "py35" ]]; then make ansible-tasks; fi
-- if [[ "$TOXENV" != "py35" ]]; then make ansible-galaxy ansible-tasks ansible-facts ansible-local; fi
+- if [[ "$TOXENV" == "py35" ]]; then make ansible-syntax ansible-facts ansible-tasks; fi
+- if [[ "$TOXENV" != "py35" ]]; then make ansible-galaxy ansible-facts ansible-tasks ansible-local; fi
 notifications:
     on_success: always
     on_failure: change
