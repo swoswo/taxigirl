@@ -1,0 +1,38 @@
+version: 0.1.0
+hosts: all
+galaxy:
+    run_once: true
+    roles:
+        os_hardening: no
+        ntp: no
+        switch_apt_mirror: yes
+        unattended_upgrades: no
+apt:
+    upgrade: dist
+unattended_upgrades:
+    automatic_reboot: true
+provision:
+    tasks:
+    - bootstrap
+    - packages
+    packages:
+        state: latest
+        install:
+        - ca-certificates
+        - curl
+        - build-essential
+        - gcc
+        - git
+        - libssl-dev
+        - libreadline-dev
+        - libjson-c-dev
+        - libyaml-dev
+        - libxml2-dev
+        - libxslt1-dev
+        - zlib1g-dev
+        - python
+        - python-dev
+        - python-apt
+        - python-pkg-resources
+        - python-setuptools
+        - virtualenv

@@ -65,14 +65,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end # provider
 
-  config.vm.provision 'Wait for unattended-upgrades',
-                      type: 'shell',
-                      path: './provisioning/wait_unattended_upgrades.sh',
-                      args: %w( dpkg apt unattended-upgrade )
-  config.vm.provision 'Bootstrap minimal Python',
-                      type: 'shell',
-                      path: './provisioning/bootstrap_python.sh',
-                      args: ['2.7', 'python python-pkg-resources']
+  # config.vm.provision 'Wait for unattended-upgrades',
+  #                     type: 'shell',
+  #                     path: './provisioning/wait_unattended_upgrades.sh',
+  #                     args: %w( dpkg apt unattended-upgrade )
+  # config.vm.provision 'Bootstrap minimal Python',
+  #                     type: 'shell',
+  #                     path: './provisioning/bootstrap_python.sh',
+  #                     args: ['2.7', 'python python-pkg-resources']
 
   config.vm.box = ENV['VAGRANT_VM_BOX'] || 'geerlingguy/ubuntu1604'
   config.vm.hostname = ENV['VAGRANT_VM_HOSTNAME'] || 'taxigirl.vagrant'
@@ -172,7 +172,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # ansi.galaxy_roles_path = './playbooks/roles.galaxy'
 
     ansi.extra_vars =
-      ENV['ANSIBLE_EXTRA_VARS'] || '@./config/test.yml'
+      ENV['ANSIBLE_EXTRA_VARS'] || '@./config/setup.yml'
 
     ansi.inventory_path =
       ENV['ANSIBLE_INVENTORY_PATH'] || './inventory/vagrant.py'
@@ -191,10 +191,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     ansi.verbose =
       ENV['ANSIBLE_VERBOSE'] || 'vv'
-      if ENV['ANSIBLE_RAW_ARGUMENTS']
-        # duplicate frozen string
-        raw_args = ENV['ANSIBLE_RAW_ARGUMENTS'].dup
-        ansi.raw_arguments = str_to_a(raw_args) unless raw_args.nil?
-      end
+
+    if ENV['ANSIBLE_RAW_ARGUMENTS']
+      # duplicate frozen string
+      raw_args = ENV['ANSIBLE_RAW_ARGUMENTS'].dup
+      ansi.raw_arguments = str_to_a(raw_args) unless raw_args.nil?
+    end
   end # provision
 end
