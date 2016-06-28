@@ -13,7 +13,6 @@
 -   name: Install Git
     package:
         name: git
-    run_once: yes
     tags:
     - git
     - git_install

@@ -12,8 +12,8 @@ log_location STDOUT
 # The level of logging to be stored in a log file. Possible levels: :auto (default), debug, info, warn, error, or fatal.
 log_level '{{ chef.log_level|default('auto') }}'.to_sym
 
-# TODO: comment
-color STDOUT.tty || false
+# enable colors if session is interactive
+color STDOUT.isatty || false
 
 # The sub-directory for cookbooks on the chef-client. This value can be a string or an array of file system locations, processed in the specified order. The last cookbook is considered to override local modifications.
 # TODO: abstraction
@@ -34,6 +34,7 @@ listen false
 # Enable audit-mode. Set to audit-only to skip the converge phase of the chef-client run and only perform audits. Possible values: audit-only, disabled, and enabled.
 audit_mode "{{ chef.audit_mode|default(':enabled') }}"
 
+# prevents warning if no chef-server is in use
 enable_reporting false
 
 # The home directory for the user that is running the chef-client as a non-root user.

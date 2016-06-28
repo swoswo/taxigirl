@@ -22,5 +22,4 @@
     port: "{{ ec2_rds.port | default(omit) }}"
     character_set_name: "{{ ec2_rds.character_set_name | default(omit) }}"
   register: ec2_rds.server
-  # run_once: true # TODO: check
   tags: [provision, ec2, ec2_rds, ec2_rds_create]

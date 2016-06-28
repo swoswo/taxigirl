@@ -5,15 +5,15 @@
     - chef
     - chef_run
     - chef_assert_run
--   name: Assert on 'chef.runlist'
+-   name: Assert on 'chef.run_list'
     assert:
-        that: (chef.runlist is defined and chef.runlist is not none and chef.runlist | trim != '')
+        that: (chef.run_list is defined and chef.run_list is not none and chef.run_list | trim != '')
     tags:
     - chef
     - chef_run
     - chef_assert_runlist
 -   name: Run Chef (Zero)
-    command: chef-client --no-fork --no-color -c /etc/chef/client.rb -o '{{ chef.run_list }}'
+    command: chef-client --no-fork --no-color -c "{{ chef.config_dir|default(''/etc/chef'') }}"/client.rb -o '{{ chef.run_list }}'
     args:
         chdir: '{{ chdir }}'
     become: '{{ chef.with_sudo|default(omit) }}'
@@ -25,7 +25,7 @@
     - chef_run
     - chef_run_zero
 -   name: Run Chef (Solo)
-    command: chef-solo --no-fork --no-color -c /etc/chef/solo.rb -o '{{ chef.run_list }}'
+    command: chef-solo --no-fork --no-color -c "{{ chef.config_dir|default(''/etc/chef'') }}"/solo.rb -o '{{ chef.run_list }}'
     args:
         chdir: '{{ chdir }}'
     become: '{{ chef.with_sudo|default(omit) }}'

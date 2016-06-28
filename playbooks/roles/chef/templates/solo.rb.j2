@@ -12,8 +12,8 @@ log_location STDOUT
 # The level of logging to be stored in a log file. Possible levels: :auto (default), debug, info, warn, error, or fatal.
 log_level '{{ chef.log_level|default('auto') }}'.to_sym
 
-# TODO: comment
-color STDOUT.tty || false
+# enable colors if session is interactive
+color STDOUT.isatty || false
 
 # The sub-directory for cookbooks on the chef-client. This value can be a string or an array of file system locations, processed in the specified order. The last cookbook is considered to override local modifications.
 # TODO: abstraction
@@ -31,5 +31,5 @@ file_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
 # All files in a cookbook must contain valid Ruby syntax. Use this setting to specify the location in which knife caches information about files that have been checked for valid Ruby syntax.
 syntax_check_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
 
-# TODO: comment
+# prevent forking
 client_fork false

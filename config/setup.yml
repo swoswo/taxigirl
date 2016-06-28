@@ -1,7 +1,6 @@
 version: 0.1.0
 hosts: all
 galaxy:
-    run_once: true
     roles:
         os_hardening: no
         ntp: no

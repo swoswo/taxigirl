@@ -2,7 +2,6 @@
     command: gem update --system --no-document
     register: gem_update_system
     changed_when: gem_update_system.stdout.find('Successfully installed') != -1
-    run_once: true
     become: true
     tags:
     - ruby
@@ -13,7 +12,6 @@
     command: gem update --env-shebang --no-document --conservative
     register: gem_update
     changed_when: gem_update.stdout.find('Successfully installed') != -1
-    run_once: true
     become: '{{ data.with_sudo|default(omit) }}'
     tags:
     - ruby

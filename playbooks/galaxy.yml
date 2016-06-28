@@ -6,7 +6,6 @@
   become: yes
   vars_files:
       - ../vars/galaxy.yml
-  run_once: "{{ galaxy.run_once|default('yes') }}"
   roles:
       - { role: switch-apt-mirror, when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and (galaxy.roles.switch_apt_mirror is defined and galaxy.roles.switch_apt_mirror == True) }
       - { role: os-hardening, when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and (galaxy.roles.os_hardening is defined and galaxy.roles.os_hardening == True) }

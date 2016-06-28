@@ -50,13 +50,14 @@
     register: chef_install
     become: yes
     changed_when: chef_install.stdout.find('Selecting previously unselected package chef') != -1
-    # when: hostvars[ansible_hostname]['have_chef'] is undefined
+    # when: hostvars[ansible_hostname]['installed'] is undefined
     tags:
     - chef
     - chef_install
 -   name: Factize installation
     set_fact:
-        have_chef: yes
+        chef:
+            installed: yes
     when: chef_install|success
     tags:
     - chef
@@ -102,28 +103,13 @@
     - chef_version
 -   name: Factize version of Chef
     set_fact:
-        chef_version: chef_version.stdout
+        chef:
+            version: chef_version.stdout
     when: chef_version|changed
     tags:
     - chef
     - chef_version
     - chef_version_fact
-# -   name: Run OHAI
-#     setup:
-#         filter: ohai
-#     no_log: yes
-#     register: chef_ohai
-#     tags:
-#     - chef
-#     - chef_ohai
-# -   name: Factize output of OHAI
-#     set_fact:
-#         chef_ohai: chef_ohai.stdout
-#         when: chef_ohai|success
-#     tags:
-#     - chef
-#     - chef_ohai
-#     - chef_ohai_fact
 - name: Include Runner
   include: chef_run.yml
   tags:
