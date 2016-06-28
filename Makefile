@@ -310,8 +310,11 @@ vagrant-provision: Vagrantfile
 
 vagrant-status: Vagrantfile
 	$(info $@: gather info on vm)
+	# virtual box
 	@-vagrant vbinfo
+	# ssh-configuration
 	@-vagrant ssh-config
+	# status
 	@-vagrant status
 
 vagrant-halt: Vagrantfile
