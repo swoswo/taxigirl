@@ -95,7 +95,8 @@ install_tasks +=	virtualenv-provide \
 lint_tasks += 		git-check \
 			git-secrets-scan \
 			precommit-run \
-			ansible-lint
+			ansible-lint \
+			ansible-syntax
 
 run_tasks +=		ansible-lint \
 			ansible-syntax \
@@ -124,16 +125,16 @@ all_tasks += 		update \
 			provision \
 			run
 
-.PHONY: install reset update check install distclean test
-update:			$(update_tasks)
+.PHONY: all bootstrap distclean install lint provision run test update
+all:			$(all_tasks)
 bootstrap:		$(bootstrap_tasks)
+distclean:		$(distclean_tasks)
 install:		$(install_tasks)
 lint:			$(lint_tasks)
-run:			$(run_tasks)
 provision:		$(provision_tasks)
-distclean:		$(distclean_tasks)
+run:			$(run_tasks)
 test:			$(test_tasks)
-all:			$(all_tasks)
+update:			$(update_tasks)
 
 list help:
 	$(info $@: available targets)
