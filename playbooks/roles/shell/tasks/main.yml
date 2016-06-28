@@ -1,8 +1,15 @@
 -   name: Assert on 'data.commands'
     assert:
         that: (data.commands is defined and data.commands is not none and data.commands | trim != '')
+    tags:
+    - shell
+    - shell_assert
 -   name: Data
     debug: var=data verbosity=3
+    tags:
+    - debug
+    - shell
+    - shell_debug
 -   name: Run shell commands
     raw: '{{ shell_command }}'
     args:

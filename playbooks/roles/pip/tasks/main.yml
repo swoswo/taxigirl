@@ -1,5 +1,10 @@
 -   name: Data
     debug: var=data verbosity=3
+    tags:
+    - debug
+    - python
+    - pip
+    - pip_debug
 -   name: Resolve pip requirements
     pip:
         virtualenv: '{{ data.virtualenv|default(omit) }}'

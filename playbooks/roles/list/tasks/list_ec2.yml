@@ -31,6 +31,7 @@
     loop_control:
         loop_var: instance
     tags:
+    - debug
     - list
     - ec2
     - ec2_inventory
@@ -52,6 +53,7 @@
     loop_control:
         loop_var: volume
     tags:
+    - debug
     - list
     - ec2
     - ec2_volumes

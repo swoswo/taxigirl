@@ -20,6 +20,12 @@
 -   name: List of Gems to install
     debug: var=data.packages verbosity=3
     when: data.packages is defined
+    tags:
+    - debug
+    - ruby
+    - gem
+    - gem_install
+
 -   name: Install or Upgrade Gems
     gem:
         name: '{{ gem_name }}'

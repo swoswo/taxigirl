@@ -33,7 +33,7 @@
 - name: List of instances
   debug: var=item
   with_items: "{{ ec2_create.instances }}"
-  tags: [provision, ec2, ec2_create, ec2_list]
+  tags: [debug, provision, ec2, ec2_create, ec2_list]
 
 - name: Wait for SSH to be accessible
   wait_for:

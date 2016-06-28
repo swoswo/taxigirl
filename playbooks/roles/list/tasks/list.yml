@@ -4,4 +4,4 @@
   with_inventory_hostnames: all
   loop_control:
     loop_var: inv_host
-  tags: [list, local, local_inventory]
+  tags: [debug, list, local, local_inventory]
