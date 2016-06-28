@@ -4,6 +4,10 @@
     any_errors_fatal: true
     strategy: "{{ strategy|default('linear') }}"
     roles:
+    -   role: aws_ec2
+        when: ('aws_ec2' in provision.tasks and ec2 is defined)
+    -   role: aws_rds
+        when: ('aws_rds' in provision.tasks and ec2_rds is defined)
     -   role: bootstrap
         when: ('bootstrap' in provision.tasks)
     -   role: packages
@@ -13,3 +17,6 @@
         data: '{{ provision.shell }}'
         chdir: '{{ deploy.dest }}'
         when: ('shell' in provision.tasks and provision.shell is defined)
+    post_tasks:
+    -   name: Flag Completion
+        set_fact: completed_provision=true

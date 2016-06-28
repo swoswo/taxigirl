@@ -3,10 +3,8 @@
     become: true
     gather_facts: true
     hosts: "{{ hosts|default('all') }}"
-    pre_tasks:
-    -   name: 'Debug: completed'
-        debug: var=hostvars[ansible_hostname]['completed'] verbosity=3
-
+    vars_files:
+    - ../vars/galaxy.yml
     roles:
     -   role: switch-apt-mirror
         when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and (galaxy.roles.switch_apt_mirror is defined and galaxy.roles.switch_apt_mirror == True)
@@ -16,15 +14,6 @@
         when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and (galaxy.roles.ntp is defined and galaxy.roles.ntp == True)
     -   role: unattended-upgrades
         when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and (galaxy.roles.unattended_upgrades is defined) and (galaxy.roles.unattended_upgrades == True)
-
     post_tasks:
-    -   name: Flag
-        set_fact:
-            completed:
-                galaxy: true
-
-    -   name: 'Debug: completed'
-        debug: var=hostvars[ansible_hostname]['completed'] verbosity=3
-
-    vars_files:
-    - ../vars/galaxy.yml
+    -   name: Flag Completion
+        set_fact: completed_galaxy=true

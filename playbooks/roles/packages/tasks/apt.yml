@@ -15,16 +15,6 @@
     - packages
     - apt
     - apt_debug
-# -   name: 'Install Package: Aptitude'
-#     apt:
-#         name: aptitude
-#     register: apt_aptitude
-#     become: yes
-#     # when: (apt.install_aptitude is defined and apt.install_aptitude == True)
-#     tags:
-#     - packages
-#     - apt
-#     - apt_aptitude
 -   name: 'Remove Packages: APT'
     apt:
         name: "{{ remove_apt }}"

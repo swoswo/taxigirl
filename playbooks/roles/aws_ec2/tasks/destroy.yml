@@ -6,7 +6,8 @@
     - aws_ec2
     - aws_ec2_destroy
     - aws_ec2_destroy_assert
--   pause: prompt="Make sure you are OK to Terminate Instance!"
+-   name: Confirm Termination
+    pause: prompt="Make sure you are OK to Terminate Instance!"
     tags:
     - destroy
     - aws_ec2

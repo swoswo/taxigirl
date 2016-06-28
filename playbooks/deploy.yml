@@ -31,3 +31,6 @@
         data: '{{ deploy.shell }}'
         chdir: '{{ deploy.dest }}'
         when: ('shell' in deploy.tasks and deploy.shell is defined)
+    post_tasks:
+    -   name: Flag Completion
+        set_fact: completed_deploy=true

@@ -15,4 +15,4 @@
     include: create.yml
 -   name: 'Destroy Instance: EC2'
     include: destroy.yml
-    when: (ec2_destroy is defined and ec2_destroy == True)
+    when: (ec2_destroy is defined and ec2_destroy == 'true')

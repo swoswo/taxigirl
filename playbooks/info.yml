@@ -1,0 +1,11 @@
+-   name: 'Playbook: Info'
+    hosts: "{{ hosts|default('all') }}"
+    gather_facts: true
+    any_errors_fatal: false
+    tasks:
+    -   name: 'Hostname'
+        debug: var=ansible_hostname verbosity=1
+    -   name: 'Hostvars'
+        debug: var=hostvars verbosity=4
+    -   name: 'Hostvars for this host'
+        debug: var=hostvars[ansible_fqdn] verbosity=3

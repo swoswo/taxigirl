@@ -1,3 +1,6 @@
+-   include: info.yml
+    tags:
+    - info
 -   include: galaxy.yml
     tags:
     - galaxy
