@@ -37,10 +37,9 @@ AutoNetwork.default_pool = '172.16.0.0/24'
 
 Vagrant.require_version '>= 1.8.3'
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.define :taxigirl
+  config.vm.define ENV['VAGRANT_VM_HOSTNAME'] || 'taxigirl.vagrant'
   config.vm.provider :virtualbox do |vbox|
-    # TODO: cli
-    vbox.name = 'taxigirl'
+    vbox.name = ENV['VAGRANT_VM_HOSTNAME'] || 'taxigirl.vagrant'
 
     # vbox.linked_clone = true
     vbox.customize ['modifyvm', :id,
@@ -54,7 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                     'VBoxInternal2/SharedFoldersEnableSymlinksCreate//sync',
                     '1']
 
-    # do not sync time with host as the guest should run ntp
+    # do not sync time with host (guest should run ntp)
     vbox.customize ['setextradata', :id,
                     'VVBoxInternal/Devices/VMMDev/0/Config/GetHostTimeDisabled',
                     '1']
@@ -76,8 +75,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                       args: ['2.7', 'python python-pkg-resources']
 
   config.vm.box = ENV['VAGRANT_VM_BOX'] || 'geerlingguy/ubuntu1604'
-  # config.vm.box = ENV['VAGRANT_VM_BOX'] || 'bento/ubuntu-16.04'
-  config.vm.hostname = ENV['VAGRANT_VM_HOSTNAME'] || 'vagrant.taxigirl'
+  config.vm.hostname = ENV['VAGRANT_VM_HOSTNAME'] || 'taxigirl.vagrant'
   config.ssh.forward_agent = true
   config.vm.network :private_network, auto_network: true
   # TODO: abstraction
@@ -170,14 +168,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # https://www.vagrantup.com/docs/provisioning/ansible_common.html
   config.vm.provision 'ansible' do |ansi|
 
-    ansi.galaxy_role_file = './requirements.yml'
-    ansi.galaxy_roles_path = './playbooks/roles.galaxy'
+    # ansi.galaxy_role_file = './requirements.yml'
+    # ansi.galaxy_roles_path = './playbooks/roles.galaxy'
 
     ansi.extra_vars =
       ENV['ANSIBLE_EXTRA_VARS'] || '@./config/test.yml'
 
     ansi.inventory_path =
-      ENV['ANSIBLE_INVENTORY_PATH'] || './inventory/vagrant.ini'
+      ENV['ANSIBLE_INVENTORY_PATH'] || './inventory/vagrant.py'
 
     # ansi.limit =
     #   ENV['ANSIBLE_LIMIT'] unless ENV['ANSIBLE_LIMIT'].nil?

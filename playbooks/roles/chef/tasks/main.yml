@@ -1,17 +1,15 @@
-# -   name: Assert on 'deploy.dest'
-#     assert:
-#         that: (deploy.dest is defined and deploy.dest is not none and deploy.dest | trim != '')
-#     tags:
-#     - deploy
-#     - chef
-#     - chef_assert_dest
-# -   name: Assert on 'chef.tmp_dir'
-#     assert:
-#         that: (chef.tmp_dir is defined and chef.tmp_dir is not none and chef.tmp_dir | trim != '')
-#     tags:
-#     - deploy
-#     - chef
-#     - chef_assert_tmp_dir
+-   name: Assert on 'deploy.dest'
+    assert:
+        that: (deploy.dest is defined and deploy.dest is not none and deploy.dest | trim != '')
+    tags:
+    - chef
+    - chef_assert_dest
+-   name: Assert on 'chef.tmp_dir'
+    assert:
+        that: (chef.tmp_dir is defined and chef.tmp_dir is not none and chef.tmp_dir | trim != '')
+    tags:
+    - chef
+    - chef_assert_tmp_dir
 -   name: Create directories for temporary data
     file:
         path: '{{ chef_tmpdir }}'
@@ -26,7 +24,6 @@
         loop_var: chef_tmpdir
     become: yes
     tags:
-    - deploy
     - chef
     - chef_dir_tmp
 -   name: Create configuration directory
@@ -38,7 +35,6 @@
         mode: 0755
     become: yes
     tags:
-    - deploy
     - chef
     - chef_dir_config
 -   name: Fetch installation script for Chef
@@ -47,7 +43,6 @@
         dest: '{{ chef.tmp_dir }}/install.sh'
     register: chef_fetch
     tags:
-    - deploy
     - chef
     - chef_fetch
 -   name: Install Chef
@@ -55,16 +50,14 @@
     register: chef_install
     become: yes
     changed_when: chef_install.stdout.find('Selecting previously unselected package chef') != -1
-    when: hostvars[ansible_hostname]['have_chef'] is undefined
+    # when: hostvars[ansible_hostname]['have_chef'] is undefined
     tags:
-    - deploy
     - chef
     - chef_install
 # -   set_fact:
 #         have_chef: yes
 #     when: chef_install|success
 #     tags:
-#     - deploy
 #     - chef
 #     - chef_install
 #     - set_fact
@@ -75,7 +68,6 @@
         mode: 0644
     become: yes
     tags:
-    - deploy
     - chef
     - chef_zero_config
     - chef_zero
@@ -86,7 +78,6 @@
         mode: 0644
     become: yes
     tags:
-    - deploy
     - chef
     - chef_solo_config
     - chef_solo
@@ -99,22 +90,19 @@
         state: directory
     become: yes
     tags:
-    - deploy
     - chef
     - chef_permissions
--   name: Gather version of Chef
-    command: chef-client -v
-    register: chef_version
-    tags:
-    - deploy
-    - chef
-    - chef_version
+# -   name: Gather version of Chef
+#     command: chef-client -v
+#     register: chef_version
+#     tags:
+#     - chef
+#     - chef_version
 # -   name: Factize version of Chef
 #     set_fact:
 #         chef_version: chef_version.stdout
 #         when: chef_version|success
 #     tags:
-#     - deploy
 #     - chef
 #     - chef_version
 #     - chef_version_fact
@@ -124,7 +112,6 @@
 #     no_log: yes
 #     register: chef_ohai
 #     tags:
-#     - deploy
 #     - chef
 #     - chef_ohai
 # -   name: Factize output of OHAI
@@ -132,7 +119,11 @@
 #         chef_ohai: chef_ohai.stdout
 #         when: chef_ohai|success
 #     tags:
-#     - deploy
 #     - chef
 #     - chef_ohai
 #     - chef_ohai_fact
+- name: Include Runner
+  include: chef_run.yml
+  tags:
+  - chef
+  - chef_run

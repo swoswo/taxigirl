@@ -1,0 +1,13 @@
+---
+- name: 'Galaxy Roles'
+  hosts: all
+  gather_facts: yes
+  any_errors_fatal: yes
+  become: yes
+  vars_files:
+      - ../vars/galaxy.yml
+  roles:
+      - { role: switch-apt-mirror, when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and (roles.switch_apt_mirror is defined and roles.switch_apt_mirror == True) }
+      - { role: os-hardening, when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and (roles.os_hardening is defined and roles.os_hardening == True) }
+      - { role: ntp, when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and (roles.ntp is defined and roles.ntp == True) }
+      - { role: unattended-upgrades, when: (roles.unattended_upgrades is defined) and (roles.unattended_upgrades == True) }

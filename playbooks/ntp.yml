@@ -1,8 +1,0 @@
----
-- name: 'Playbook for https://github.com/ANXS/ntp'
-  hosts: all
-  gather_facts: yes
-  any_errors_fatal: yes
-  become: yes
-  roles:
-      - { role: ntp, ntp_servers: [ntp.in.xplosion.de,2.ubuntu.pool.ntp.org] }

@@ -26,10 +26,10 @@
         purge: yes
     become: yes
     register: packages_remove
-    with_items: '{{ data.packages.remove|default({}) }}'
+    with_items: '{{ data.remove|default({}) }}'
     loop_control:
         loop_var: remove_apt
-    when: (data.packages.remove is defined and data.packages.remove is not none and data.packages.remove | trim != '')
+    when: (data.remove is defined and data.remove is not none and data.remove | trim != '')
     tags:
     - packages
     - apt
@@ -50,13 +50,13 @@
 -   name: 'Install Packages: APT'
     package:
         name: '{{ install_apt }}'
-        state: '{{ data.packages.state|default(''present'') }}'
+        state: '{{ data.state|default(''present'') }}'
     become: yes
     register: packages_install
-    with_items: '{{ data.packages.install|default({}) }}'
+    with_items: '{{ data.install|default({}) }}'
     loop_control:
         loop_var: install_apt
-    when: (data.packages.install is defined and data.packages.install is not none and data.packages.install | trim != '')
+    when: (data.install is defined and data.install is not none and data.install | trim != '')
     tags:
     - packages
     - apt

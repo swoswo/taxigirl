@@ -1,5 +1,5 @@
 ---
-- name: 'Role: List'
+- name: 'Playbook: List'
   hosts: all
   gather_facts: yes
   strategy: free

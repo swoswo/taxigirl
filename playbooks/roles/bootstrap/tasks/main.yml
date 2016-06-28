@@ -1,15 +1,15 @@
-# -   name: Assert on 'version'
-#     assert:
-#         that: (version is defined and version is not none and version | trim != '' and version != '0.0.0')
-#     tags:
-#     - provision
-#     - provision_assert_version
-# -   name: Assert on 'deploy.dest'
-#     assert:
-#         that: (deploy.dest is defined and deploy.dest is not none and deploy.dest | trim != '')
-#     tags:
-#     - provision
-#     - provision_assert_dest
+-   name: Assert on 'version'
+    assert:
+        that: (version is defined and version is not none and version | trim != '' and version != '0.0.0')
+    tags:
+    - bootstrap
+    - bootstrap_assert_version
+-   name: Assert on 'deploy.dest'
+    assert:
+        that: (deploy.dest is defined and deploy.dest is not none and deploy.dest | trim != '')
+    tags:
+    - bootstrap
+    - bootstrap_assert_dest
 -   name: Bootstrap Debian System
     include: debian.yml
     when: (ansible_os_family == 'Debian') or (ansible_os_family == 'Ubuntu')
@@ -27,5 +27,5 @@
         state: directory
     become: yes
     tags:
-    - provision
-    - provision_base_directory
+    - bootstrap
+    - bootstrap_base_directory

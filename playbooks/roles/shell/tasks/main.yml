@@ -9,7 +9,7 @@
     loop_control:
         loop_var: shell_command
     register: shell_commands
-    # when: data.commands is defined
+    when: data.commands is defined
     become: '{{ data.with_sudo|default(omit) }}'
     tags:
     - shell

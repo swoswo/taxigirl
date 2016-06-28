@@ -5,7 +5,6 @@
     run_once: yes
     become: yes
     tags:
-    - deploy
     - ruby
     - gem
     - gem_update
@@ -17,7 +16,6 @@
     run_once: yes
     become: '{{ data.with_sudo|default(omit) }}'
     tags:
-    - deploy
     - ruby
     - gem
     - gem_update
@@ -33,7 +31,6 @@
     become: '{{ data.with_sudo|default(omit) }}'
     when: data.packages is defined
     tags:
-    - deploy
     - ruby
     - gem
     - gem_install

@@ -1,10 +1,16 @@
 -   name: 'Assert: data'
     assert:
-        that: (data is defined and data is not none and data| trim != '')
+        that: (data is defined and data is not none and data|trim != '')
     tags:
     - provision
-    - provision_assert_dest
+    - provision_assert_data
+
+- name: Debug
+  debug: var=provision.packages verbosity=3
+
+- name: Debug
+  debug: var=data verbosity=3
+
 -   name: 'Packages: APT'
     include: apt.yml
     when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu')
-    run_once: true

@@ -1,5 +1,5 @@
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    sha: 144c3857cdbba0b758f80aeee9f2adf42ea303ee
+    sha: 493665a5fc24deb2204fc48b8398be77e6c9e5d5
     hooks:
     -   id: check-merge-conflict
     -   id: check-added-large-files
@@ -55,6 +55,7 @@
     -   id: travis
         name: Travis Lint
         language: script
-        description: Validating your .travis.yml file before committing it reduces common build errors
+        description: Validating your .travis.yml file before committing it reduces
+            common build errors
         files: .travis.yml$
         entry: pre-commit-hooks/travis.sh

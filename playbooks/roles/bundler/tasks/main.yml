@@ -1,10 +1,9 @@
-# -   name: Assert on 'git.dest'
-#     assert:
-#         that: (git.dest is defined and git.dest is not none and git.dest | trim != '')
-#     tags:
-#     - deploy
-#     - bundler
-#     - bundler_assert
+-   name: Assert on 'git.dest'
+    assert:
+        that: (git.dest is defined and git.dest is not none and git.dest | trim != '')
+    tags:
+    - bundler
+    - bundler_assert
 -   name: Run Bundler
     bundler:
         state: present
@@ -16,7 +15,6 @@
         exclude_groups: '{{ bundler.exclude_groups|default([''test'',''integration'',''development'',''openstack'',''tools'']) }}'
     become: '{{ bundler.with_sudo|default(omit) }}'
     tags:
-    - deploy
     - bundler
     - bundler_install'
 -   name: Adjust permissions of binstubs
@@ -30,6 +28,5 @@
     when: bundler.binstub_directory is defined
     become: true
     tags:
-    - deploy
-    - chef
+    - bundler
     - bundler_permission_binstubs

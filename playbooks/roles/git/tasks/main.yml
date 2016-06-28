@@ -1,24 +1,20 @@
-# -   name: Assert on 'git.dest'
-#     assert:
-#         that: (git.dest is defined and git.dest is not none and git.dest | trim != '')
-#     tags:
-#     - deploy
-#     - git
-#     - git_assert_dest
-# -   name: Assert on 'git.repo'
-#     assert:
-#         that: (git.repo is defined and git.repo is not none and git.repo | trim != '')
-#     tags:
-#     - deploy
-#     - git
-#     - git_assert_repo
+-   name: Assert on 'git.dest'
+    assert:
+        that: (git.dest is defined and git.dest is not none and git.dest | trim != '')
+    tags:
+    - git
+    - git_assert_dest
+-   name: Assert on 'git.repo'
+    assert:
+        that: (git.repo is defined and git.repo is not none and git.repo | trim != '')
+    tags:
+    - git
+    - git_assert_repo
 -   name: Install Git
     package:
         name: git
-        state: latest
     run_once: yes
     tags:
-    - deploy
     - git
     - git_install
 -   name: Add Git server as a known host
@@ -28,15 +24,13 @@
         mode: 0600
         state: touch
     tags:
-    - deploy
     - git
     - git_known_hosts
 -   name: Scan for key of Git server
-    shell: ssh-keyscan -H -t dsa {{ git.server }} >> ~/.ssh/known_hosts
+    command: ssh-keyscan -H -t dsa {{ git.server }} >> ~/.ssh/known_hosts
     no_log: yes
     when: (git.server is defined and git.server is not none and git.server | trim != '')
     tags:
-    - deploy
     - git
     - git_ssh_keyscan
 -   name: Clone project from Git
@@ -51,6 +45,5 @@
         version: '{{ git.version|default(omit) }}'
     register: git_clone
     tags:
-    - deploy
     - git
     - git_clone

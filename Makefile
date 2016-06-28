@@ -102,6 +102,8 @@ run_tasks +=		ansible-lint \
 			vagrant-provision
 
 provision_tasks +=	vagrant-up \
+			vagrant-status \
+			galaxy-install \
 			lint \
 			vagrant-provision
 
@@ -301,11 +303,16 @@ vagrant-update: Vagrantfile
 vagrant-up: Vagrantfile
 	$(info $@: bringing the box up)
 	@vagrant up --no-provision
-	@-vagrant vbinfo
 
 vagrant-provision: Vagrantfile
 	$(info $@: running provisioner inside the box)
 	@source bin/activate; vagrant provision
+
+vagrant-status: Vagrantfile
+	$(info $@: gather info on vm)
+	@-vagrant vbinfo
+	@-vagrant ssh-config
+	@-vagrant status
 
 vagrant-halt: Vagrantfile
 	$(info $@: halting the box)
@@ -319,7 +326,11 @@ vagrant-destroy: Vagrantfile
 ### # ansible
 ###
 
-ansible-galaxy: $(ANSIBLE_GALAXY_REQ_FILE)
+galaxy-install: $(ANSIBLE_GALAXY_REQ_FILE)
+	$(info $@: installing role dependencies)
+	$(BIN_PATH)/ansible-galaxy install -r $(ANSIBLE_GALAXY_REQ_FILE)
+
+galaxy-update: $(ANSIBLE_GALAXY_REQ_FILE)
 	$(info $@: updating role dependencies)
 	$(BIN_PATH)/ansible-galaxy install -f -r $(ANSIBLE_GALAXY_REQ_FILE)
 
@@ -459,7 +470,7 @@ versions:
 .PHONY: ubuntu-mirror
 ubuntu-mirror:
 	# 'fastest' ubuntu mirror
-	@-curl -s http://mirrors.ubuntu.com/mirrors.txt | xargs -n1 -I {} sh -c 'echo `curl -r 0-102400 -s -w %{speed_download} -o /dev/null {}/ls-lR.gz` {}' |sort -g -r |head -1| awk '{ print $2  }'
+	@-curl -s http://mirrors.ubuntu.com/mirrors.txt | xargs -n1 -I {} sh -c 'echo `curl -r 0-102400 -s -w %{speed_download} -o /dev/null {}/ls-lR.gz` {}' | sort -g -r | head -1 | awk '{ print $2  }'
 
 ###
 ### # cleansing

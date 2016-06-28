@@ -6,7 +6,6 @@
     become: '{{ data.with_sudo|default(omit) }}'
     when: data.requirements is defined
     tags:
-    - deploy
     - python
     - pip
     - pip_requiremenets
@@ -21,7 +20,6 @@
     become: '{{ data.with_sudo|default(omit) }}'
     when: data.packages is defined
     tags:
-    - deploy
     - python
     - pip
     - pip_packages
