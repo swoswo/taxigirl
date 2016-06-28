@@ -1,13 +1,13 @@
--   name: Assert on 'git.dest'
+-   name: Assert on 'chdir'
     assert:
-        that: (git.dest is defined and git.dest is not none and git.dest | trim != '')
+        that: (chdir is defined and chdir is not none and chdir | trim != '')
     tags:
     - bundler
     - bundler_assert
 -   name: Run Bundler
     bundler:
         state: present
-        chdir: '{{ git.dest }}'
+        chdir: '{{ chdir }}'
         clean: '{{ bundler.clean|default(''yes'') }}'
         gem_path: '{{ bundler.gem_path|default(omit) }}'
         extra_args: '{{ bundler.extra_args|default(omit) }}'
@@ -19,7 +19,7 @@
     - bundler_install'
 -   name: Adjust permissions of binstubs
     file:
-        path: '{{ git.dest }}/bin'
+        path: '{{ chdir }}/bin'
         recurse: true
         owner: root
         group: root

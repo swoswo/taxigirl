@@ -1,12 +1,15 @@
----
-- name: 'Playbook: Provision'
-  hosts: all
-  gather_facts: yes
-  any_errors_fatal: yes
-  strategy: "{{ strategy|default('linear') }}"
-  roles:
-  - { role: bootstrap, when: "'bootstrap' in provision.tasks" }
-  - { role: packages, data: "{{ provision.packages }}", when: "'packages' in provision.tasks" }
-  - { role: shell, data: "{{ provision.shell }}", chdir: "{{ deploy.dest }}", when: "'shell' in provision.tasks" }
-  tags:
-    - provision
+-   name: 'Playbook: Provision'
+    hosts: all
+    gather_facts: true
+    any_errors_fatal: true
+    strategy: '{{ strategy|default(''linear'') }}'
+    roles:
+    -   role: bootstrap
+        when: '''bootstrap'' in provision.tasks'
+    -   role: packages
+        data: '{{ provision.packages }}'
+        when: '''packages'' in provision.tasks'
+    -   role: shell
+        data: '{{ provision.shell }}'
+        chdir: '{{ deploy.dest }}'
+        when: '''shell'' in provision.tasks'

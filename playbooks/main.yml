@@ -1,4 +1,7 @@
 ---
 - include: galaxy.yml
+  tags: [main, galaxy]
 - include: provision.yml
+  tags: [main, provision]
 - include: deploy.yml
+  tags: [main, deploy]

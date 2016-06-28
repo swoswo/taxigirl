@@ -1,22 +1,36 @@
+-   name: Assert on 'chef.run'
+    assert:
+        that: (chef.run is defined and chef.run is not none and chef.run | trim != '')
+    tags:
+    - chef
+    - chef_run
+    - chef_assert_run
+-   name: Assert on 'chef.runlist'
+    assert:
+        that: (chef.runlist is defined and chef.runlist is not none and chef.runlist | trim != '')
+    tags:
+    - chef
+    - chef_run
+    - chef_assert_runlist
 -   name: Run Chef (Zero)
     command: chef-client --no-fork --no-color -c /etc/chef/client.rb -o '{{ chef.run_list }}'
     args:
-        chdir: '{{ deploy.dest }}'
+        chdir: '{{ chdir }}'
     become: '{{ chef.with_sudo|default(omit) }}'
     register: run_chef_zero
-    when: chef.run == 'solo'
+    when: (chef.run is defined and chef.run == 'zero')
     tags:
     - chef
     - chef_zero
     - chef_run
     - chef_run_zero
 -   name: Run Chef (Solo)
-    command: chef-colo --no-fork --no-color -c /etc/chef/solo.rb -o '{{ chef.run_list }}'
+    command: chef-solo --no-fork --no-color -c /etc/chef/solo.rb -o '{{ chef.run_list }}'
     args:
-        chdir: '{{ deploy.dest }}'
+        chdir: '{{ chdir }}'
     become: '{{ chef.with_sudo|default(omit) }}'
     register: run_chef_solo
-    when: chef.run == 'solo'
+    when: (chef.run is defined and chef.run == 'solo')
     tags:
     - chef
     - chef_solo

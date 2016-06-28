@@ -1,6 +1,6 @@
--   name: Assert on 'deploy.dest'
+-   name: Assert on 'chdir'
     assert:
-        that: (deploy.dest is defined and deploy.dest is not none and deploy.dest | trim != '')
+        that: (chdir is defined and chdir is not none and chdir | trim != '')
     tags:
     - chef
     - chef_assert_dest
@@ -54,16 +54,17 @@
     tags:
     - chef
     - chef_install
-# -   set_fact:
-#         have_chef: yes
-#     when: chef_install|success
-#     tags:
-#     - chef
-#     - chef_install
-#     - set_fact
+-   name: Factize installation
+    set_fact:
+        have_chef: yes
+    when: chef_install|success
+    tags:
+    - chef
+    - chef_install
+    - set_fact
 -   name: Create configuration file for chef-client (zero)
     template:
-        src: chef/client.rb.j2
+        src: templates/client.rb.j2
         dest: '{{ chef.config_dir|default(''/etc/chef'') }}/client.rb'
         mode: 0644
     become: yes
@@ -73,7 +74,7 @@
     - chef_zero
 -   name: Create configuration file for chef-solo
     template:
-        src: chef/solo.rb.j2
+        src: templates/solo.rb.j2
         dest: '{{ chef.config_dir|default(''/etc/chef'') }}/solo.rb'
         mode: 0644
     become: yes
@@ -83,7 +84,7 @@
     - chef_solo
 -   name: Adjust permissions
     file:
-        path: '{{ deploy.dest }}'
+        path: '{{ chdir }}'
         recurse: yes
         owner: '{{ ansible_user }}'
         mode: 0775
@@ -92,20 +93,21 @@
     tags:
     - chef
     - chef_permissions
-# -   name: Gather version of Chef
-#     command: chef-client -v
-#     register: chef_version
-#     tags:
-#     - chef
-#     - chef_version
-# -   name: Factize version of Chef
-#     set_fact:
-#         chef_version: chef_version.stdout
-#         when: chef_version|success
-#     tags:
-#     - chef
-#     - chef_version
-#     - chef_version_fact
+-   name: Gather version of Chef
+    command: chef-client -v
+    register: chef_version
+    when: chef_install|changed
+    tags:
+    - chef
+    - chef_version
+-   name: Factize version of Chef
+    set_fact:
+        chef_version: chef_version.stdout
+    when: chef_version|changed
+    tags:
+    - chef
+    - chef_version
+    - chef_version_fact
 # -   name: Run OHAI
 #     setup:
 #         filter: ohai

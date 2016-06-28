@@ -1,6 +1,6 @@
--   name: Assert on 'git.dest'
+-   name: Assert on 'chdir'
     assert:
-        that: (git.dest is defined and git.dest is not none and git.dest | trim != '')
+        that: (chdir is defined and chdir is not none and chdir | trim != '')
     tags:
     - chef
     - chef_berkshelf
@@ -8,7 +8,7 @@
 -   name: Run Berkshelf
     command: bundle exec berks vendor {{ berkshelf.cookbook_path }}
     args:
-        chdir: '{{ git.dest }}'
+        chdir: '{{ chdir }}'
     register: run_berkshelf
     changed_when: run_berkshelf.stdout.find('Nothing to update') != -1
     when: berkshelf.cookbook_path is defined

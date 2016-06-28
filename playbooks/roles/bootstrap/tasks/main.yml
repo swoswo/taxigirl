@@ -4,28 +4,11 @@
     tags:
     - bootstrap
     - bootstrap_assert_version
--   name: Assert on 'deploy.dest'
-    assert:
-        that: (deploy.dest is defined and deploy.dest is not none and deploy.dest | trim != '')
-    tags:
-    - bootstrap
-    - bootstrap_assert_dest
 -   name: Bootstrap Debian System
     include: debian.yml
-    when: (ansible_os_family == 'Debian') or (ansible_os_family == 'Ubuntu')
+    when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu')
     run_once: true
     tags:
     - bootstrap
     - debian
     - bootstrap_debian
--   name: Create Deployment directory
-    file:
-        path: '{{ deploy.dest }}'
-        recurse: yes
-        owner: '{{ ansible_user }}'
-        mode: 0775
-        state: directory
-    become: yes
-    tags:
-    - bootstrap
-    - bootstrap_base_directory

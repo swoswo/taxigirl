@@ -1,17 +1,33 @@
----
-- name: 'Playbook: Deploy'
-  hosts: all
-  gather_facts: yes
-  any_errors_fatal: yes
-  strategy: "{{ strategy|default('linear') }}"
-  roles:
-      - { role: packages, data: "{{ deploy.packages }}", when: "'packages' in provision.tasks" }
-      - { role: git, when: "'git' in deploy.tasks" }
-      - { role: pip, data: "{{ deploy.pip }}", when: "'pip' in deploy.tasks" }
-      - { role: gem, data: "{{ deploy.gem }}", when: "'gem' in deploy.tasks" }
-      - { role: bundler, when: "'bundler' in deploy.tasks" }
-      - { role: berkshelf, when: "'berkshelf' in deploy.tasks" }
-      - { role: chef, when: "'chef' in deploy.tasks" }
-      - { role: shell, data: "{{ deploy.shell }}", chdir: "{{ deploy.dest }}", when: "'shell' in deploy.tasks" }
-  tags:
-    - deploy
+-   name: 'Playbook: Deploy'
+    hosts: all
+    gather_facts: true
+    any_errors_fatal: true
+    strategy: '{{ strategy|default(''linear'') }}'
+    roles:
+    -   role: directory
+        chdir: '{{ deploy.dest }}'
+        when: deploy.tasks is defined
+    -   role: packages
+        data: '{{ deploy.packages }}'
+        when: '''packages'' in provision.tasks'
+    -   role: git
+        when: '''git'' in deploy.tasks'
+    -   role: pip
+        data: '{{ deploy.pip }}'
+        when: '''pip'' in deploy.tasks'
+    -   role: gem
+        data: '{{ deploy.gem }}'
+        when: '''gem'' in deploy.tasks'
+    -   role: bundler
+        chdir: '{{ bundler.dest }}'
+        when: '''bundler'' in deploy.tasks'
+    -   role: berkshelf
+        chdir: '{{ berkshelf.dest }}'
+        when: '''berkshelf'' in deploy.tasks'
+    -   role: chef
+        chdir: '{{ deploy.dest }}'
+        when: '''chef'' in deploy.tasks'
+    -   role: shell
+        data: '{{ deploy.shell }}'
+        chdir: '{{ deploy.dest }}'
+        when: '''shell'' in deploy.tasks'

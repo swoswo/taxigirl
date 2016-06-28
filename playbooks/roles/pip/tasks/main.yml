@@ -1,3 +1,5 @@
+-   name: Data
+    debug: var=data verbosity=3
 -   name: Resolve pip requirements
     pip:
         virtualenv: '{{ data.virtualenv|default(omit) }}'

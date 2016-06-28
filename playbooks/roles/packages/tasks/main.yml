@@ -4,13 +4,8 @@
     tags:
     - provision
     - provision_assert_data
-
-- name: Debug
-  debug: var=provision.packages verbosity=3
-
-- name: Debug
-  debug: var=data verbosity=3
-
+-   name: Data
+    debug: var=data verbosity=3
 -   name: 'Packages: APT'
     include: apt.yml
     when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu')

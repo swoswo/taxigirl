@@ -8,13 +8,14 @@
     - packages
     - apt
     - apt_update
+-   name: Debug apt_update
+    debug: var=apt_update
 -   name: 'Install Package: Aptitude'
     apt:
         name: aptitude
-        state: present
     register: apt_aptitude
     become: yes
-    when: (apt.install_aptitude is defined) and (apt.install_aptitude == True)
+    # when: (apt.install_aptitude is defined and apt.install_aptitude == True)
     tags:
     - packages
     - apt
@@ -42,7 +43,7 @@
         install_recommends: '{{ apt.install_recommends|default(''no'') }}'
     register: apt_upgrade
     become: yes
-    when: apt_update|cache_updated
+    when: apt_update.cache_updated
     tags:
     - packages
     - apt

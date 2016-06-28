@@ -1,0 +1,17 @@
+-   name: Assert on 'chdir'
+    assert:
+        that: (chdir is defined and chdir is not none and chdir | trim != '')
+    tags:
+    - directory
+    - directory_assert_dest
+-   name: Create Directory
+    file:
+        path: '{{ chdir }}'
+        recurse: yes
+        owner: '{{ ansible_user }}'
+        mode: 0775
+        state: directory
+    become: yes
+    tags:
+    - directory
+    - directory_base_directory
