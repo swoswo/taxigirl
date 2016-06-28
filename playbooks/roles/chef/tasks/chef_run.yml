@@ -15,8 +15,8 @@
 -   name: Run Chef (Zero)
     command: chef-client --no-fork --audit-mode "{{ chef.audit_mode|default('enabled') }}" -c "{{ chef.config_dir|default('/etc/chef') }}"/client.rb -o "{{ chef.run_list }}"
     args:
-        chdir: '{{ chdir }}'
-    become: '{{ chef.with_sudo|default(omit) }}'
+        chdir: "{{ chdir }}"
+    become: "{{ chef.with_sudo|default(omit) }}"
     register: run_chef_zero
     when: (chef.run is defined and chef.run == 'zero')
     tags:
@@ -27,8 +27,8 @@
 -   name: Run Chef (Solo)
     command: chef-solo --no-fork -c "{{ chef.config_dir|default('/etc/chef') }}"/solo.rb -o "{{ chef.run_list }}"
     args:
-        chdir: '{{ chdir }}'
-    become: '{{ chef.with_sudo|default(omit) }}'
+        chdir: "{{ chdir }}"
+    become: "{{ chef.with_sudo|default(omit) }}"
     register: run_chef_solo
     when: (chef.run is defined and chef.run == 'solo')
     tags:

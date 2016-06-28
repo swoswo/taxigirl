@@ -1,5 +1,5 @@
 -   name: 'Playbook: Deploy'
-    hosts: all
+    hosts: "{{ hosts|default('all') }}"
     gather_facts: true
     any_errors_fatal: true
     strategy: "{{ strategy|default('linear') }}"
@@ -9,7 +9,7 @@
         when: (deploy.tasks is defined)
     -   role: packages
         data: '{{ deploy.packages }}'
-        when: ('packages' in provision.tasks and deploy.packages is defined)
+        when: ('packages' in deploy.tasks and deploy.packages is defined)
     -   role: git
         when: ('git' in deploy.tasks)
     -   role: pip

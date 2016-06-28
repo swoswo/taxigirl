@@ -1,84 +1,115 @@
----
-- name: 'Assert: ec2_ssh'
-  assert: { that: "(ec2_ssh is defined and ec2_ssh is not none and ec2_ssh | trim != '')" }
-  tags: [provision, ec2, ec2_create, ec2_ssh_assert]
-
-- name: Create Instance
-  local_action:
-    module: ec2
-    # instance_profile_name: "{{ ec2.iam_role}}"
-    key_name: "{{ ec2.key_name|default('count') }}"
-    assign_public_ip: "{{ ec2.assign_public_ip|default('false') }}"
-    count: "{{ ec2.count|default('1') }}"
-    count_tag:
-      Group: "{{ ec2.count_tag|default('count') }}"
-    group_id: "{{ ec2.group_id|default(omit) }}"
-    image: "{{ ec2.image }}"
-    instance_tags: "{{ ec2.instance_tags|default(omit) }}"
-    instance_type: "{{ ec2.instance_type }}"
-    monitoring: "{{ ec2.monitoring|default('false') }}"
-    private_ip: "{{ ec2.private_ip|default(omit) }}"
-    region: "{{ ec2.region|default('eu-west-1') }}"
-    termination_protection: "{{ ec2.termination_protection|default('yes') }}"
-    user_data: "{{ lookup('template', 'user_data.j2')|default(omit) }}"
-    vpc_subnet_id: "{{ ec2.vpc_subnet_id|default(omit) }}"
-    wait: yes
-  register: ec2_create
-  tags: [provision, ec2, ec2_create, ec2_create_instance]
-
-- name: 'Assert: ec2_create.instances'
-  assert: { that: "(ec2_create.instances is undefined or ec2_create.instances is none or ec2_create.instances | trim == '')" }
-  tags: [provision, ec2, ec2_create, ec2_create_assert]
-
-- name: List of instances
-  debug: var=item
-  with_items: "{{ ec2_create.instances }}"
-  tags: [debug, provision, ec2, ec2_create, ec2_list]
-
-- name: Wait for SSH to be accessible
-  wait_for:
-    port: "{{ ec2_ssh.port|default('22') }}"
-    host: "{{ instance_ssh }}"
-    search_regex: OpenSSH
-    delay: 5
-    timeout: 300
-    delegate_to: localhost
-  with_items: "{{ ec2_create.instances }}"
-  loop_control:
-    loop_var: instance_ssh
-  when: ec2_create|changed
-  tags: [provision, ec2, ec2_create, ec2_wait_for]
-
-# TODO: delegate_to?
-- name: Add new instance to dynamic inventory
-  local_action:
-    module: add_host
-    hostname: "{{ item.private_dns_name }}"
-    groups: ['ec2']
-    ansible_ssh_user: "{{ ec2_ssh.user|default('root') }}"
-    ansible_ssh_port: "{{ ec2_ssh.port|default('22') }}"
-    ansible_ssh_private_key_file: "{{ ec2.key_name }}"
-  register: add_host
-  with_items: "{{ ec2_create.instances }}"
-  tags: [provision, ec2, ec2_create, ec2_add_host]
-
-- name: Send notification to Slack
-  slack:
-    token: "{{ slack.token }}"
-    msg: "Created instance(s)"
-    attachments:
-      - title: "Info"
-        text: "{{ ec2.instance_tags.Name }}"
-        color: "#00ff00"
-        fields:
-          - title: "AMI ID"
-            value: "{{ ec2_create.instances|map(attribute='image_id')|join(', ') }}"
-            short: "yes"
-          - title: "Instance ID"
-            value: "{{ ec2_create.instances|map(attribute='id')|join(', ') }}"
-            short: "yes"
-    username: "{{ slack.username }}"
-    channel: "{{ slack.channel }}"
-    icon_emoji: "{{ slack.icon_emoji }}"
-  when: slack.token is defined
-  tags: [provision, ec2, ec2_create, slack, slack_ec2_create]
+-   name: 'Assert: ec2_ssh'
+    assert:
+        that: (ec2_ssh is defined and ec2_ssh is not none and ec2_ssh | trim != '')
+    tags:
+    - create
+    - aws_ec2
+    - aws_ec2_create
+    - aws_ec2_create_assset
+-   name: 'Debug: ec2_ssh'
+    debug: var=ec2 verbosity=3
+    tags:
+    - debug
+    - create
+    - aws_ec2
+    - aws_ec2_debug_ec2_ssh
+-   name: Create Instance
+    local_action:
+        module: ec2
+        key_name: "{{ ec2.key_name|default('count') }}"
+        assign_public_ip: "{{ ec2.assign_public_ip|default('false') }}"
+        count: "{{ ec2.count|default('1') }}"
+        count_tag:
+            Group: "{{ ec2.count_tag|default('count') }}"
+        group_id: "{{ ec2.group_id|default(omit) }}"
+        image: "{{ ec2.image }}"
+        instance_tags: "{{ ec2.instance_tags|default(omit) }}"
+        instance_type: "{{ ec2.instance_type }}"
+        monitoring: "{{ ec2.monitoring|default('false') }}"
+        private_ip: "{{ ec2.private_ip|default(omit) }}"
+        region: "{{ ec2.region|default('eu-west-1') }}"
+        termination_protection: "{{ ec2.termination_protection|default('yes') }}"
+        user_data: "{{ lookup('template', 'user_data.j2')|default(omit) }}"
+        vpc_subnet_id: "{{ ec2.vpc_subnet_id|default(omit) }}"
+        wait: true
+    register: ec2_create
+    tags:
+    - create
+    - aws_ec2
+    - aws_ec2_create
+    - aws_ec2_create_instance
+-   name: 'Assert: ec2_create.instances'
+    assert:
+        that: (ec2_create.instances is undefined or ec2_create.instances is none or ec2_create.instances | trim == ')
+    tags:
+    - create
+    - aws_ec2
+    - aws_ec2_create
+    - aws_ec2_create_assert
+-   name: 'Debug: ec2_create.instances'
+    debug: var=item verbosity=1
+    with_items: "{{ ec2_create.instances }}"
+    tags:
+    - debug
+    - create
+    - aws_ec2
+    - aws_ec2_create
+    - aws_ec2_create_list
+-   name: Wait for SSH to be accessible
+    wait_for:
+        port: "{{ ec2_ssh.port|default('22') }}"
+        host: "{{ instance_ssh }}"
+        search_regex: OpenSSH
+        delay: 5
+        timeout: 300
+        delegate_to: localhost
+    with_items: "{{ ec2_create.instances }}"
+    loop_control:
+        loop_var: instance_ssh
+    when: ec2_create|changed
+    tags:
+    - create
+    - aws_ec2
+    - aws_ec2_create
+    - aws_ec2_create_wait_for
+-   name: Add new instance to dynamic inventory
+    local_action:
+        module: add_host
+        hostname: "{{ item.private_dns_name }}"
+        groups:
+        - ec2
+        ansible_ssh_user: "{{ ec2_ssh.user|default('root') }}"
+        ansible_ssh_port: "{{ ec2_ssh.port|default('22') }}"
+        ansible_ssh_private_key_file: "{{ ec2.key_name }}"
+    register: add_host
+    with_items: "{{ ec2_create.instances }}"
+    tags:
+    - create
+    - aws_ec2
+    - aws_ec2_create
+    - aws_ec2_add_host
+-   name: Send notification to Slack
+    slack:
+        token: "{{ slack.token }}"
+        msg: Created instance(s)
+        attachments:
+        -   title: Info
+            text: "{{ ec2.instance_tags.Name }}"
+            color: '#00ff00'
+            fields:
+            -   title: AMI ID
+                value: "{{ ec2_create.instances|map(attribute='image_id')|join(', ') }}"
+                short: 'yes'
+            -   title: Instance ID
+                value: "{{ ec2_create.instances|map(attribute='id')|join(', ') }}"
+                short: 'yes'
+        username: "{{ slack.username }}"
+        channel: "{{ slack.channel }}"
+        icon_emoji: "{{ slack.icon_emoji }}"
+    when: slack.token is defined
+    tags:
+    - create
+    - aws_ec2
+    - aws_ec2_create
+    - aws_ec2_create_slack
+    - slack

@@ -12,12 +12,12 @@
     command: gem update --env-shebang --no-document --conservative
     register: gem_update
     changed_when: gem_update.stdout.find('Successfully installed') != -1
-    become: '{{ data.with_sudo|default(omit) }}'
+    become: "{{ data.with_sudo|default(omit) }}"
     tags:
     - ruby
     - gem
     - gem_update
--   name: List of Gems to install
+-   name: 'Debug: data.packages'
     debug: var=data.packages verbosity=3
     when: data.packages is defined
     tags:
@@ -27,14 +27,14 @@
     - gem_install
 -   name: Install or Upgrade Gems
     gem:
-        name: '{{ gem_name }}'
+        name: "{{ gem_name }}"
         state: latest
         build_flags: -j{{ ansible_processor_vcpus|default('1') }}
-    with_items: '{{ data.packages|default([''bundler'']) }}'
+    with_items: "{{ data.packages|default(['bundler']) }}"
     loop_control:
         loop_var: gem_name
     register: gem_install
-    become: '{{ data.with_sudo|default(omit) }}'
+    become: "{{ data.with_sudo|default(omit) }}"
     when: data.packages is defined
     tags:
     - ruby

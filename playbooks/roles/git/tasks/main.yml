@@ -19,7 +19,7 @@
 -   name: Add Git server as a known host
     file:
         path: ~/.ssh/known_hosts
-        owner: '{{ ansible_user }}'
+        owner: "{{ ansible_user }}"
         mode: 0600
         state: touch
     tags:
@@ -34,14 +34,14 @@
     - git_ssh_keyscan
 -   name: Clone project from Git
     git:
-        accept_hostkey: '{{ git.accept_hostkey|default(omit) }}'
-        depth: '{{ git.depth|default(omit) }}'
-        dest: '{{ git.dest }}'
-        force: '{{ git.force|default(True) }}'
-        recursive: '{{ git.recursive|default(False) }}'
-        repo: '{{ git.repo }}'
+        accept_hostkey: "{{ git.accept_hostkey|default(omit) }}"
+        depth: "{{ git.depth|default(omit) }}"
+        dest: "{{ git.dest }}"
+        force: "{{ git.force|default(True) }}"
+        recursive: "{{ git.recursive|default(False) }}"
+        repo: "{{ git.repo }}"
         update: yes
-        version: '{{ git.version|default(omit) }}'
+        version: "{{ git.version|default(omit) }}"
     register: git_clone
     tags:
     - git

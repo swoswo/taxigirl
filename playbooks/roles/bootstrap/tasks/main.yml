@@ -1,4 +1,4 @@
--   name: Assert on 'version'
+-   name: 'Assert: version'
     assert:
         that: (version is defined and version is not none and version | trim != '' and version != '0.0.0')
     tags:

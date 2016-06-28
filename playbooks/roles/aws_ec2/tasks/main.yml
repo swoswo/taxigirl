@@ -1,9 +1,18 @@
 -   name: 'Assert: ec2'
-    assert: { that: "(ec2 is defined and ec2 is not none and ec2 | trim != '')" }
-
+    assert:
+        that: (ec2 is defined and ec2 is not none and ec2 | trim != '')
+    tags:
+    - debug
+    - aws_ec2
+    - aws_ec2_assert_ec2
+-   name: 'Debug: ec2'
+    debug: var=ec2 verbosity=3
+    tags:
+    - debug
+    - aws_ec2
+    - aws_ec2_debug_ec2
 -   name: 'Create Instance: EC2'
     include: create.yml
-
 -   name: 'Destroy Instance: EC2'
     include: destroy.yml
-    when: "(ec2_destroy is defined and ec2_destroy == True)"
+    when: (ec2_destroy is defined and ec2_destroy == True)

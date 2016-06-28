@@ -1,11 +1,11 @@
 -   name: 'Playbook: Provision'
-    hosts: all
+    hosts: "{{ hosts|default('all') }}"
     gather_facts: true
     any_errors_fatal: true
-    strategy: '{{ strategy|default(''linear'') }}'
+    strategy: "{{ strategy|default('linear') }}"
     roles:
     -   role: bootstrap
-        when: '''bootstrap'' in provision.tasks'
+        when: ('bootstrap' in provision.tasks)
     -   role: packages
         data: '{{ provision.packages }}'
         when: ('packages' in provision.tasks and provision.packages is defined)

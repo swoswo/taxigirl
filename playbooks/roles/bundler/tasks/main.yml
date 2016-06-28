@@ -2,31 +2,34 @@
     assert:
         that: (chdir is defined and chdir is not none and chdir | trim != '')
     tags:
+    - ruby
     - bundler
     - bundler_assert
 -   name: Run Bundler
     bundler:
         state: present
-        chdir: '{{ chdir }}'
-        clean: '{{ bundler.clean|default(''yes'') }}'
-        gem_path: '{{ bundler.gem_path|default(omit) }}'
-        extra_args: '{{ bundler.extra_args|default(omit) }}'
-        binstub_directory: '{{ bundler.binstub_directory|default(omit) }}'
-        exclude_groups: '{{ bundler.exclude_groups|default([''test'',''integration'',''development'',''openstack'',''tools'']) }}'
-    become: '{{ bundler.with_sudo|default(omit) }}'
+        chdir: "{{ chdir }}"
+        clean: "{{ bundler.clean|default('yes') }}"
+        gem_path: "{{ bundler.gem_path|default(omit) }}"
+        extra_args: "{{ bundler.extra_args|default(omit) }}"
+        binstub_directory: "{{ bundler.binstub_directory|default(omit) }}"
+        exclude_groups: "{{ bundler.exclude_groups|default(['test','integration','development','openstack','tools']) }}"
+    become: "{{ bundler.with_sudo|default(omit) }}"
     tags:
+    - ruby
     - bundler
-    - bundler_install'
+    - bundler_install
 -   name: Adjust permissions of binstubs
     file:
-        path: '{{ chdir }}/bin'
+        path: "{{ chdir }}/bin"
         recurse: true
         owner: root
         group: root
-        mode: 0755
+        mode: 493
         state: directory
     when: bundler.binstub_directory is defined
     become: true
     tags:
+    - ruby
     - bundler
     - bundler_permission_binstubs

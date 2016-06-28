@@ -1,17 +1,15 @@
--   name: 'Assert: data'
+-   name: Assert on 'data'
     assert:
         that: (data is defined and data is not none and data|trim != '')
     tags:
     - packages
     - packages_assert_data
-
--   name: Data
+-   name: 'Debug: data'
     debug: var=data verbosity=3
     tags:
     - debug
     - packages
     - packages_debug
-
 -   name: 'Packages: APT'
     include: apt.yml
     when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu')

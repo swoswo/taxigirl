@@ -4,22 +4,22 @@
     tags:
     - shell
     - shell_assert
--   name: Data
+-   name: 'Debug: data'
     debug: var=data verbosity=3
     tags:
     - debug
     - shell
     - shell_debug
 -   name: Run shell commands
-    raw: '{{ shell_command }}'
+    raw: "{{ shell_command }}"
     args:
-        chdir: '{{ chdir|default(omit) }}'
-    with_items: '{{ data.commands|default([]) }}'
+        chdir: "{{ chdir|default(omit) }}"
+    with_items: "{{ data.commands|default([]) }}"
     loop_control:
         loop_var: shell_command
     register: shell_commands
     when: data.commands is defined
-    become: '{{ data.with_sudo|default(omit) }}'
+    become: "{{ data.with_sudo|default(omit) }}"
     tags:
     - shell
     - shell_commands

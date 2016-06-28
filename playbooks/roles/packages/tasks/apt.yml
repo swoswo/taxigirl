@@ -1,15 +1,15 @@
 -   name: 'Update Cache: APT'
     apt:
         update_cache: yes
-        cache_valid_time: '{{ apt.cache_valid_time|default(''3600'') }}'
+        cache_valid_time: "{{ apt.cache_valid_time|default('3600') }}"
     register: apt_update
     become: yes
     tags:
     - packages
     - apt
     - apt_update
--   name: Debug apt_update
-    debug: var=apt_update
+-   name: 'Debug: apt_update'
+    debug: var=apt_update verbosity=3
     tags:
     - debug
     - packages
@@ -27,12 +27,12 @@
 #     - apt_aptitude
 -   name: 'Remove Packages: APT'
     apt:
-        name: '{{ remove_apt }}'
+        name: "{{ remove_apt }}"
         state: absent
         purge: yes
     become: yes
     register: packages_remove
-    with_items: '{{ data.remove|default({}) }}'
+    with_items: "{{ data.remove|default({}) }}"
     loop_control:
         loop_var: remove_apt
     when: (data.remove is defined and data.remove is not none and data.remove | trim != '')
@@ -42,10 +42,10 @@
     - apt_remove
 -   name: 'Upgrade Packages: APT'
     apt:
-        upgrade: '{{ apt.upgrade|default(''yes'') }}'
-        dpkg_options: '{{ apt.dpkg_options|default(''force-confold,force-confdef,force-confmiss'') }}'
-        autoremove: '{{ apt.autoremove|default(''yes'') }}'
-        install_recommends: '{{ apt.install_recommends|default(''no'') }}'
+        upgrade: "{{ apt.upgrade|default('yes') }}"
+        dpkg_options: "{{ apt.dpkg_options|default('force-confold,force-confdef,force-confmiss') }}"
+        autoremove: "{{ apt.autoremove|default('yes') }}"
+        install_recommends: "{{ apt.install_recommends|default('no') }}"
     register: apt_upgrade
     become: yes
     when: apt_update.cache_updated
@@ -55,11 +55,11 @@
     - apt_upgrade
 -   name: 'Install Packages: APT'
     package:
-        name: '{{ install_apt }}'
-        state: '{{ data.state|default(''present'') }}'
+        name: "{{ install_apt }}"
+        state: "{{ data.state|default('present') }}"
     become: yes
     register: packages_install
-    with_items: '{{ data.install|default({}) }}'
+    with_items: "{{ data.install|default({}) }}"
     loop_control:
         loop_var: install_apt
     when: (data.install is defined and data.install is not none and data.install | trim != '')

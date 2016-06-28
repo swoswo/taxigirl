@@ -7,18 +7,15 @@
     changed_when: dpkg_configure.stdout != ''
     become: yes
     tags:
-    - provision
+    - bootstrap
     - debian
-    - apt
-    - apt_dpkg
+    - bootstrap_dpkg_check
 -   name: Install minimal Python
     raw: apt-get -q install python
     register: python_minimal
     changed_when: python_minimal.stdout.find('python is already the newest version') == -1
     become: yes
     tags:
-    - provision
+    - bootstrap
     - debian
-    - apt
-    - python
-    - python_minimal
+    - bootstrap_python

@@ -12,23 +12,23 @@
     - chef_assert_tmp_dir
 -   name: Create directories for temporary data
     file:
-        path: '{{ chef_tmpdir }}'
+        path: "{{ chef_tmpdir }}"
         state: directory
-        owner: '{{ ansible_user }}'
+        owner: "{{ ansible_user }}"
         group: root
         mode: 0775
     with_items:
-    - '{{ chef.tmp_dir }}'
-    - '{{ chef.file_cache_path }}'
+    - "{{ chef.tmp_dir }}"
+    - "{{ chef.file_cache_path }}"
     loop_control:
         loop_var: chef_tmpdir
     become: yes
     tags:
     - chef
-    - chef_dir_tmp
+    - chef_dir
 -   name: Create configuration directory
     file:
-        path: '{{ chef.config_dir }}'
+        path: "{{ chef.config_dir }}"
         state: directory
         owner: root
         group: root
@@ -62,7 +62,7 @@
     tags:
     - chef
     - chef_install
-    - set_fact
+    - chef_install_fact
 -   name: Create configuration file for chef-client (zero)
     template:
         src: templates/client.rb.j2
@@ -85,9 +85,9 @@
     - chef_solo
 -   name: Adjust permissions
     file:
-        path: '{{ chdir }}'
+        path: "{{ chdir }}"
         recurse: yes
-        owner: '{{ ansible_user }}'
+        owner: "{{ ansible_user }}"
         mode: 0775
         state: directory
     become: yes
@@ -115,3 +115,5 @@
   tags:
   - chef
   - chef_run
+  - chef_solo
+  - chef_zero

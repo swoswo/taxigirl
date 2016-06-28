@@ -3,14 +3,14 @@
 # https://docs.chef.io/config_rb_solo.html
 
 # The name of the node.
-node_name '{{ ansible_hostname }}'
+node_name "{{ ansible_hostname }}"
 
 # The location of the log file. Default value: STDOUT.
 # TODO: abstraction (in 'sync'?)
 log_location STDOUT
 
 # The level of logging to be stored in a log file. Possible levels: :auto (default), debug, info, warn, error, or fatal.
-log_level '{{ chef.log_level|default('auto') }}'.to_sym
+log_level "{{ chef.log_level|default('auto') }}".to_sym
 
 # enable colors if session is interactive
 color STDOUT.isatty || false

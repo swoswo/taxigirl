@@ -1,8 +1,7 @@
----
-- name: 'Role: AWS EC2'
-  hosts: all
-  gather_facts: yes
-  any_errors_fatal: yes
-  strategy: "{{ strategy|default('linear') }}"
-  roles:
-      - { role: aws_ec2 }
+-   name: 'Playbook: AWS EC2'
+    any_errors_fatal: true
+    gather_facts: true
+    hosts: "{{ hosts|default('all') }}"
+    roles:
+    -   role: aws_ec2
+    strategy: "{{ strategy|default('linear') }}"

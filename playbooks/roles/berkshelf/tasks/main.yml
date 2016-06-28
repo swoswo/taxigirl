@@ -8,11 +8,11 @@
 -   name: Run Berkshelf
     command: bundle exec berks vendor {{ berkshelf.cookbook_path }}
     args:
-        chdir: '{{ chdir }}'
+        chdir: "{{ chdir }}"
     register: run_berkshelf
     changed_when: run_berkshelf.stdout.find('Nothing to update') != -1
     when: berkshelf.cookbook_path is defined
-    become: '{{ berkshelf.with_sudo|default(omit) }}'
+    become: "{{ berkshelf.with_sudo|default(omit) }}"
     tags:
     - chef
     - berkshelf
