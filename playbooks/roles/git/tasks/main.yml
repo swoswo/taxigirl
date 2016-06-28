@@ -27,7 +27,7 @@
     - git_known_hosts
 -   name: Scan for key of Git server
     command: ssh-keyscan -H -t dsa {{ git.server }} >> ~/.ssh/known_hosts
-    no_log: yes
+    # no_log: yes
     when: (git.server is defined and git.server is not none and git.server | trim != '')
     tags:
     - git
@@ -37,10 +37,10 @@
         accept_hostkey: "{{ git.accept_hostkey|default(omit) }}"
         depth: "{{ git.depth|default(omit) }}"
         dest: "{{ git.dest }}"
-        force: "{{ git.force|default(True) }}"
-        recursive: "{{ git.recursive|default(False) }}"
+        force: "{{ git.force|default('yes') }}"
+        recursive: "{{ git.recursive|default('yes') }}"
         repo: "{{ git.repo }}"
-        update: yes
+        update: "{{ git.recursive|default('yes') }}"
         version: "{{ git.version|default(omit) }}"
     register: git_clone
     tags:
