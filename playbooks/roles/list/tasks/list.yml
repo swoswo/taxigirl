@@ -1,4 +1,4 @@
--   name: Inventory
+-   name: Complete Inventory
     debug: msg="{{ inv_host }}"
     with_inventory_hostnames: all
     loop_control:
@@ -6,5 +6,3 @@
     tags:
     - debug
     - list
-    - local
-    - local_inventory

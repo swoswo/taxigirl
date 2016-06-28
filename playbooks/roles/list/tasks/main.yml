@@ -1,3 +1,5 @@
+-   name: 'Hostname'
+    debug: var=ansible_hostname
 -   include: list_ec2.yml
     when: (hosts == 'ec2' and ec2 is defined)
 -   include: list.yml
