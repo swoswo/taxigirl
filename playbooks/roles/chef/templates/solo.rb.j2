@@ -30,6 +30,3 @@ file_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
 
 # All files in a cookbook must contain valid Ruby syntax. Use this setting to specify the location in which knife caches information about files that have been checked for valid Ruby syntax.
 syntax_check_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
-
-# prevent forking
-client_fork false

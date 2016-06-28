@@ -40,17 +40,19 @@
 -   name: Fetch installation script for Chef
     get_url:
         url: https://www.opscode.com/chef/install.sh
-        dest: '{{ chef.tmp_dir }}/install.sh'
+        dest: "{{ chef.tmp_dir }}/install.sh"
     register: chef_fetch
     tags:
     - chef
     - chef_fetch
 -   name: Install Chef
-    command: /usr/bin/env bash {{ chef.tmp_dir }}/install.sh -d {{ chef.tmp_dir }}
+    command: /usr/bin/env bash "{{ chef.tmp_dir }}/install.sh" -d "{{ chef.tmp_dir }}"
     register: chef_install
     become: yes
     changed_when: chef_install.stdout.find('Selecting previously unselected package chef') != -1
     # when: hostvars[ansible_hostname]['installed'] is undefined
+    args:
+        creates: "{{ chef.tmp_dir }}/.installed"
     tags:
     - chef
     - chef_install
@@ -66,7 +68,7 @@
 -   name: Create configuration file for chef-client (zero)
     template:
         src: templates/client.rb.j2
-        dest: '{{ chef.config_dir|default(''/etc/chef'') }}/client.rb'
+        dest: "{{ chef.config_dir|default('/etc/chef') }}/client.rb"
         mode: 0644
     become: yes
     tags:
@@ -76,7 +78,7 @@
 -   name: Create configuration file for chef-solo
     template:
         src: templates/solo.rb.j2
-        dest: '{{ chef.config_dir|default(''/etc/chef'') }}/solo.rb'
+        dest: "{{ chef.config_dir|default('/etc/chef') }}/solo.rb"
         mode: 0644
     become: yes
     tags:

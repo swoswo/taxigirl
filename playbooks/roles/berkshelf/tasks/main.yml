@@ -3,8 +3,8 @@
         that: (chdir is defined and chdir is not none and chdir | trim != '')
     tags:
     - chef
-    - chef_berkshelf
-    - chef_berkshelf_assert
+    - berkshelf
+    - berkshelf_assert
 -   name: Run Berkshelf
     command: bundle exec berks vendor {{ berkshelf.cookbook_path }}
     args:
@@ -15,5 +15,5 @@
     become: '{{ berkshelf.with_sudo|default(omit) }}'
     tags:
     - chef
-    - chef_berkshelf
-    - chef_berkshelf_run
+    - berkshelf
+    - berkshelf_run

@@ -31,9 +31,6 @@ local_mode true
 # Whether Chef Zero local mode should bind to a port.
 listen false
 
-# Enable audit-mode. Set to audit-only to skip the converge phase of the chef-client run and only perform audits. Possible values: audit-only, disabled, and enabled.
-audit_mode "{{ chef.audit_mode|default(':enabled') }}"
-
 # prevents warning if no chef-server is in use
 enable_reporting false
 
