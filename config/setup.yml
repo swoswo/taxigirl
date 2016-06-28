@@ -2,10 +2,10 @@ version: 0.1.0
 hosts: all
 galaxy:
     roles:
-        os_hardening: no
-        ntp: no
-        switch_apt_mirror: yes
-        unattended_upgrades: no
+        os_hardening: false
+        ntp: false
+        switch_apt_mirror: true
+        unattended_upgrades: false
 apt:
     upgrade: dist
 unattended_upgrades:
@@ -22,16 +22,3 @@ provision:
         - build-essential
         - gcc
         - git
-        - libssl-dev
-        - libreadline-dev
-        - libjson-c-dev
-        - libyaml-dev
-        - libxml2-dev
-        - libxslt1-dev
-        - zlib1g-dev
-        - python
-        - python-dev
-        - python-apt
-        - python-pkg-resources
-        - python-setuptools
-        - virtualenv
