@@ -14,7 +14,7 @@
     raw: '{{ shell_command }}'
     args:
         chdir: '{{ chdir|default(omit) }}'
-    with_items: '{{ data.commands }}'
+    with_items: '{{ data.commands|default([]) }}'
     loop_control:
         loop_var: shell_command
     register: shell_commands

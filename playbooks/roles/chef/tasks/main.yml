@@ -51,8 +51,6 @@
     become: yes
     changed_when: chef_install.stdout.find('Selecting previously unselected package chef') != -1
     # when: hostvars[ansible_hostname]['installed'] is undefined
-    args:
-        creates: "{{ chef.tmp_dir }}/.installed"
     tags:
     - chef
     - chef_install

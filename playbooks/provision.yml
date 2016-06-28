@@ -8,8 +8,8 @@
         when: '''bootstrap'' in provision.tasks'
     -   role: packages
         data: '{{ provision.packages }}'
-        when: '''packages'' in provision.tasks'
+        when: ('packages' in provision.tasks and provision.packages is defined)
     -   role: shell
         data: '{{ provision.shell }}'
         chdir: '{{ deploy.dest }}'
-        when: '''shell'' in provision.tasks'
+        when: ('shell' in provision.tasks and provision.shell is defined)

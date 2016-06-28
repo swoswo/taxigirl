@@ -25,7 +25,6 @@
     - ruby
     - gem
     - gem_install
-
 -   name: Install or Upgrade Gems
     gem:
         name: '{{ gem_name }}'

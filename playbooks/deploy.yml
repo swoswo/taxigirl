@@ -2,32 +2,32 @@
     hosts: all
     gather_facts: true
     any_errors_fatal: true
-    strategy: '{{ strategy|default(''linear'') }}'
+    strategy: "{{ strategy|default('linear') }}"
     roles:
     -   role: directory
         chdir: '{{ deploy.dest }}'
-        when: deploy.tasks is defined
+        when: (deploy.tasks is defined)
     -   role: packages
         data: '{{ deploy.packages }}'
-        when: '''packages'' in provision.tasks'
+        when: ('packages' in provision.tasks and deploy.packages is defined)
     -   role: git
-        when: '''git'' in deploy.tasks'
+        when: ('git' in deploy.tasks)
     -   role: pip
         data: '{{ deploy.pip }}'
-        when: '''pip'' in deploy.tasks'
+        when: ('pip' in deploy.tasks and deploy.pip is defined)
     -   role: gem
         data: '{{ deploy.gem }}'
-        when: '''gem'' in deploy.tasks'
+        when: ('gem' in deploy.tasks and deploy.gem is defined)
     -   role: bundler
         chdir: '{{ bundler.dest }}'
-        when: '''bundler'' in deploy.tasks'
+        when: ('bundler' in deploy.tasks)
     -   role: berkshelf
         chdir: '{{ berkshelf.dest }}'
-        when: '''berkshelf'' in deploy.tasks'
+        when: ('berkshelf' in deploy.tasks)
     -   role: chef
         chdir: '{{ deploy.dest }}'
-        when: '''chef'' in deploy.tasks'
+        when: ('chef' in deploy.tasks)
     -   role: shell
         data: '{{ deploy.shell }}'
         chdir: '{{ deploy.dest }}'
-        when: '''shell'' in deploy.tasks'
+        when: ('shell' in deploy.tasks and deploy.shell is defined)
