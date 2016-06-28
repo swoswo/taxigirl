@@ -83,6 +83,17 @@
     - chef
     - chef_solo_config
     - chef_solo
+-   name: Create node configuration
+    copy:
+        content: "{{ chef.attributes|default('{}') }}"
+        dest: "{{ chef.config_dir|default('/etc/chef') }}/node.json"
+        mode: 0644
+    when: (chef.attributes is defined)
+    become: yes
+    tags:
+    - chef
+    - chef_zero_config
+    - chef_zero
 -   name: Adjust permissions
     file:
         path: "{{ chdir }}"

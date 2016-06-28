@@ -34,3 +34,26 @@
     post_tasks:
     -   name: Flag Completion
         set_fact: completed_deploy=true
+    -   name: Notification
+        slack:
+            token: "{{ slack.token }}"
+            msg: Deploy
+            attachments:
+            -   title: Host
+                text: "{{ ansible_fqdn }}"
+                color: '#00ff00'
+                fields:
+                -   title: Facts
+                    value: "{{ hostvars[ansible_fqdn] }}"
+                    short: yes
+                -   title: Configuration
+                    value: "{{ deploy }}"
+                    short: yes
+            username: "{{ slack.username }}"
+            channel: "{{ slack.channel|default(omit) }}"
+            icon_emoji: "{{ slack.icon_emoji|default(omit) }}"
+        when: slack.token is defined
+        tags:
+        - provision
+        - slack
+        - provision_slack

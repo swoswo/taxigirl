@@ -20,3 +20,26 @@
     post_tasks:
     -   name: Flag Completion
         set_fact: completed_provision=true
+    -   name: Notification
+        slack:
+            token: "{{ slack.token }}"
+            msg: Provision
+            attachments:
+            -   title: Host
+                text: "{{ ansible_fqdn }}"
+                color: '#00ff00'
+                fields:
+                -   title: Facts
+                    value: "{{ hostvars[ansible_fqdn] }}"
+                    short: yes
+                -   title: Configuration
+                    value: "{{ provision }}"
+                    short: yes
+            username: "{{ slack.username }}"
+            channel: "{{ slack.channel|default(omit) }}"
+            icon_emoji: "{{ slack.icon_emoji|default(omit) }}"
+        when: slack.token is defined
+        tags:
+        - provision
+        - slack
+        - provision_slack

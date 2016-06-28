@@ -27,7 +27,7 @@
     - git_known_hosts
 -   name: Scan for key of Git server
     command: ssh-keyscan -H -t dsa {{ git.server }} >> ~/.ssh/known_hosts
-    # no_log: yes
+    no_log: yes
     when: (git.server is defined and git.server is not none and git.server | trim != '')
     tags:
     - git

@@ -18,7 +18,7 @@
         module: ec2
         state: "{{ ec2_destroy.terminate_state|default('stopped') }}"
         instance_ids: "{{ ec2_destroy.instance_ids }}"
-        region: "{{ ec2.region|default('eu-west-1') }}"
+        region: "{{ ec2.region|default('eu-central-1') }}"
         wait: true
     register: ec2_destroy
     tags:

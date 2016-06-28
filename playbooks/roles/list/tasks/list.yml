@@ -1,4 +1,4 @@
--   name: Complete Inventory
+-   name: 'Inventory (All)'
     debug: msg="{{ inv_host }}"
     with_inventory_hostnames: all
     loop_control:
