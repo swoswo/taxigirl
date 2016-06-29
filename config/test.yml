@@ -19,7 +19,6 @@ provision:
         - echo 'provision'
 deploy:
     tasks:
-    - packages
     - shell
     dest: /opt/test
     shell:

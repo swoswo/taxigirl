@@ -169,7 +169,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision 'ansible' do |ansi|
 
     # ansi.galaxy_role_file = './requirements.yml'
-    # ansi.galaxy_roles_path = './playbooks/roles.galaxy'
+    # ansi.galaxy_roles_path = './roles.galaxy'
 
     ansi.extra_vars =
       ENV['ANSIBLE_EXTRA_VARS'] || '@./config/setup.yml'
@@ -181,7 +181,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #   ENV['ANSIBLE_LIMIT'] unless ENV['ANSIBLE_LIMIT'].nil?
 
     ansi.playbook =
-      ENV['ANSIBLE_PLAYBOOK'] || './playbooks/main.yml'
+      ENV['ANSIBLE_PLAYBOOK'] || './main.yml'
 
     ansi.tags =
       ENV['ANSIBLE_TAGS'] unless ENV['ANSIBLE_TAGS'].nil?
