@@ -19,9 +19,10 @@ paramiko
 git+https://github.com/ansible/ansible#egg=ansible
 ansible-ec2-inventory
 
-boto3
-saws
+# boto3
+# saws
 
-fabric
-python-vagrant
-click
+# fabric
+# python-vagrant
+# click
+# prettytable
