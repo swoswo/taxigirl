@@ -15,9 +15,9 @@
 ###
 
 ANSIBLE_GALAXY_REQ_FILE ?= requirements.yml
-ANSIBLE_PLAYBOOK_FILE	?= playbooks/main.yml
+ANSIBLE_PLAYBOOK_FILE	?= main.yml
 ANSIBLE_INVENTORY_FILE	?= inventory/localhost.ini
-ANSIBLE_ROLES_GALAXY_PATH	?= playbooks/roles.galaxy
+ANSIBLE_GALAXY_PATH	?= roles.galaxy
 BIN_PATH 		?= ./bin
 BREW_BUNDLE_FILE 	?= Brewfile
 BREW_INSTALL_FILE 	?= ./sbin/brew-install
@@ -343,15 +343,15 @@ ansible-check:
 	@pre-commit run --no-stash --allow-unstaged-config --files \
 		ansible.cfg Makefile Vagrantfile requirements.txt \
 		action_plugins/* callback_plugins/*\
-		config/* group_vars/* inventory/* library/* meta/*\
-		playbooks/** playbooks/roles/** tests/**\
+		config/* group_vars/* host_vars/* inventory/* library/*\
+		meta/*\ roles/** tests/**\
 		.envrc pre-commit-hooks/* provisioning/* sbin/* \
 		README.md
 
 .PHONY: ansible-lint
 ansible-lint:
 	$(info $@: linting playbook $(ANSIBLE_PLAYBOOK_FILE))
-	@$(BIN_PATH)/ansible-lint --exclude=$(ANSIBLE_ROLES_GALAXY_PATH) --exclude=tests $(ANSIBLE_PLAYBOOK_FILE)
+	@$(BIN_PATH)/ansible-lint --exclude=$(ANSIBLE_GALAXY_PATH) --exclude=tests $(ANSIBLE_PLAYBOOK_FILE)
 
 .PHONY: ansible-syntax
 ansible-syntax:
