@@ -1,7 +1,8 @@
 # https://raw.githubusercontent.com/FreeFeed/freefeed-ansible/freefeed/plugins/callback/slack.py
 # (C) 2014-2015, Matt Martz <matt@sivel.net>
 # (C) 2016, Ivan Dyachkov <ivan@dyachkov.org>
-
+#     2016, Tom Hensel <github@jitter.eu>
+#
 # This file is part of Ansible
 #
 # Ansible is free software: you can redistribute it and/or modify
@@ -80,7 +81,7 @@ class CallbackModule(CallbackBase):
                                   'plugin.')
 
         self.token = os.getenv('SLACK_TOKEN')
-        self.channel = os.getenv('SLACK_CHANNEL', '#ansible')
+        self.channel = os.getenv('SLACK_CHANNEL', '#automation')
         self.username = os.getenv('SLACK_USERNAME', 'ansible')
         self.show_invocation = mk_boolean(
             os.getenv('SLACK_INVOCATION', self._display.verbosity > 1)
@@ -109,10 +110,13 @@ class CallbackModule(CallbackBase):
         }
 
         data = json.dumps(payload)
+        # DEBUG
         self._display.debug(data)
         try:
             webhook_url = SLACK_INCOMING_WEBHOOK % (self.token)
             response = open_url(webhook_url, data=data)
+            # DEBUG
+            self._display.debug(response)
             return response.read()
         except Exception as e:
             self._display.warning('Could not submit message to Slack: %s, URL: %s' % (str(e), webhook_url))
@@ -121,7 +125,7 @@ class CallbackModule(CallbackBase):
         self.playbook_name = os.path.basename(playbook._file_name)
 
         title = [
-            'Ansible playbook %s started on %s' % (playbook._file_name, socket.gethostname())
+            'Playbook %s started on %s' % (playbook._file_name, socket.gethostname())
         ]
         invocation_items = []
         if self._options and self.show_invocation:
