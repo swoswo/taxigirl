@@ -53,6 +53,7 @@
         update: "{{ git.recursive|default('yes') }}"
         version: "{{ git.version|default(omit) }}"
     register: git_clone
+    become: yes
     tags:
     - git
     - git_clone
