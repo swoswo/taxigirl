@@ -18,6 +18,7 @@ Jinja2
 paramiko
 git+https://github.com/ansible/ansible#egg=ansible
 ansible-ec2-inventory
+prettytable
 
 # boto3
 # saws
@@ -25,4 +26,3 @@ ansible-ec2-inventory
 # fabric
 # python-vagrant
 # click
-# prettytable
