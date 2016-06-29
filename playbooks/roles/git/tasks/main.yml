@@ -13,6 +13,7 @@
 -   name: Install Git
     package:
         name: git
+    become: yes
     tags:
     - git
     - git_install
