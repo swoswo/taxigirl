@@ -1,6 +1,8 @@
 version: 0.1.0
 hosts: all
 slack: []
+galaxy:
+    enabled: false
 provision:
     tasks:
     - bootstrap

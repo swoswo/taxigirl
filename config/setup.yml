@@ -1,6 +1,7 @@
 version: 0.1.0
 hosts: all
 galaxy:
+    enabled: false
     roles:
         os_hardening: false
         ntp: false
@@ -22,3 +23,5 @@ provision:
         - build-essential
         - gcc
         - git
+deploy:
+    tasks: []
