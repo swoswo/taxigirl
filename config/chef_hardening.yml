@@ -1,0 +1,99 @@
+version: 0.1.0
+hosts: all
+galaxy:
+    enabled: false
+    roles:
+        os_hardening: false
+        ntp: false
+        switch_apt_mirror: true
+        unattended_upgrades: true
+provision:
+    tasks:
+    - bootstrap
+    - packages
+    packages:
+        state: latest
+        install:
+        - build-essential
+        - ca-certificates
+        - curl
+        - git
+deploy:
+    dest: /opt/chef_example
+    tasks:
+    - berkshelf
+    - bundler
+    - chef
+    - gem
+    - git
+    - packages
+    - pip
+    packages:
+        state: latest
+        install:
+        - libssl-dev
+        - libreadline-dev
+        - libjson-c-dev
+        - libyaml-dev
+        - libxml2-dev
+        - libxslt1-dev
+        - zlib1g-dev
+        - python
+        - python-dev
+        - python-apt
+        - python-pkg-resources
+        - python-setuptools
+        - virtualenv
+        - ruby
+        - ruby-dev
+        - ruby-ffi
+        - rubygems-integration
+        - ruby-nokogiri
+        - ruby-bundler
+    gem:
+        with_sudo: true
+        packages:
+        - bundler
+        - berkshelf
+    pip:
+        virtualenv: /opt/chef_example
+        packages:
+        - grc
+apt:
+    upgrade: dist
+git:
+    accept_hostkey: true
+    depth: 1
+    dest: /sync/cookbooks/os-hardening
+    repo: https://github.com/dev-sec/chef-os-hardening
+    server: github.com
+bundler:
+    binstub_directory: /opt/chef_example/bin
+    clean: true
+    dest: /sync/cookbooks/os-hardening
+    with_sudo: true
+    exclude_groups:
+    - development
+    - integration
+    - openstack
+    - test
+    - tools
+    extra_args: --jobs {{ ansible_processor_vcpus }}
+    gem_path: /opt/chef_example/vendor/cache
+berkshelf:
+    with_sudo: true
+    dest: /sync/cookbooks/os-hardening
+    cookbook_path: /sync/berks-cookbooks
+chef:
+    base_dir: /opt/chef
+    config_dir: /etc/chef
+    file_cache_path: /opt/chef_example/tmp
+    log_level: info
+    log_location: /opt/chef_example/tmp/chef_run.log
+    run: zero
+    run_list: recipe[os-hardening]
+    tmp_dir: /opt/chef_example/tmp
+    with_sudo: true
+    attributes:
+        base_path: /opt/chef_example
+slack: []
