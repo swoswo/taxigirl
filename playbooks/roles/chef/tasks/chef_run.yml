@@ -17,7 +17,7 @@
     args:
         chdir: "{{ chdir }}"
     become: "{{ chef.with_sudo|default(omit) }}"
-    register: run_chef_zero
+    register: chef_run
     when: (chef.run is defined and chef.run == 'zero')
     tags:
     - chef
@@ -29,10 +29,28 @@
     args:
         chdir: "{{ chdir }}"
     become: "{{ chef.with_sudo|default(omit) }}"
-    register: run_chef_solo
+    register: chef_run
     when: (chef.run is defined and chef.run == 'solo')
     tags:
     - chef
     - chef_solo
     - chef_run
     - chef_run_solo
+-   name: Notification
+    slack:
+        token: "{{ slack.token }}"
+        msg: Chef Run done
+        username: "Taxigirl on {{ inventory_hostname }}"
+        # attachments:
+        # -   title: Host
+        #     text: "{{ ansible_fqdn }}"
+        #     color: good
+        #     fields:
+        #     -   title: Log
+        #         value: "{{ lookup('file', chef.log_location)|default('') }}"
+        #         short: no
+    when: (slack.token is defined and chef_run|success)
+    tags:
+    - slack
+    - chef
+    - chef_slack

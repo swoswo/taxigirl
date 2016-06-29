@@ -17,28 +17,30 @@
         data: '{{ provision.shell }}'
         chdir: '{{ deploy.dest }}'
         when: ('shell' in provision.tasks and provision.shell is defined)
+    pre_tasks:
+    - name: Meditation
+      pause: prompt="Take a deep breath." seconds=3
+      tags:
+      - provision
+      - pause
     post_tasks:
     -   name: Flag Completion
         set_fact: completed_provision=true
     -   name: Notification
-        slack:
+        local_action:
+            module: slack
             token: "{{ slack.token }}"
-            msg: Provision
-            attachments:
-            -   title: Host
-                text: "{{ ansible_fqdn }}"
-                color: '#00ff00'
-                fields:
-                -   title: Facts
-                    value: "{{ hostvars[ansible_fqdn] }}"
-                    short: yes
-                -   title: Configuration
-                    value: "{{ provision }}"
-                    short: yes
-            username: "{{ slack.username }}"
-            channel: "{{ slack.channel|default(omit) }}"
-            icon_emoji: "{{ slack.icon_emoji|default(omit) }}"
-        when: slack.token is defined
+            msg: Provisioning done
+            username: "Taxigirl on {{ inventory_hostname }}"
+            # attachments:
+            # -   title: Host
+            #     text: "{{ ansible_fqdn }}"
+            #     color: good
+            #     fields:
+            #     -   title: Configuration (Provision)
+            #         value: "{{ provision|to_nice_yaml }}"
+            #         short: no
+        when: (slack.token is defined)
         tags:
         - provision
         - slack

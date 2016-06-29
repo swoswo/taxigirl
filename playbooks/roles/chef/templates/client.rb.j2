@@ -6,8 +6,7 @@
 node_name "{{ ansible_hostname }}"
 
 # The location of the log file. Default value: STDOUT.
-# TODO: abstraction (in 'sync'?)
-log_location STDOUT
+log_location "{{ chef.log_location|default('STDOUT') }}"
 
 # The level of logging to be stored in a log file. Possible levels: :auto (default), debug, info, warn, error, or fatal.
 log_level "{{ chef.log_level|default('auto') }}".to_sym
@@ -16,8 +15,10 @@ log_level "{{ chef.log_level|default('auto') }}".to_sym
 color STDOUT.isatty || false
 
 # The sub-directory for cookbooks on the chef-client. This value can be a string or an array of file system locations, processed in the specified order. The last cookbook is considered to override local modifications.
-# TODO: abstraction
 cookbook_path [ "{{ berkshelf.cookbook_path }}" ]
+
+# The path to a file that contains JSON data.
+json_attribs "{{ chef.config_dir|default('/etc/chef') }}/node.json"
 
 # The location of the file that contains the client key.
 client_key '/opt/chef/embedded/ssl/cert.pem'

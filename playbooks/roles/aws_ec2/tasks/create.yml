@@ -88,24 +88,23 @@
     - aws_ec2
     - aws_ec2_create
     - aws_ec2_add_host
--   name: Send notification to Slack
-    slack:
+-   name: Notification
+    local_action:
+        module: slack
         token: "{{ slack.token }}"
-        msg: Created instance(s)
+        msg: Provision
+        username: "Taxigirl on {{ inventory_hostname }}"
         attachments:
-        -   title: Info
-            text: "{{ ec2.instance_tags.Name }}"
-            color: '#00ff00'
+        -   title: Host
+            text: "{{ ansible_fqdn }}"
+            color: good
             fields:
-            -   title: AMI ID
-                value: "{{ ec2_create.instances|map(attribute='image_id')|join(', ') }}"
-                short: 'yes'
-            -   title: Instance ID
+            -   title: Instances
                 value: "{{ ec2_create.instances|map(attribute='id')|join(', ') }}"
-                short: 'yes'
-        username: "{{ slack.username }}"
-        channel: "{{ slack.channel }}"
-        icon_emoji: "{{ slack.icon_emoji }}"
+                short: yes
+            -   title: Machine Images
+                value: "{{ ec2_create.instances|map(attribute='image_id')|join(', ') }}"
+                short: yes
     when: slack.token is defined
     tags:
     - create

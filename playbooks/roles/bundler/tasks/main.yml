@@ -33,3 +33,14 @@
     - ruby
     - bundler
     - bundler_permission_binstubs
+-   name: Add binstubs to PATH
+    lineinfile: >
+        dest=/etc/environment
+        state=present
+        backrefs=yes
+        regexp='PATH=(["]*)((?!.*?{{ chdir }}/bin).*?)(["]*)$'
+        line="PATH=\1{{ chdir }}/bin:\2\3"
+    become: yes
+    tags:
+    - bundler
+    - bundler_path

@@ -30,3 +30,15 @@
     - python
     - pip
     - pip_install
+-   name: Add binstubs to PATH
+    lineinfile: >
+        dest=/etc/environment
+        state=present
+        backrefs=yes
+        regexp='PATH=(["]*)((?!.*?{{ data.virtualenv }}/bin).*?)(["]*)$'
+        line="PATH=\1{{ data.virtualenv }}/bin:\2\3"
+    become: yes
+    when: (data.virtualenv is defined)
+    tags:
+    - pip
+    - pip_path

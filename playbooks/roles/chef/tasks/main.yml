@@ -1,9 +1,9 @@
--   name: Assert on 'chdir'
-    assert:
-        that: (chdir is defined and chdir is not none and chdir | trim != '')
-    tags:
-    - chef
-    - chef_assert_dest
+# -   name: Assert on 'chdir'
+#     assert:
+#         that: (chdir is defined and chdir is not none and chdir | trim != '')
+#     tags:
+#     - chef
+#     - chef_assert_dest
 -   name: Assert on 'chef.tmp_dir'
     assert:
         that: (chef.tmp_dir is defined and chef.tmp_dir is not none and chef.tmp_dir | trim != '')
@@ -54,18 +54,18 @@
     tags:
     - chef
     - chef_install
--   name: Factize installation
-    set_fact:
-        chef:
-            installed: yes
-    when: chef_install|success
-    tags:
-    - chef
-    - chef_install
-    - chef_install_fact
+# -   name: Factize installation
+#     set_fact:
+#         chef:
+#             installed: yes
+#     when: chef_install|success
+#     tags:
+#     - chef
+#     - chef_install
+#     - chef_install_fact
 -   name: Create configuration file for chef-client (zero)
     template:
-        src: templates/client.rb.j2
+        src: ../templates/client.rb.j2
         dest: "{{ chef.config_dir|default('/etc/chef') }}/client.rb"
         mode: 0644
     become: yes
@@ -75,7 +75,7 @@
     - chef_zero
 -   name: Create configuration file for chef-solo
     template:
-        src: templates/solo.rb.j2
+        src: ../templates/solo.rb.j2
         dest: "{{ chef.config_dir|default('/etc/chef') }}/solo.rb"
         mode: 0644
     become: yes
@@ -94,17 +94,17 @@
     - chef
     - chef_zero_config
     - chef_zero
--   name: Adjust permissions
-    file:
-        path: "{{ chdir }}"
-        recurse: yes
-        owner: "{{ ansible_user }}"
-        mode: 0775
-        state: directory
-    become: yes
-    tags:
-    - chef
-    - chef_permissions
+# -   name: Adjust permissions
+#     file:
+#         path: "{{ base_dir }}"
+#         recurse: yes
+#         owner: "{{ ansible_user }}"
+#         mode: 0775
+#         state: directory
+#     become: yes
+#     tags:
+#     - chef
+#     - chef_permissions
 -   name: Gather version of Chef
     command: chef-client -v
     register: chef_version
@@ -112,19 +112,30 @@
     tags:
     - chef
     - chef_version
--   name: Factize version of Chef
-    set_fact:
-        chef:
-            version: chef_version.stdout
-    when: chef_version|changed
+# -   name: Factize version of Chef
+#     set_fact:
+#         chef:
+#             version: chef_version.stdout
+#     when: chef_version|changed
+#     tags:
+#     - chef
+#     - chef_version
+#     - chef_version_fact
+-   name: Add Chef to PATH
+    lineinfile: >
+        dest=/etc/environment
+        state=present
+        backrefs=yes
+        regexp='PATH=(["]*)((?!.*?{{ chef.base_dir }}/bin).*?)(["]*)$'
+        line="PATH=\1{{ chef.base_dir }}/bin:\2\3"
+    become: yes
     tags:
     - chef
-    - chef_version
-    - chef_version_fact
-- name: Include Runner
-  include: chef_run.yml
-  tags:
-  - chef
-  - chef_run
-  - chef_solo
-  - chef_zero
+    - chef_path
+-   name: Include Runner
+    include: chef_run.yml
+    tags:
+    - chef
+    - chef_run
+    - chef_solo
+    - chef_zero

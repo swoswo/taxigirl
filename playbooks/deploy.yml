@@ -3,6 +3,12 @@
     gather_facts: true
     any_errors_fatal: true
     strategy: "{{ strategy|default('linear') }}"
+    pre_tasks:
+    - name: Meditation
+      pause: prompt="Take a deep breath." seconds=3
+      tags:
+      - provision
+      - pause
     roles:
     -   role: directory
         chdir: '{{ deploy.dest }}'
@@ -35,23 +41,22 @@
     -   name: Flag Completion
         set_fact: completed_deploy=true
     -   name: Notification
-        slack:
+        local_action:
+            module: slack
             token: "{{ slack.token }}"
-            msg: Deploy
+            msg: Deployment done
+            username: "Taxigirl on {{ inventory_hostname }}"
             attachments:
             -   title: Host
+                title_link: "{{ git.dest|default(omit) }}"
                 text: "{{ ansible_fqdn }}"
-                color: '#00ff00'
+                color: good
+                parse: full
+                footer: "{{ ansible_version }}"
                 fields:
-                -   title: Facts
-                    value: "{{ hostvars[ansible_fqdn] }}"
-                    short: yes
-                -   title: Configuration
-                    value: "{{ deploy }}"
-                    short: yes
-            username: "{{ slack.username }}"
-            channel: "{{ slack.channel|default(omit) }}"
-            icon_emoji: "{{ slack.icon_emoji|default(omit) }}"
+                -   title: Configuration (Deploy)
+                    value: "{{ deploy|to_nice_yaml }}"
+                    short: no
         when: slack.token is defined
         tags:
         - provision
