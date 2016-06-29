@@ -5,21 +5,21 @@
     strategy: "{{ strategy|default('linear') }}"
     roles:
     -   role: aws_ec2
-        when: ('aws_ec2' in provision.tasks and ec2 is defined)
+        when: ('aws_ec2' in provision.tasks)
     -   role: aws_rds
-        when: ('aws_rds' in provision.tasks and ec2_rds is defined)
+        when: ('aws_rds' in provision.tasks)
     -   role: bootstrap
         when: ('bootstrap' in provision.tasks)
     -   role: packages
-        data: '{{ provision.packages }}'
-        when: ('packages' in provision.tasks and provision.packages is defined)
+        data: "{{ provision.packages }}"
+        when: ('packages' in provision.tasks)
     -   role: shell
-        data: '{{ provision.shell }}'
-        chdir: '{{ deploy.dest }}'
-        when: ('shell' in provision.tasks and provision.shell is defined)
+        data: "{{ provision.shell }}"
+        chdir: "{{ deploy.dest }}"
+        when: ('shell' in provision.tasks)
     pre_tasks:
-    - name: Meditation
-      pause: prompt="Take a deep breath." seconds=3
+    - name: Meditate on Provision
+      pause: prompt="Take a deep breath." seconds=5
       tags:
       - provision
       - pause

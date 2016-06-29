@@ -16,7 +16,16 @@
     tags:
     - git
     - git_install
--   name: Add Git server as a known host
+-   name: Create .ssh directory
+    file:
+        path: ~/.ssh
+        owner: "{{ ansible_user }}"
+        mode: 0700
+        state: directory
+    tags:
+    - git
+    - git_ssh_dir
+-   name: Touch known_hosts
     file:
         path: ~/.ssh/known_hosts
         owner: "{{ ansible_user }}"

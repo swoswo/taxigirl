@@ -37,7 +37,8 @@
     - chef_run
     - chef_run_solo
 -   name: Notification
-    slack:
+    local_action:
+        module: slack
         token: "{{ slack.token }}"
         msg: Chef Run done
         username: "Taxigirl on {{ inventory_hostname }}"

@@ -50,7 +50,7 @@
     register: chef_install
     become: yes
     changed_when: chef_install.stdout.find('Selecting previously unselected package chef') != -1
-    # when: hostvars[ansible_hostname]['installed'] is undefined
+    # when: hostvars[inventory_hostname]['installed'] is undefined
     tags:
     - chef
     - chef_install

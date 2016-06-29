@@ -4,39 +4,39 @@
     any_errors_fatal: true
     strategy: "{{ strategy|default('linear') }}"
     pre_tasks:
-    - name: Meditation
-      pause: prompt="Take a deep breath." seconds=3
+    - name: Meditate on Deploy
+      pause: prompt="Take a deep breath." seconds=5
       tags:
       - provision
       - pause
     roles:
     -   role: directory
-        chdir: '{{ deploy.dest }}'
-        when: (deploy.tasks is defined)
+        chdir: "{{ deploy.dest }}"
+        when: (deploy.dest is defined)
     -   role: packages
-        data: '{{ deploy.packages }}'
-        when: ('packages' in deploy.tasks and deploy.packages is defined)
+        data: "{{ deploy.packages }}"
+        when: ('packages' in deploy.tasks)
     -   role: git
         when: ('git' in deploy.tasks)
     -   role: pip
-        data: '{{ deploy.pip }}'
-        when: ('pip' in deploy.tasks and deploy.pip is defined)
+        data: "{{ deploy.pip }}"
+        when: ('pip' in deploy.tasks)
     -   role: gem
-        data: '{{ deploy.gem }}'
-        when: ('gem' in deploy.tasks and deploy.gem is defined)
+        data: "{{ deploy.gem }}"
+        when: ('gem' in deploy.tasks)
     -   role: bundler
-        chdir: '{{ bundler.dest }}'
+        chdir: "{{ bundler.dest }}"
         when: ('bundler' in deploy.tasks)
     -   role: berkshelf
-        chdir: '{{ berkshelf.dest }}'
+        chdir: "{{ berkshelf.dest }}"
         when: ('berkshelf' in deploy.tasks)
     -   role: chef
-        chdir: '{{ deploy.dest }}'
+        chdir: "{{ deploy.dest }}"
         when: ('chef' in deploy.tasks)
     -   role: shell
-        data: '{{ deploy.shell }}'
-        chdir: '{{ deploy.dest }}'
-        when: ('shell' in deploy.tasks and deploy.shell is defined)
+        data: "{{ deploy.shell }}"
+        chdir: "{{ deploy.dest }}"
+        when: ('shell' in deploy.tasks)
     post_tasks:
     -   name: Flag Completion
         set_fact: completed_deploy=true
@@ -46,17 +46,20 @@
             token: "{{ slack.token }}"
             msg: Deployment done
             username: "Taxigirl on {{ inventory_hostname }}"
-            attachments:
-            -   title: Host
-                title_link: "{{ git.dest|default(omit) }}"
-                text: "{{ ansible_fqdn }}"
-                color: good
-                parse: full
-                footer: "{{ ansible_version }}"
-                fields:
-                -   title: Configuration (Deploy)
-                    value: "{{ deploy|to_nice_yaml }}"
-                    short: no
+            # attachments:
+            # -   title: Host
+            #     title_link: "{{ git.dest|default(omit) }}"
+            #     text: "{{ ansible_fqdn }}"
+            #     color: good
+            #     parse: full
+            #     footer: "{{ ansible_version }}"
+            #     fields:
+            #     -   title: Configuration (Deploy)
+            #         value: "{{ deploy|to_nice_yaml }}"
+            #         short: no
+            #     -   title: Facts
+            #         value: "{{ hostvars[inventory_hostname]|to_nice_yaml }}"
+            #         short: no
         when: slack.token is defined
         tags:
         - provision

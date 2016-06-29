@@ -27,7 +27,7 @@ client_key '/opt/chef/embedded/ssl/cert.pem'
 chef_zero.enabled true
 
 # Run the chef-client in local mode. This allows all commands that work against the Chef server to also work against the local chef-repo.
-local_mode true
+local_mode false
 
 # Whether Chef Zero local mode should bind to a port.
 listen false
@@ -43,6 +43,3 @@ file_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
 
 # All files in a cookbook must contain valid Ruby syntax. Use this setting to specify the location in which knife caches information about files that have been checked for valid Ruby syntax.
 syntax_check_cache_path "{{ chef.file_cache_path|default('/tmp/chef') }}"
-
-# TODO: comment
-client_fork false

@@ -2,9 +2,18 @@
     assert:
         that: (chdir is defined and chdir is not none and chdir | trim != '')
     tags:
-    - chef
     - berkshelf
     - berkshelf_assert
+-   name: Create directory
+    file:
+        path: "{{ berkshelf.cookbook_path }}"
+        owner: "{{ ansible_user }}"
+        mode: 0755
+        state: directory
+    become: yes
+    tags:
+    - berkshelf
+    - berkshelf_dir
 -   name: Run Berkshelf
     command: bundle exec berks vendor {{ berkshelf.cookbook_path }}
     args:
@@ -14,6 +23,5 @@
     when: berkshelf.cookbook_path is defined
     become: "{{ berkshelf.with_sudo|default(omit) }}"
     tags:
-    - chef
     - berkshelf
     - berkshelf_run

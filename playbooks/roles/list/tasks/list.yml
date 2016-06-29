@@ -1,6 +1,6 @@
--   name: 'Inventory (All)'
+-   name: 'Inventory'
     debug: msg="{{ inv_host }}"
-    with_inventory_hostnames: all
+    with_items: "{{ groups['all'] }}"
     loop_control:
         loop_var: inv_host
     tags:
