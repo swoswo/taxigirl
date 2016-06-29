@@ -38,7 +38,7 @@
         install_recommends: "{{ apt.install_recommends|default('no') }}"
     register: apt_upgrade
     become: yes
-    when: apt_update.cache_updated
+    # when: apt_update.cache_updated
     tags:
     - packages
     - apt
