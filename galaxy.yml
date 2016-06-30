@@ -4,7 +4,7 @@
     gather_facts: true
     hosts: "{{ hosts|default('all') }}"
     vars_files:
-    - ../vars/galaxy.yml
+    - ./vars/galaxy.yml
     roles:
     -   role: switch-apt-mirror
         when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu') and (galaxy.roles.switch_apt_mirror is defined and galaxy.roles.switch_apt_mirror == True)
@@ -17,3 +17,6 @@
     post_tasks:
     -   name: Flag Completion
         set_fact: completed_galaxy=true
+        tags:
+        - galaxy
+        - galaxy_fact

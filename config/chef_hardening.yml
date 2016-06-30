@@ -7,6 +7,8 @@ galaxy:
         ntp: false
         switch_apt_mirror: true
         unattended_upgrades: true
+    ubuntu_apt:
+        mirror: 'ftp.hawo.stw.uni-erlangen.de'
 provision:
     tasks:
     - bootstrap
@@ -28,6 +30,7 @@ deploy:
     - git
     - packages
     - pip
+    - run_chef
     packages:
         state: latest
         install:
@@ -59,6 +62,9 @@ deploy:
         virtualenv: /opt/chef_example
         packages:
         - grc
+service:
+    tasks:
+    - chef
 apt:
     upgrade: dist
 git:
@@ -87,12 +93,10 @@ berkshelf:
 chef:
     base_dir: /opt/chef
     config_dir: /etc/chef
-    file_cache_path: /opt/chef_example/tmp
-    log_level: info
+    channel: current
     log_location: /opt/chef_example/tmp/chef_run.log
     run: zero
     run_list: recipe[os-hardening]
-    tmp_dir: /opt/chef_example/tmp
     with_sudo: true
     attributes:
         base_path: /opt/chef_example

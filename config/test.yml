@@ -1,6 +1,5 @@
 version: 0.1.0
 hosts: all
-slack: []
 galaxy:
     enabled: false
 provision:
@@ -25,3 +24,4 @@ deploy:
         commands:
         - id
         - echo 'deploy'
+slack: []

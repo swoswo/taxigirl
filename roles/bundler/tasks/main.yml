@@ -5,6 +5,12 @@
     - ruby
     - bundler
     - bundler_assert
+-   name: 'Debug: bundler'
+    debug: var=bundler verbosity=3
+    tags:
+    - debug
+    - bundler
+    - bundler_debug
 -   name: Run Bundler
     bundler:
         state: present

@@ -1,6 +1,6 @@
 -   name: 'Playbook: List'
     hosts: "{{ hosts|default('all') }}"
     gather_facts: true
-    # strategy: free
+    strategy: free
     roles:
     -   role: list

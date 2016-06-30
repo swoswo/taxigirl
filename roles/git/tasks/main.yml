@@ -10,6 +10,12 @@
     tags:
     - git
     - git_assert_repo
+-   name: 'Debug: git'
+    debug: var=git verbosity=3
+    tags:
+    - debug
+    - git
+    - git_debug
 -   name: Install Git
     package:
         name: git

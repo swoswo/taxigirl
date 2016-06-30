@@ -1,15 +1,9 @@
-# -   name: Assert on 'chdir'
-#     assert:
-#         that: (chdir is defined and chdir is not none and chdir | trim != '')
-#     tags:
-#     - chef
-#     - chef_assert_dest
--   name: Assert on 'chef.tmp_dir'
-    assert:
-        that: (chef.tmp_dir is defined and chef.tmp_dir is not none and chef.tmp_dir | trim != '')
+-   name: 'Debug: data'
+    debug: var=data verbosity=3
     tags:
+    - debug
     - chef
-    - chef_assert_tmp_dir
+    - chef_debug
 -   name: Create directories for temporary data
     file:
         path: "{{ chef_tmpdir }}"
@@ -18,17 +12,17 @@
         group: root
         mode: 0775
     with_items:
-    - "{{ chef.tmp_dir }}"
-    - "{{ chef.file_cache_path }}"
+    - "{{ chef.tmp_dir|default('/tmp/chef') }}"
+    - "{{ chef.file_cache_path|default('/tmp/chef') }}"
     loop_control:
         loop_var: chef_tmpdir
     become: yes
     tags:
     - chef
-    - chef_dir
+    - chef_dir_tmp
 -   name: Create configuration directory
     file:
-        path: "{{ chef.config_dir }}"
+        path: "{{ chef.config_dir|default('/etc/chef') }}"
         state: directory
         owner: root
         group: root
@@ -40,29 +34,38 @@
 -   name: Fetch installation script for Chef
     get_url:
         url: https://www.opscode.com/chef/install.sh
-        dest: "{{ chef.tmp_dir }}/install.sh"
+        dest: "{{ chef.tmp_dir|default('/tmp/chef') }}/install.sh"
+        mode: 0555
     register: chef_fetch
     tags:
     - chef
+    - chef_install
     - chef_fetch
 -   name: Install Chef
-    command: /usr/bin/env bash "{{ chef.tmp_dir }}/install.sh" -d "{{ chef.tmp_dir }}"
+    command: /usr/bin/env bash "{{ chef.tmp_dir|default('/tmp/chef') }}/install.sh" -c "{{ chef.channel|default('stable') }}" -d "{{ chef.tmp_dir|default('/tmp/chef') }}"
     register: chef_install
     become: yes
     changed_when: chef_install.stdout.find('Selecting previously unselected package chef') != -1
-    # when: hostvars[inventory_hostname]['installed'] is undefined
+    when: hostvars[inventory_hostname].chef_installed is undefined
     tags:
     - chef
     - chef_install
-# -   name: Factize installation
-#     set_fact:
-#         chef:
-#             installed: yes
-#     when: chef_install|success
-#     tags:
-#     - chef
-#     - chef_install
-#     - chef_install_fact
+-   name: Factize installation
+    set_fact:
+        chef_installed: true
+    when: chef_install|success
+    tags:
+    - chef
+    - chef_install
+    - chef_install_fact
+-   name: Gather version of Chef
+    command: chef-client -v
+    register: chef_version
+    when: chef_install|changed
+    tags:
+    - chef
+    - chef_install
+    - chef_version
 -   name: Create configuration file for chef-client (zero)
     template:
         src: ../templates/client.rb.j2
@@ -94,24 +97,6 @@
     - chef
     - chef_zero_config
     - chef_zero
-# -   name: Adjust permissions
-#     file:
-#         path: "{{ base_dir }}"
-#         recurse: yes
-#         owner: "{{ ansible_user }}"
-#         mode: 0775
-#         state: directory
-#     become: yes
-#     tags:
-#     - chef
-#     - chef_permissions
--   name: Gather version of Chef
-    command: chef-client -v
-    register: chef_version
-    when: chef_install|changed
-    tags:
-    - chef
-    - chef_version
 # -   name: Factize version of Chef
 #     set_fact:
 #         chef:
@@ -132,10 +117,3 @@
 #     tags:
 #     - chef
 #     - chef_path
--   name: Include Runner
-    include: chef_run.yml
-    tags:
-    - chef
-    - chef_run
-    - chef_solo
-    - chef_zero

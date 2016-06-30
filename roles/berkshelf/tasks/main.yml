@@ -4,6 +4,12 @@
     tags:
     - berkshelf
     - berkshelf_assert
+-   name: 'Debug: berkshelf'
+    debug: var=berkshelf verbosity=3
+    tags:
+    - debug
+    - berkshelf
+    - berkshelf_debug
 -   name: Create directory
     file:
         path: "{{ berkshelf.cookbook_path }}"

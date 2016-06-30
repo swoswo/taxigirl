@@ -8,8 +8,8 @@
         when: ('aws_ec2' in provision.tasks)
     -   role: aws_rds
         when: ('aws_rds' in provision.tasks)
-    -   role: bootstrap
-        when: ('bootstrap' in provision.tasks)
+    -   role: bootstrap_debian
+        when: (ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu')
     -   role: packages
         data: "{{ provision.packages }}"
         when: ('packages' in provision.tasks)
@@ -26,11 +26,14 @@
     post_tasks:
     -   name: Flag Completion
         set_fact: completed_provision=true
+        tags:
+        - provision
+        - provision_fact
     -   name: Notification
         local_action:
             module: slack
             token: "{{ slack.token }}"
-            msg: Provisioning done
+            msg: Provision done
             username: "Taxigirl on {{ inventory_hostname }}"
             # attachments:
             # -   title: Host

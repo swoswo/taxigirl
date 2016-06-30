@@ -7,7 +7,7 @@
     - name: Meditate on Deploy
       pause: prompt="Take a deep breath." seconds=5
       tags:
-      - provision
+      - deploy
       - pause
     roles:
     -   role: directory
@@ -40,11 +40,14 @@
     post_tasks:
     -   name: Flag Completion
         set_fact: completed_deploy=true
+        tags:
+        - deploy
+        - deploy_fact
     -   name: Notification
         local_action:
             module: slack
             token: "{{ slack.token }}"
-            msg: Deployment done
+            msg: Deploy done
             username: "Taxigirl on {{ inventory_hostname }}"
             # attachments:
             # -   title: Host
@@ -62,6 +65,6 @@
             #         short: no
         when: slack.token is defined
         tags:
-        - provision
+        - deploy
         - slack
-        - provision_slack
+        - deploy_slack

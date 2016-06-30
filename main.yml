@@ -1,5 +1,5 @@
 -   include: galaxy.yml
-    when: (galaxy is defined and galaxy.enabled)
+    when: (galaxy.enabled)
     tags:
     - galaxy
 -   include: provision.yml
@@ -11,3 +11,6 @@
 -   include: deploy.yml
     tags:
     - deploy
+-   include: service.yml
+    tags:
+    - service

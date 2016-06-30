@@ -7,6 +7,8 @@ galaxy:
         ntp: false
         switch_apt_mirror: true
         unattended_upgrades: false
+    unattended_upgrades:
+        automatic_reboot: true
 apt:
     upgrade: dist
 unattended_upgrades:
@@ -24,4 +26,8 @@ provision:
         - gcc
         - git
 deploy:
+    dest: /opt/test
     tasks: []
+service:
+    tasks: []
+slack: []

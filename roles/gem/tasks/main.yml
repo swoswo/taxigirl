@@ -1,3 +1,9 @@
+-   name: 'Debug: data'
+    debug: var=data verbosity=3
+    tags:
+    - debug
+    - gem
+    - gem_debug
 -   name: Update Rubygems
     command: gem update --system --no-document
     register: gem_update_system

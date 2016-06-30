@@ -1,0 +1,10 @@
+-   name: Adjust Permissions
+    file:
+        path: "{{ chdir }}"
+        mode: "{{ mode|default('u=rwX,g=rX,o=rX') }}"
+        owner: "{{ owner|default(ansible_user) }}"
+        group: "{{ group|default('root') }}"
+        recurse: "{{ recurse|default('yes') }}"
+    become: yes
+    tags:
+    - permissions
