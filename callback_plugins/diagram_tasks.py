@@ -1,9 +1,10 @@
 # https://raw.githubusercontent.com/ansible/ansible/devel/lib/ansible/plugins/callback/profile_tasks.py
+#     2016, Tom Hensel, <github@jitter.eu>
 # (C) 2016, Joel, http://github.com/jjshoe
 # (C) 2015, Tom Paine, <github@aioue.net>
 # (C) 2014, Jharrod LaFon, @JharrodLaFon
 # (C) 2012-2013, Michael DeHaan, <michael.dehaan@gmail.com>
-#
+
 # This file is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -33,7 +34,7 @@ from ansible.plugins.callback import CallbackBase
 # define start time
 t0 = tn = time.time()
 
-def secondsToStr(t):
+def seconds_to_str(t):
     # http://bytes.com/topic/python/answers/635958-handy-short-cut-formatting-elapsed-time-floating-point-seconds
     rediv = lambda ll, b: list(divmod(ll[0], b)) + ll[1:]
     return "%d:%02d:%02d.%03d" % tuple(reduce(rediv, [[t * 1000, ], 1000, 60, 60]))
@@ -59,8 +60,8 @@ def timestamp(self):
 def tasktime():
     global tn
     time_current = time.strftime('%A %d %B %Y  %H:%M:%S %z')
-    time_elapsed = secondsToStr(time.time() - tn)
-    time_total_elapsed = secondsToStr(time.time() - t0)
+    time_elapsed = seconds_to_str(time.time() - tn)
+    time_total_elapsed = seconds_to_str(time.time() - t0)
     tn = time.time()
     return filled('%s (%s)%s%s' % (time_current, time_elapsed, ' ' * 7, time_total_elapsed))
 
@@ -72,7 +73,7 @@ class CallbackModule(CallbackBase):
     """
     CALLBACK_VERSION = 2.0
     CALLBACK_TYPE = 'aggregate'
-    CALLBACK_NAME = 'profile_tasks'
+    CALLBACK_NAME = 'diagram_tasks'
     CALLBACK_NEEDS_WHITELIST = True
 
     def __init__(self):
@@ -82,7 +83,7 @@ class CallbackModule(CallbackBase):
         self.task_output_limit = os.getenv('PROFILE_TASKS_TASK_OUTPUT_LIMIT', 20)
 
         if self.sort_order == 'ascending':
-            self.sort_order = False;
+            self.sort_order = False
 
         if self.task_output_limit == 'all':
             self.task_output_limit = None
@@ -101,8 +102,7 @@ class CallbackModule(CallbackBase):
         # Record the start time of the current task
         self.current = task._uuid
         self.stats[self.current] = {'time': time.time(), 'name': task.get_name()}
-        if self._display.verbosity >= 2:
-            self.stats[self.current][ 'path'] = task.get_path()
+        self.stats[self.current]['path'] = os.path.basename(task.get_path())
 
     def v2_playbook_on_task_start(self, task, is_conditional):
         self._record_task(task)

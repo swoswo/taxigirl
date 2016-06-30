@@ -1,6 +1,7 @@
 # https://raw.githubusercontent.com/ansible/ansible/devel/lib/ansible/plugins/callback/osx_say.py
 # (C) 2012, Michael DeHaan, <michael.dehaan@gmail.com>
-
+#     2016, Tom Hensel, <github@jitter.eu>
+#
 # This file is part of Ansible
 #
 # Ansible is free software: you can redistribute it and/or modify
@@ -37,7 +38,7 @@ class CallbackModule(CallbackBase):
     """
     CALLBACK_VERSION = 2.0
     CALLBACK_TYPE = 'notification'
-    CALLBACK_NAME = 'osx_say'
+    CALLBACK_NAME = 'osx_say_min'
     CALLBACK_NEEDS_WHITELIST = True
 
     def __init__(self):
@@ -53,8 +54,18 @@ class CallbackModule(CallbackBase):
     def say(self, msg, voice):
         subprocess.call([SAY_CMD, msg, "--voice=%s" % (voice)])
 
-    def runner_on_failed(self, host, res, ignore_errors=False):
-        self.say("Play failed on host %s" % host, FAILED_VOICE)
+    def v2_playbook_on_start(self, playbook):
+        self.playbook_name = os.path.basename(playbook._file_name)
+        self.say('Running %s.' % (self.playbook_name), REGULAR_VOICE)
 
-    def playbook_on_stats(self, stats):
-        self.say("Play is complete", HAPPY_VOICE)
+    def v2_runner_on_failed(self, result, ignore_errors=False):
+        self.say('%s has failed. Doh!' % (self.playbook_name), FAILED_VOICE)
+
+    def v2_playbook_on_play_start(self, play):
+        pass
+
+    def v2_runner_item_on_failed(self, result, ignore_errors=False):
+        pass
+
+    def v2_playbook_on_stats(self, stats):
+        self.say('%s done.' % (self.playbook_name), HAPPY_VOICE)
