@@ -351,7 +351,7 @@ ansible-check:
 .PHONY: ansible-lint
 ansible-lint:
 	$(info $@: linting playbook $(ANSIBLE_PLAYBOOK_FILE))
-	@$(BIN_PATH)/ansible-lint --exclude=$(ANSIBLE_GALAXY_PATH) --exclude=tests $(ANSIBLE_PLAYBOOK_FILE)
+	@$(BIN_PATH)/ansible-lint --exclude=$(ANSIBLE_GALAXY_PATH) --exclude=tests -x ANSIBLE0013 $(ANSIBLE_PLAYBOOK_FILE)
 
 .PHONY: ansible-syntax
 ansible-syntax:
