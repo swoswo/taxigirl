@@ -11,6 +11,17 @@
     - debug
     - bundler
     - bundler_debug
+# -   name: Create directory
+#     file:
+#         path: "{{ bundler.gem_path }}"
+#         owner: "{{ ansible_user }}"
+#         mode: 0755
+#         state: directory
+#     when: (bundler.gem_path is defined)
+#     become: yes
+#     tags:
+#     - bundler
+#     - bundler_dir
 -   name: Run Bundler
     bundler:
         state: present
@@ -29,9 +40,9 @@
     file:
         path: "{{ chdir }}/bin"
         recurse: true
-        owner: root
+        owner: "{{ ansible_user }}"
         group: root
-        mode: 493
+        mode: 'u=rX,g=rX,o=rX'
         state: directory
     when: bundler.binstub_directory is defined
     become: true

@@ -7,9 +7,9 @@
 -   name: Create Directory
     file:
         path: "{{ chdir }}"
-        recurse: yes
+        mode: 'u=rwX,g=rX,o=rX'
         owner: "{{ ansible_user }}"
-        mode: 0775
+        recurse: yes
         state: directory
     become: yes
     tags:

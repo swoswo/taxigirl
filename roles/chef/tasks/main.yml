@@ -42,7 +42,7 @@
     - chef_install
     - chef_fetch
 -   name: Install Chef
-    command: /usr/bin/env bash "{{ chef.tmp_dir|default('/tmp/chef') }}/install.sh" -c "{{ chef.channel|default('stable') }}" -d "{{ chef.tmp_dir|default('/tmp/chef') }}"
+    shell: /usr/bin/env bash "{{ chef.tmp_dir|default('/tmp/chef') }}/install.sh" -c "{{ chef.channel|default('stable') }}" -d "{{ chef.tmp_dir|default('/tmp/chef') }}"
     register: chef_install
     become: yes
     changed_when: chef_install.stdout.find('Selecting previously unselected package chef') != -1

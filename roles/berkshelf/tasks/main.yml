@@ -3,30 +3,42 @@
         that: (chdir is defined and chdir is not none and chdir | trim != '')
     tags:
     - berkshelf
-    - berkshelf_assert
+    - berkshelf_assert_chdir
+-   name: Assert on 'berkshelf.cookbook_path'
+    assert:
+        that: (berkshelf.cookbook_path is defined and berkshelf.cookbook_path is not none and berkshelf.cookbook_path | trim != '')
+    tags:
+    - berkshelf
+    - berkshelf_assert_path
 -   name: 'Debug: berkshelf'
     debug: var=berkshelf verbosity=3
     tags:
     - debug
     - berkshelf
     - berkshelf_debug
--   name: Create directory
+-   name: Create directories
     file:
-        path: "{{ berkshelf.cookbook_path }}"
-        owner: "{{ ansible_user }}"
-        mode: 0775
+        path: "{{ berks_dir }}"
         state: directory
+        owner: "{{ ansible_user }}"
+        group: root
+        mode: 'u=rwX,g=rX,o=rX'
+        recurse: true
+    with_items:
+    - "{{ berkshelf.cookbook_path }}"
+    - "{{ chdir }}"
+    loop_control:
+        loop_var: berks_dir
     become: yes
     tags:
     - berkshelf
     - berkshelf_dir
 -   name: Run Berkshelf
-    command: bundle exec berks vendor {{ berkshelf.cookbook_path }}
+    shell: bundle exec berks vendor {{ berkshelf.cookbook_path }}
     args:
         chdir: "{{ chdir }}"
     register: run_berkshelf
-    changed_when: run_berkshelf.stdout.find('Nothing to update') != -1
-    when: berkshelf.cookbook_path is defined
+    changed_when: (run_berkshelf.stdout is defined and run_berkshelf.stdout.find('Nothing to update') != -1)
     become: "{{ berkshelf.with_sudo|default(omit) }}"
     tags:
     - berkshelf

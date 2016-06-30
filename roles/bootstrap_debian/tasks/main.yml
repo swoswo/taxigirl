@@ -1,3 +1,10 @@
+-   name: Remove requiretty
+    lineinfile: regexp="^\s+\w+\s+requiretty" dest=/etc/sudoers state=absent
+    become: yes
+    tags:
+    - bootstrap
+    - debian
+    - bootstrap_requiretty
 -   name: Ensure integrity of dpkg database
     raw: dpkg --configure -a
     register: dpkg_configure

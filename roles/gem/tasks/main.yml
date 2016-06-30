@@ -5,7 +5,7 @@
     - gem
     - gem_debug
 -   name: Update Rubygems
-    command: gem update --system --no-document
+    shell: gem update --system --no-document
     register: gem_update_system
     changed_when: gem_update_system.stdout.find('Successfully installed') != -1
     become: true
@@ -15,10 +15,10 @@
     - gem_update
     - gem_update_system
 -   name: Update Gems
-    command: gem update --env-shebang --no-document --conservative
+    shell: gem update --env-shebang --no-document --conservative
     register: gem_update
     changed_when: gem_update.stdout.find('Successfully installed') != -1
-    become: "{{ data.with_sudo|default(omit) }}"
+    become: "{{ data.with_sudo|default('yes') }}"
     tags:
     - ruby
     - gem
@@ -40,7 +40,7 @@
     loop_control:
         loop_var: gem_name
     register: gem_install
-    become: "{{ data.with_sudo|default(omit) }}"
+    become: "{{ data.with_sudo|default('yes') }}"
     when: data.packages is defined
     tags:
     - ruby

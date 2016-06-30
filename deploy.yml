@@ -3,12 +3,12 @@
     gather_facts: true
     any_errors_fatal: true
     strategy: "{{ strategy|default('linear') }}"
-    pre_tasks:
-    - name: Meditate on Deploy
-      pause: prompt="Take a deep breath." seconds=5
-      tags:
-      - deploy
-      - pause
+    # pre_tasks:
+    # - name: Meditate on Deploy
+    #   pause: prompt="Take a deep breath." seconds=5
+    #   tags:
+    #   - deploy
+    #   - pause
     roles:
     -   role: directory
         chdir: "{{ deploy.dest }}"

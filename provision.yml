@@ -17,12 +17,12 @@
         data: "{{ provision.shell }}"
         chdir: "{{ deploy.dest }}"
         when: ('shell' in provision.tasks)
-    pre_tasks:
-    - name: Meditate on Provision
-      pause: prompt="Take a deep breath." seconds=5
-      tags:
-      - provision
-      - pause
+    # pre_tasks:
+    # - name: Meditate on Provision
+    #   pause: prompt="Take a deep breath." seconds=5
+    #   tags:
+    #   - provision
+    #   - pause
     post_tasks:
     -   name: Flag Completion
         set_fact: completed_provision=true
