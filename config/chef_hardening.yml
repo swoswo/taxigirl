@@ -4,7 +4,7 @@ galaxy:
     enabled: false
     roles:
         os_hardening: false
-        ntp: false
+        ntp: true
         switch_apt_mirror: true
         unattended_upgrades: true
     ubuntu_apt:
@@ -30,7 +30,6 @@ deploy:
     - git
     - packages
     - pip
-    - run_chef
     packages:
         state: latest
         install:
@@ -54,7 +53,7 @@ deploy:
         - ruby-nokogiri
         - ruby-bundler
     gem:
-        with_sudo: true
+        # with_sudo: true
         packages:
         - bundler
         - berkshelf
@@ -70,13 +69,13 @@ apt:
 git:
     accept_hostkey: true
     depth: 1
-    dest: /sync/cookbooks/os-hardening
+    dest: /opt/chef_example/cookbooks/os-hardening
     repo: https://github.com/dev-sec/chef-os-hardening
     server: github.com
 bundler:
+    dest: /opt/chef_example/cookbooks/os-hardening
     binstub_directory: /opt/chef_example/bin
     clean: true
-    dest: /sync/cookbooks/os-hardening
     with_sudo: true
     exclude_groups:
     - development
@@ -87,14 +86,13 @@ bundler:
     extra_args: --jobs {{ ansible_processor_vcpus }}
     gem_path: /opt/chef_example/vendor/cache
 berkshelf:
-    with_sudo: true
-    dest: /sync/cookbooks/os-hardening
-    cookbook_path: /sync/berks-cookbooks
+    dest: /opt/chef_example/cookbooks/os-hardening
+    cookbook_path: /opt/chef_example/berks-cookbooks
 chef:
     base_dir: /opt/chef
     config_dir: /etc/chef
     channel: current
-    log_location: /opt/chef_example/tmp/chef_run.log
+    log_location: /tmp/chef_run.log
     run: zero
     run_list: recipe[os-hardening]
     with_sudo: true
